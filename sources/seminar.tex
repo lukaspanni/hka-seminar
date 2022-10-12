@@ -12,6 +12,7 @@
 \usepackage{multicol}
 \usepackage[hidelinks]{hyperref}
 \usepackage{color}
+\usepackage[nolist]{acronym}
 \renewcommand\UrlFont{\color{blue}\rmfamily}
 
 \begin{document}
@@ -31,8 +32,10 @@
 % \keywords{ A \and B \and C }
 \end{abstract}
 
+\input{acronyms.tex}
 
 \input{sections/intro.tex}
+\newpage
 \input{sections/funktionsweise.tex}
 \input{sections/missbrauch.tex}
 \input{sections/gegenmaßnahmen.tex}
