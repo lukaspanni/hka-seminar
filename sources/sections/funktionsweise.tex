@@ -3,13 +3,18 @@
 
 Mit der Einführung ihres ersten \ac{BLE}-Trackers hat die Firma Tile 2013 das Konzept eines \ac{BLE}-basierten Tracking-Systems populär gemacht.
 Wie viele konkurrierende Systeme, darunter Apples „Wo ist?“ Dienst, setzt auch Tile auf crowdsourcing zur Bestimmung der Position verlorener Gegenstände \cite{Weller_BLE_Finders}.
-Die grundlegende Funktion dieser Systeme ist jeweils identisch: Ein zu findendes Gerät sendet periodisch \ac{BLE}-Advertisements, die von Smartphones, welche am entsprechenden System teilnehmen, empfangen werden können.
+Die grundlegende Funktion dieser Systeme ist jeweils identisch und in \autoref{fig:tracker_allgemein} gezeigt: Ein zu findendes Gerät \textit{a)} sendet periodisch \ac{BLE}-Advertisements, die von Smartphones in der Nähe \textit{b)}, welche am entsprechenden System teilnehmen, empfangen werden können \textit{(1)}.
 Das zu findende Gerät ist dabei entweder ein Endgerät wie ein Smartphone oder ein Tablet, oder ein spezieller, batteriebetriebener, sogenannter Tracker.
-Solche Tracker können an anderen Gegenstände befestigt werden, sodass diese bei Verlust gefunden werden können.
-Die Empfänger der \ac{BLE}-Advertisements können ihre Position über das \ac{GPS} bestimmen und diese zusammen mit einer ID, welche das zu findende Gerät identifiziert, an einen Server übermitteln.
-Der Besitzer des verlorenen Geräts kann die Position seines Geräts vom Server abrufen \cite{Garg_Secure_Tracker}.
+Solche Tracker können an anderen Gegenstände befestigt werden, sodass diese bei Verlust ebenfalls gefunden werden können.
+Die Empfänger der \ac{BLE}-Advertisements können ihre Position über das \ac{GPS} bestimmen und diese zusammen mit einer ID, welche das zu findende Gerät identifiziert, an einen Server übermitteln \textit{(2)}.
+Der Besitzer des verlorenen Geräts \textit{c)} kann die Position seines Geräts vom Server abrufen \textit{(3)} \cite{Garg_Secure_Tracker}.
 Das Funktionsprinzip ist dementsprechend vergleichsweise einfach.
-%TODO: Bilder zur Erklärung
+\begin{figure}[ht]
+    \centering 
+    \includegraphics[width=0.9\textwidth]{BLE_Tracker_allgemein.pdf}
+    \caption{Allgemeine Funktionsweise des Crowdsourced-Tracking mit \ac{BLE}.}
+    \label{fig:tracker_allgemein}
+\end{figure}
 Qualität und Nützlichkeit für die Nutzer eines solchen Dienstes hängt aber stark von der Anzahl der Nutzer ab.
 Die Position eines verlorenen Geräts kann nur vom Tracking-Dienst abgerufen werden, wenn ein Nutzer des gleichen Dienstes ein \ac{BLE}-Advertisement des verlorenen Geräts empfangen und die Position an den Dienst übermittelt hat.
 Je mehr Nutzer ein Dienst hat, desto größer die Wahrscheinlichkeit, dass sich ein Nutzer vor kurzem in der Nähe des verlorenen Geräts befand und desto größer die Wahrscheinlichkeit, das verlorene Gerät zu finden.
@@ -21,7 +26,7 @@ Auch zum Veröffentlichungszeitpunkt der Arbeit von Weller \textit{et al.} \cite
 Außerdem bot keiner der von Garg \textit{et al.} \cite{Garg_Secure_Tracker} untersuchten Dienste ausreichend Schutz vor dem Melden falscher Positionsdaten.
 
 
-\subsection{Funktionsweise des „Wo ist?“ Dienstes}
+\subsection{Funktionsweise des „Wo ist?“ Dienstes im Detail}
 \label{sec:Funktionsweise_FindMy}
 Auf seiner Informationsseite über den „Wo ist?“ Dienst gibt Apple an: „Geräte in der Nähe senden den Standort [...] sicher an iCloud weiter [...]. Zum Schutz der Privatsphäre passiert das alles anonym und verschlüsselt“ \cite{Apple_WoIst}.
 Apple erhebt demnach den Anspruch einen Dienst anzubieten, der nicht nur sicherer, sondern auch besser für die Privatsphäre der Nutzer ist als die Dienste der Konkurrenz.
@@ -33,17 +38,107 @@ Laut Apple nehmen „hunderte[n] Millionen iPhone, iPad und Mac Geräte[n]“ \c
 Der größte Konkurrent Tile hatte im Jahr 2021 laut der bekannten Gadget-Review Webseite \textit{Pocket-Lint} 40 Millionen Nutzer und kann damit für die Lokalisierung auf ein deutlich kleineres Netzwerk zurückgreifen als Apple \cite{Tile_Network}.
 
 
-Auf Basis des Reverse-Engineering des „Wo ist?“ Dienstes von Heinrich \textit{et al.} in \cite{Heinrich_FindMy} werden im Folgenden die grundlegende Funktionsweise des Dienstes sowie die Verbesserungen für Sicherheit und Privatsphäre im Vergleich mit konkurrierenden Diensten vorgestellt.
+Auf Basis des Reverse-Engineering des „Wo ist?“ Dienstes von Heinrich \textit{et al.} in \cite{Heinrich_FindMy} und der Spezifikation für Drittanbieter \cite{Apple_FindMySpec} wird im Folgenden die grundlegende Funktionsweise des Dienstes erläutert.
+Dabei wird insbesondere darauf eingegangen, welche Maßnahmen Apple ergreift um Sicherheit und Privatsphäre der Nutzer besser zu schützen als die konkurrierenden Dienste. 
+
+In der Spezifikation werden folgende vier Rollen definiert \cite{Apple_FindMySpec}:
+\begin{itemize}
+    \item \textbf{Owner Device}: Alle Geräte, in denen die Apple-ID des Besitzers hinterlegt ist.
+    \item \textbf{Accessory}: Das zu findende Gerät.
+    \item \textbf{Find My network}: Die Menge aller Apple-Geräte, mit aktivierter „Wo ist?“ Funktion. Einzelne Geräte werden jeweils als \textbf{Finder Device} bezeichnet.
+    \item \textbf{Apple Server}: Server der die Standortinformationen speichert.
+\end{itemize}
+\autoref{fig:findMy_roles} zeigt die Rollen, deren Beziehungen und die jeweiligen Aufgaben wie in der Spezifikation angegeben.
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\textwidth]{findMy_roles}
+    \caption{Rollen im „Wo ist?“ Dienst \cite{Apple_FindMySpec}.}
+    \label{fig:findMy_roles}
+\end{figure}
+Apple erlaubt seit April 2021 auch Drittanbietern die Nutzung des „Wo ist?“ Netzwerks um die eigenen Produkte zu finden \cite{Apple_FindMy3rdParty}.
+Da die Spezifikation speziell für Drittanbieter erstellt wurde, wird das zu findende Gerät als \textit{Accessory} bezeichnet.
+In der folgenden Beschreibung wird jedoch der Begriff \textit{Lost Device} verwendet, der auch von Heinrich \textit{et al.} \cite{Heinrich_FindMy} verwendet wird und sowohl Produkte von Drittanbietern als auch von Apple abdeckt.
+Das zu findende Gerät muss mit der Apple-ID des Besitzers verbunden sein, um gefunden werden zu können.
+Drittanbieter Geräte und AirTags müssen dazu vor der ersten Verwendung über einen Pairing-Prozess mit einem Apple-Gerät verbunden werden \cite{Apple_FindMySpec}.
+
+\subsubsection{Kryptografie}
+\label{sec:Kryptografie}
+
+% Schlüsselableitung allgemein
+% Verschlüsselung der Standortdaten
+% Unterschiede zwischen AirTags+3rdParty Geräten und Apple-Endgeräten
+
+\subsubsection{Ablauf beim Verlust eines Geräts}
+\label{sec:Verlust}
+
+Sobald ein Gerät die Internetverbindung oder die \ac{BLE}-Verbindung zum Owner Device verliert, wird es als Lost Device angesehen.
+Um in diesem Zustand von anderen Geräten gefunden zu werden, beginnt das Gerät mit einem Advertising Intervall von 2 s \ac{BLE}-Advertisements zu senden \cite{Apple_FindMySpec}.
+Die Advertisement Pakete werden mit dem Typ \textit{manufacturer-specific data} gesendet, sodass neben angebotenen \ac{BLE}-Services auch eigene Daten übertragen werden können.
+Das Format erlaubt nach einer Firmen-ID von zwei Byte, maximal 27 weitere Byte zu übertragen.
+Da Apple, die manufacturer-specific data auch für andere Zwecke, wie zum Beispiel AirDrop nutzt, wird jeweils ein weiteres Byte für den Typ ($0x12$) des Pakets und dessen Länge verwendet.
+Zur Identifikation des verlorenen Geräts und zur Verschlüsselung der Standortdaten müssen die 28 Byte der X-Koordinate des aktuellen öffentlichen Schlüssels im Advertisement übertragen werden \cite{Heinrich_FindMy}.
+Da die 25 Byte Payload nicht ausreichen, um die X-Koordinate des öffentlichen Schlüssels zu übertragen, wird zusätzlich die Advertising Address des Advertisement Pakets ausgenutzt.
+Die Advertising Address kann zum Schutz der Privatsphäre laut \ac{BLE}-Spezifikation \cite{Spec_BLE_5.3} von der tatsächlichen \ac{MAC}-Adresse des Geräts abweichen.
+Damit lässt sich dieses Feld auch zum Datentransfer ausnutzen.
+Apple speichert die ersten 46 Bit in der Advertising Address, wobei die beiden \acp{MSB} des ersten Bytes jeweils auf 1 gesetzt werden, um den \ac{BLE}-Standard zu erfüllen.
+Die restlichen 170 Bit bestehend aus den Bytes 6 bis 27 und den fehlenden zwei Bits des Byte 0 werden im Payload übertragen \cite{Apple_FindMySpec}.
+\autoref{fig:apple_advertising} zeigt den resultierenden Aufbau eines Advertisement Pakets des „Wo ist?“ Dienstes.
+Die Teile, in welchen der öffentliche Schlüssel übertragen wird, sind gelb hinterlegt.
+Das als "Hint" bezeichnete Feld codiert laut Spezifikation \cite{Apple_FindMySpec} Byte 5 des öffentlichen Schlüssels, laut Heinrich \textit{et al.} \cite{Heinrich_FindMy} ist dieses Feld bei iOS immer 0.
+Mit einem eigenen \ac{BLE}-Scan konnte beobachtet werden, dass das Feld bei einem iOS-Gerät auf 0 gesetzt war, obwohl Byte 5 des öffentlichen Schlüssels ungleich 0 war.
+Dementsprechend wird dieses Byte vermutlich nur bei Drittanbieter-Produkten und eventuell bei AirTags verwendet.
+% TODO: test mit Airtag?
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\textwidth]{apple_advertising.pdf}
+    \caption{Aufbau der Advertisement Pakete des „Wo ist?“ Dienstes.}
+    \label{fig:apple_advertising}
+\end{figure}
+
+Standardmäßig scannen alle Apple-Geräte im Hintergrund nach Advertisements, die die Firmen-ID von Apple enthalten.
+Wird ein Paket durch den Apple Payload Typ $0x12$ als Advertisement für den „Wo ist?“ Dienst identifiziert, wird zunächst die aktuelle Position bestimmt und ein sogenannter \textit{Location Report} erstellt.
+Das Format dieses reports ist in \autoref{fig:location_report} gezeigt.
+\begin{figure}
+    \centering
+    \includegraphics[width=0.85\textwidth]{location_report}
+    \caption{Format des Location Reports \cite{Heinrich_FindMy}}
+    \label{fig:location_report}
+\end{figure}
+Der Hauptbestandteil des Reports sind die verschlüsselten Standortinformationen, bestehend aus Koordinaten, Genauigkeit und Status.
+Daneben findet sich unter anderem der Zeitstempel zum Zeitpunkt der Erstellung des Reports \cite{Heinrich_FindMy}.
+Meist werden Reports nicht unmittelbar nach der Erstellung hochgeladen.
+Stattdessen sammelt das Gerät mehrere Reports und lädt diese gebündelt hoch.
+Der empfangende Server ordnet den Reports zusätzlich den Zeitstempel zum Zeitpunkt des Datenempfangs zu.
+Tonetto \textit{et al.} \cite{Tonetto_FindMy} haben gezeigt, dass die Art der Internetverbindung beeinflusst, wann die Reports hochgeladen werden.
+So liegt der Median für den Upload eines Reports bei aktiver WLAN-Verbindung bei 15 Minuten während bei aktiver Mobilfunkverbindung der Median bei 3 Stunden liegt.
+Der Upload erfolgt über einen HTTPS-Request, der zusätzlich über den Header authentifiziert wird.
+Dieser Header enthält unter anderem ein Identitäts-Zertifikat des Geräts und eine Signatur des Requests.
+Diese Signatur wird mit dem privaten Schlüssel erstellt, welcher in einem speziellen Sicherheitsbereich, dem \textit{Secure Enclave Processor} des Geräts gespeichert ist, um das auslesen zu verhindern.
+Somit kann vermutlich sichergestellt werden, dass nur Apple Geräte in der Lage sind Reports hochzuladen, was das Erstellen gefälschter Reports erschwert \cite{Heinrich_FindMy}.
 
 
-% Rollen: Finder Devices, Lost Devices, Owner Devices + (Apple Server)
-% Welche Geräte können gefunden werden: Apple-Geräte, AirTags, 3rd-Party-Devices (-> Quelle und Auflistung von einigen)
+Um die Standortdaten vom Server abzurufen, wird ein über Basic Authentication mit der Apple-ID des Nutzers und einem Token authentifizierter, HTTPS-Request verwendet.
+Die Anfrage enthält zusätzlich eine Liste der letzten Advertisement Keys des verlorenen Geräts.
+So können die verschlüsselten Location Reports heruntergeladen und anschließend auf dem Gerät entschlüsselt werden, um das verlorene Gerät zu lokalisieren \cite{Heinrich_FindMy}.
+\autoref{lst:findmy_result} zeigt die Struktur der Antwort auf einen solchen Request.
+Die Antwort besteht aus einem Array von Objekten, die jeweils den Hash des Advertisement Keys, einen verschlüsselten Location Report und Metadaten, darunter den Zeitstempel des Datenempfangs, enthalten.
+Mehrere Reports können kombiniert werden, um Genauigkeit bei der Positionsermittlung zu erhöhen.
+Gleichzeitig können mehrere Reports dazu verwendet werden, den Pfad des verlorenen Geräts zu rekonstruieren.
+Dafür können bis zu sieben Tage alte Positionen abgerufen werden \cite{Heinrich_FindMy}.
 
- % Allgemeiner Prozess und wie ist dieser sicherer als andere (Asymmetrisch verschlüsselte Positionsdaten)
- % Genauer auf Einzelheiten eingehen
-        % wie sehen die Daten im Advertising aus (was ist enthalten, abgeleitete IDs um Tracking der verlorenen Geräte durch andere zu verhindern, wann beginnt Advertising)
-
-        % wie läuft das finden ab (Kryptografie, wann werden die Reports hochgeladen WLAN/Mobile -> Tonetto, ist der Upload anonym -> nein)
-        % wie können Daten abgerufen werden (wer kann Daten abrufen -> im Prinzip jeder aber verschlüsselt, wie muss man sich authentifizieren um Daten abzurufen)
-
-% wie gut funktioniert das System (Genauigkeit in den Szenarien wie von Heinrich untersucht)
+\begin{lstlisting}[label=lst:findmy_result,caption={Beispielhafte Antwort beim herunterladen von Location Reports\cite{Heinrich_FindMy}.}]
+{
+    "results": 
+    [
+        {
+            "datePublished": 1586804587284 ,
+            "payload": "JETtmwIEzRBG ...." ,
+            "description": "found" ,
+            "id": "B6E5tpUPbuudAc ..."
+            "statusCode": 0
+        },
+        ...
+    ] ,
+    "statusCode": "200"
+}
+\end{lstlisting}
