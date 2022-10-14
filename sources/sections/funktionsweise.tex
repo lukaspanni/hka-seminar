@@ -1,12 +1,49 @@
-\section{Funktionsweise des „Wo ist?“ Dienstes}
+\section{Crowdsourced-Tracking: Funktionsweise}
 \label{sec:Funktionsweise}
 
 Mit der Einführung ihres ersten \ac{BLE}-Trackers hat die Firma Tile 2013 das Konzept eines \ac{BLE}-basierten Tracking-Systems populär gemacht.
 Wie viele konkurrierende Systeme, darunter Apples „Wo ist?“ Dienst, setzt auch Tile auf crowdsourcing zur Bestimmung der Position verlorener Gegenstände \cite{Weller_BLE_Finders}.
 Die grundlegende Funktion dieser Systeme ist jeweils identisch: Ein zu findendes Gerät sendet periodisch \ac{BLE}-Advertisements, die von Smartphones, welche am entsprechenden System teilnehmen, empfangen werden können.
-Die Empfänger können ihre Position über das \ac{GPS} bestimmen und diese zusammen mit einer ID, welche das zu findende Gerät identifiziert, an einen Server übermitteln.
+Das zu findende Gerät ist dabei entweder ein Endgerät wie ein Smartphone oder ein Tablet, oder ein spezieller, batteriebetriebener, sogenannter Tracker.
+Solche Tracker können an anderen Gegenstände befestigt werden, sodass diese bei Verlust gefunden werden können.
+Die Empfänger der \ac{BLE}-Advertisements können ihre Position über das \ac{GPS} bestimmen und diese zusammen mit einer ID, welche das zu findende Gerät identifiziert, an einen Server übermitteln.
 Der Besitzer des verlorenen Geräts kann die Position seines Geräts vom Server abrufen \cite{Garg_Secure_Tracker}.
+Das Funktionsprinzip ist dementsprechend vergleichsweise einfach.
+%TODO: Bilder zur Erklärung
+Qualität und Nützlichkeit für die Nutzer eines solchen Dienstes hängt aber stark von der Anzahl der Nutzer ab.
+Die Position eines verlorenen Geräts kann nur vom Tracking-Dienst abgerufen werden, wenn ein Nutzer des gleichen Dienstes ein \ac{BLE}-Advertisement des verlorenen Geräts empfangen und die Position an den Dienst übermittelt hat.
+Je mehr Nutzer ein Dienst hat, desto größer die Wahrscheinlichkeit, dass sich ein Nutzer vor kurzem in der Nähe des verlorenen Geräts befand und desto größer die Wahrscheinlichkeit, das verlorene Gerät zu finden.
 
 
+In allen untersuchten Systemen konnten Weller \textit{et al.} \cite{Weller_BLE_Finders} und Garg \textit{et al.} \cite{Garg_Secure_Tracker} unabhängig voneinander verschiedene Schwachstellen finden, die sowohl Privatsphäre als auch Sicherheit betreffen.
+Unter anderem übermittelten einige Dienste die Positionsdaten unverschlüsselt und erlaubten das unberechtigte Abrufen von personenbezogenen Daten über die Backends der Dienste.
+Auch zum Veröffentlichungszeitpunkt der Arbeit von Weller \textit{et al.} \cite{Weller_BLE_Finders} waren nicht alle der erkannten Schwachstellen behoben.
+Außerdem bot keiner der von Garg \textit{et al.} \cite{Garg_Secure_Tracker} untersuchten Dienste ausreichend Schutz vor dem Melden falscher Positionsdaten.
 
-Apples „Wo ist?“ Dienst 
+
+\subsection{Funktionsweise des „Wo ist?“ Dienstes}
+\label{sec:Funktionsweise_FindMy}
+Auf seiner Informationsseite über den „Wo ist?“ Dienst gibt Apple an: „Geräte in der Nähe senden den Standort [...] sicher an iCloud weiter [...]. Zum Schutz der Privatsphäre passiert das alles anonym und verschlüsselt“ \cite{Apple_WoIst}.
+Apple erhebt demnach den Anspruch einen Dienst anzubieten, der nicht nur sicherer, sondern auch besser für die Privatsphäre der Nutzer ist als die Dienste der Konkurrenz.
+Vergangene Untersuchungen haben allerdings bereits gezeigt, dass auch Apples Dienst einige Schwachstellen aufweist \cite{Heinrich_FindMy,Tonetto_FindMy}.
+Diese Schwachstellen werden in \autoref{sec:Missbrauch} wieder aufgegriffen.
+
+Der vermutlich größte Vorteil des Dienstes liegt vermutlich aber in der großen Zahl der Geräte, welche aktiv die Positionsdaten verlorener Geräte sammeln.
+Laut Apple nehmen „hunderte[n] Millionen iPhone, iPad und Mac Geräte[n]“ \cite{Apple_WoIst} am „Wo ist?“ Dienst teil.
+Der größte Konkurrent Tile hatte im Jahr 2021 laut der bekannten Gadget-Review Webseite \textit{Pocket-Lint} 40 Millionen Nutzer und kann damit für die Lokalisierung auf ein deutlich kleineres Netzwerk zurückgreifen als Apple \cite{Tile_Network}.
+
+
+Auf Basis des Reverse-Engineering des „Wo ist?“ Dienstes von Heinrich \textit{et al.} in \cite{Heinrich_FindMy} werden im Folgenden die grundlegende Funktionsweise des Dienstes sowie die Verbesserungen für Sicherheit und Privatsphäre im Vergleich mit konkurrierenden Diensten vorgestellt.
+
+
+% Rollen: Finder Devices, Lost Devices, Owner Devices + (Apple Server)
+% Welche Geräte können gefunden werden: Apple-Geräte, AirTags, 3rd-Party-Devices (-> Quelle und Auflistung von einigen)
+
+ % Allgemeiner Prozess und wie ist dieser sicherer als andere (Asymmetrisch verschlüsselte Positionsdaten)
+ % Genauer auf Einzelheiten eingehen
+        % wie sehen die Daten im Advertising aus (was ist enthalten, abgeleitete IDs um Tracking der verlorenen Geräte durch andere zu verhindern, wann beginnt Advertising)
+
+        % wie läuft das finden ab (Kryptografie, wann werden die Reports hochgeladen WLAN/Mobile -> Tonetto, ist der Upload anonym -> nein)
+        % wie können Daten abgerufen werden (wer kann Daten abrufen -> im Prinzip jeder aber verschlüsselt, wie muss man sich authentifizieren um Daten abzurufen)
+
+% wie gut funktioniert das System (Genauigkeit in den Szenarien wie von Heinrich untersucht)
