@@ -64,9 +64,30 @@ Drittanbieter Geräte und AirTags müssen dazu vor der ersten Verwendung über e
 \subsubsection{Kryptografie}
 \label{sec:Kryptografie}
 
-% Schlüsselableitung allgemein
-% Verschlüsselung der Standortdaten
-% Unterschiede zwischen AirTags+3rdParty Geräten und Apple-Endgeräten
+Um bessere Sicherheit und Privatsphäre als die Konkurrenz zu bieten, setzt Apple stark asymmetrische \ac{ECC} Verschlüsselung.
+Standortdaten werden immer Ende-zu-Ende verschlüsselt, sodass weder Apple noch potenzielle Angreifer die Positionen der Nutzer verfolgen können, wenn sie an Standortdaten gelangen.
+Nur der Besitzer des Geräts kann die Standortdaten zur Lokalisierung des Geräts entschlüsseln \cite{Greenberg_FindMyCrypto}.
+Jedes Gerät des Besitzers erstellt den sogenannten \textit{Master Beacon Key} bestehend aus einem \ac{ECC} Schlüsselpaar und einem symmetrischen Schlüssel.
+Diese Schlüssel werden über den iCloud Dienst zwischen allen Geräten mit der gleichen Apple-ID synchronisiert.
+Bei der Synchronisierung werden die Schlüssel mit einem symmetrischen Schlüssel aus der als sicher geltenden iCloud Keychain verschlüsselt \cite{Heinrich_FindMy,Afonin_iCloudKeychain}.
+Der auch der öffentliche Teil des \ac{ECC}-Schlüssels im Master Beacon Key, wird nie über \ac{BLE} übertragen.
+Stattdessen wird der Master Beacon Key verwendet, um temporäre Schlüssel abzuleiten, die im \ac{BLE}-Advertising übertragen werden können.
+Für die Ableitung dieser sogenannten \textit{Advertising Keys} wird die ANSI X9.63-\ac{KDF} verwendet \cite{Apple_FindMySpec}.
+Aus einem im \ac{BLE}-Advertising übertragenen öffentlichen Schlüssel kann ohne Kenntnis des Master Beacon Keys nicht der nächste öffentliche Schlüssel abgeleitet werden.
+Durch regelmäßiges Wechseln des verwendeten Avertising Keys wird es einem Angreifer erschwert, ein verlorenes Gerät anhand der im Advertising übertragenen Daten zu verfolgen.
+Da für die Verschlüsselung der Standortdaten nur die X-Koordinate des öffentlichen Schlüssels benötigt wird, kann auf die Übertragung der Y-Koordinate verzichtet werden \cite{Heinrich_FindMy}.
+
+Die Verschlüsselung der Standortdaten erfolgt mit dem \ac{AES}-Algorithmus in \ac{GCM}-Mode.
+Aus dem Advertising Key wird ein temporäres \ac{ECC}-Schlüsselpaar generiert aus dem über einen \ac{ECDH} Schlüsselaustauch und folgender Anwendung der ANSI X9.63-\ac{KDF} ein symmetrischer Schlüssel abgeleitet wird.
+Von diesem Schlüssel werden die ersten 16 Byte als Schlüssel für den \ac{AES}-Algorithmus und die folgenden 16 Byte als Initialisierungsvektor verwendet \cite{Heinrich_FindMy}.
+
+Für die Entschlüsslung der Daten sind der öffentliche Teil des temporären Schlüssels und der private Teil des Advertising Keys notwendig.
+Damit ist sichergestellt, dass die verschlüsselten Daten nur vom Besitzer entschlüsselt werden können.
+Dieser kann die für das Advertisement verwendeten Schlüsselpaare unabhängig vom verlorenen Gerät aus dem Master Beacon Key ableiten und hat somit Zugriff auf die privaten Schlüssel.
+Der öffentliche Teil des temporären Schlüssels wird mit den verschlüsselten Daten auf Apples Server hochgeladen.
+Aus der Kombination beider kann der symmetrische Entschlüsselungsschlüssel abgeleitet werden und der Besitzer erhält Zugriff auf die Standortdaten \cite{Heinrich_FindMy}.
+
+% Unterschiede zwischen AirTags+3rdParty Geräten und Apple-Endgeräten, Infos aus Spec!
 
 \subsubsection{Ablauf beim Verlust eines Geräts}
 \label{sec:Verlust}
@@ -77,11 +98,13 @@ Die Advertisement Pakete werden mit dem Typ \textit{manufacturer-specific data} 
 Das Format erlaubt nach einer Firmen-ID von zwei Byte, maximal 27 weitere Byte zu übertragen.
 Da Apple, die manufacturer-specific data auch für andere Zwecke, wie zum Beispiel AirDrop nutzt, wird jeweils ein weiteres Byte für den Typ ($0x12$) des Pakets und dessen Länge verwendet.
 Zur Identifikation des verlorenen Geräts und zur Verschlüsselung der Standortdaten müssen die 28 Byte der X-Koordinate des aktuellen öffentlichen Schlüssels im Advertisement übertragen werden \cite{Heinrich_FindMy}.
+Jeder Schlüssel wird für 15 Minuten verwendet, um die Verfolgung des Geräts anhand der Advertising-Daten für Dritte zu erschweren.
+Da der Schlüssel aus dem Advertising alleine nicht reicht, um den nächsten Schlüssel abzuleiten, kann so die Privatsphäre im Vergleich zu Konkurrenzprodukten verbessert werden.
 Da die 25 Byte Payload nicht ausreichen, um die X-Koordinate des öffentlichen Schlüssels zu übertragen, wird zusätzlich die Advertising Address des Advertisement Pakets ausgenutzt.
 Die Advertising Address kann zum Schutz der Privatsphäre laut \ac{BLE}-Spezifikation \cite{Spec_BLE_5.3} von der tatsächlichen \ac{MAC}-Adresse des Geräts abweichen.
 Damit lässt sich dieses Feld auch zum Datentransfer ausnutzen.
-Apple speichert die ersten 46 Bit in der Advertising Address, wobei die beiden \acp{MSB} des ersten Bytes jeweils auf 1 gesetzt werden, um den \ac{BLE}-Standard zu erfüllen.
-Die restlichen 170 Bit bestehend aus den Bytes 6 bis 27 und den fehlenden zwei Bits des Byte 0 werden im Payload übertragen \cite{Apple_FindMySpec}.
+Apple speichert die ersten 46 Bit des öffentlichen Schlüssels in der Advertising Address, wobei die beiden \acp{MSB} des ersten Bytes jeweils auf 1 gesetzt werden müssen, um den \ac{BLE}-Standard zu erfüllen.
+Die restlichen 170 Bit bestehend aus den Bytes 6 bis 27 und den fehlenden zwei Bits des Byte 0 werden im Advertising Payload übertragen \cite{Apple_FindMySpec}.
 \autoref{fig:apple_advertising} zeigt den resultierenden Aufbau eines Advertisement Pakets des „Wo ist?“ Dienstes.
 Die Teile, in welchen der öffentliche Schlüssel übertragen wird, sind gelb hinterlegt.
 Das als "Hint" bezeichnete Feld codiert laut Spezifikation \cite{Apple_FindMySpec} Byte 5 des öffentlichen Schlüssels, laut Heinrich \textit{et al.} \cite{Heinrich_FindMy} ist dieses Feld bei iOS immer 0.
@@ -95,17 +118,20 @@ Dementsprechend wird dieses Byte vermutlich nur bei Drittanbieter-Produkten und 
     \label{fig:apple_advertising}
 \end{figure}
 
-Standardmäßig scannen alle Apple-Geräte im Hintergrund nach Advertisements, die die Firmen-ID von Apple enthalten.
+Standardmäßig scannen alle Apple-Geräte (Finder-Devices) im Hintergrund nach Advertisements, die die Firmen-ID von Apple enthalten.
 Wird ein Paket durch den Apple Payload Typ $0x12$ als Advertisement für den „Wo ist?“ Dienst identifiziert, wird zunächst die aktuelle Position bestimmt und ein sogenannter \textit{Location Report} erstellt.
-Das Format dieses reports ist in \autoref{fig:location_report} gezeigt.
+Das Format dieses Reports ist in \autoref{fig:location_report} gezeigt.
 \begin{figure}
     \centering
     \includegraphics[width=0.85\textwidth]{location_report}
     \caption{Format des Location Reports \cite{Heinrich_FindMy}}
     \label{fig:location_report}
 \end{figure}
-Der Hauptbestandteil des Reports sind die verschlüsselten Standortinformationen, bestehend aus Koordinaten, Genauigkeit und Status.
-Daneben findet sich unter anderem der Zeitstempel zum Zeitpunkt der Erstellung des Reports \cite{Heinrich_FindMy}.
+Der Hauptbestandteil des Reports sind die wie oben beschrieben verschlüsselten Standortinformationen, bestehend aus Koordinaten, Genauigkeit und Status.
+Außerdem sind sowohl der temporäre Schlüssel, welcher vom Finder-Device aus dem Advertisement Key abgeleitet und für den \ac{ECDH}-Schlüsselaustausch genutzt wurde, und der \ac{AES}-\ac{GCM} Authentication Tag teil des Reports.
+Daneben findet sich unter anderem der Zeitstempel zum Zeitpunkt der Erstellung des Reports.
+Beim Upload wird der Report mit einem \ac{SHA}-256 Hash des verwendeten Advertisement Keys verknüpft, um die Identifizierung zu ermöglichen \cite{Heinrich_FindMy}.
+Im Vergleich zu konkurrierenden Diensten ist die Verschlüsselung ein wichtiger Schritt, um die Sicherheit und Privatsphäre des Dienstes zu verbessern.
 Meist werden Reports nicht unmittelbar nach der Erstellung hochgeladen.
 Stattdessen sammelt das Gerät mehrere Reports und lädt diese gebündelt hoch.
 Der empfangende Server ordnet den Reports zusätzlich den Zeitstempel zum Zeitpunkt des Datenempfangs zu.
@@ -113,28 +139,29 @@ Tonetto \textit{et al.} \cite{Tonetto_FindMy} haben gezeigt, dass die Art der In
 So liegt der Median für den Upload eines Reports bei aktiver WLAN-Verbindung bei 15 Minuten während bei aktiver Mobilfunkverbindung der Median bei 3 Stunden liegt.
 Der Upload erfolgt über einen HTTPS-Request, der zusätzlich über den Header authentifiziert wird.
 Dieser Header enthält unter anderem ein Identitäts-Zertifikat des Geräts und eine Signatur des Requests.
-Diese Signatur wird mit dem privaten Schlüssel erstellt, welcher in einem speziellen Sicherheitsbereich, dem \textit{Secure Enclave Processor} des Geräts gespeichert ist, um das auslesen zu verhindern.
+Diese Signatur wird mit dem privaten Schlüssel erstellt, welcher in einem speziellen Sicherheitsbereich, dem \textit{Secure Enclave Processor} des Geräts gespeichert ist, welcher das unberechtigte Auslesen verhindert.
 Somit kann vermutlich sichergestellt werden, dass nur Apple Geräte in der Lage sind Reports hochzuladen, was das Erstellen gefälschter Reports erschwert \cite{Heinrich_FindMy}.
 
 
 Um die Standortdaten vom Server abzurufen, wird ein über Basic Authentication mit der Apple-ID des Nutzers und einem Token authentifizierter, HTTPS-Request verwendet.
 Die Anfrage enthält zusätzlich eine Liste der letzten Advertisement Keys des verlorenen Geräts.
 So können die verschlüsselten Location Reports heruntergeladen und anschließend auf dem Gerät entschlüsselt werden, um das verlorene Gerät zu lokalisieren \cite{Heinrich_FindMy}.
-\autoref{lst:findmy_result} zeigt die Struktur der Antwort auf einen solchen Request.
+\autoref{lst:findmy_result} zeigt die Struktur der Antwort auf einen solchen Request in gekürzter Form.
 Die Antwort besteht aus einem Array von Objekten, die jeweils den Hash des Advertisement Keys, einen verschlüsselten Location Report und Metadaten, darunter den Zeitstempel des Datenempfangs, enthalten.
-Mehrere Reports können kombiniert werden, um Genauigkeit bei der Positionsermittlung zu erhöhen.
-Gleichzeitig können mehrere Reports dazu verwendet werden, den Pfad des verlorenen Geräts zu rekonstruieren.
-Dafür können bis zu sieben Tage alte Positionen abgerufen werden \cite{Heinrich_FindMy}.
+Anhand des Hashes kann der für die Entschlüsselung zu verwendende Advertising Key bestimmt werden.
+Entschlüsselte Standortdaten aus mehreren Reports können kombiniert werden, um Genauigkeit bei der Positionsermittlung zu erhöhen.
+Gleichzeitig können die Daten mehrerer Reports auch dazu verwendet werden, den Pfad des verlorenen Geräts zu rekonstruieren.
+Dafür können bis zu sieben Tage alte Positionen vom Server abgerufen werden \cite{Heinrich_FindMy}.
 
 \begin{lstlisting}[label=lst:findmy_result,caption={Beispielhafte Antwort beim herunterladen von Location Reports\cite{Heinrich_FindMy}.}]
 {
     "results": 
     [
         {
-            "datePublished": 1586804587284 ,
-            "payload": "JETtmwIEzRBG ...." ,
-            "description": "found" ,
-            "id": "B6E5tpUPbuudAc ..."
+            "datePublished": 1586804587284,
+            "payload": "JETtmwIEzRBG ....",
+            "description": "found",
+            "id": "B6E5tpUPbuudAc ...",
             "statusCode": 0
         },
         ...
