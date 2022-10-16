@@ -64,46 +64,68 @@ Drittanbieter Geräte und AirTags müssen dazu vor der ersten Verwendung über e
 \subsubsection{Kryptografie}
 \label{sec:Kryptografie}
 
-Um bessere Sicherheit und Privatsphäre als die Konkurrenz zu bieten, setzt Apple stark asymmetrische \ac{ECC} Verschlüsselung.
-Standortdaten werden immer Ende-zu-Ende verschlüsselt, sodass weder Apple noch potenzielle Angreifer die Positionen der Nutzer verfolgen können, wenn sie an Standortdaten gelangen.
+Um bessere Sicherheit und Privatsphäre als die Konkurrenz zu bieten, setzt Apple auf asymmetrische \ac{ECC} Verschlüsselung.
+Standortdaten werden immer Ende-zu-Ende verschlüsselt, sodass potenzielle Angreifer die Positionen der Nutzer nicht verfolgen können, sollten sie an Standortdaten gelangen.
+Durch den verwendeten Prozess zur Verschlüsselung kann auch Apple selbst nicht auf die Standortdaten zugreifen.
 Nur der Besitzer des Geräts kann die Standortdaten zur Lokalisierung des Geräts entschlüsseln \cite{Greenberg_FindMyCrypto}.
-Jedes Gerät des Besitzers erstellt den sogenannten \textit{Master Beacon Key} bestehend aus einem \ac{ECC} Schlüsselpaar und einem symmetrischen Schlüssel.
+
+
+Jedes Owner Device erstellt zunächst den sogenannten \textit{Master Beacon Key}, bestehend aus einem \ac{ECC} Schlüsselpaar und einem symmetrischen Schlüssel.
 Diese Schlüssel werden über den iCloud Dienst zwischen allen Geräten mit der gleichen Apple-ID synchronisiert.
-Bei der Synchronisierung werden die Schlüssel mit einem symmetrischen Schlüssel aus der als sicher geltenden iCloud Keychain verschlüsselt \cite{Heinrich_FindMy,Afonin_iCloudKeychain}.
-Der auch der öffentliche Teil des \ac{ECC}-Schlüssels im Master Beacon Key, wird nie über \ac{BLE} übertragen.
-Stattdessen wird der Master Beacon Key verwendet, um temporäre Schlüssel abzuleiten, die im \ac{BLE}-Advertising übertragen werden können.
+Um die Schlüssel bei der Synchronisierung zu schützen, werden sie mit einem symmetrischen Schlüssel, aus der als sicher geltenden iCloud Keychain, verschlüsselt \cite{Heinrich_FindMy,Afonin_iCloudKeychain}.
+Der private Schlüssel des \ac{ECC}-Schlüssels sowie der symmetrische Schlüssel des Master Beacon Keys müssen geheim bleiben.
+Auch der öffentliche Teil des \ac{ECC}-Schlüssels im Master Beacon Key, wird nie über \ac{BLE} übertragen.
+Stattdessen wird der Master Beacon Key verwendet, um temporär gültige Schlüssel abzuleiten, die im \ac{BLE}-Advertising übertragen werden können.
 Für die Ableitung dieser sogenannten \textit{Advertising Keys} wird die ANSI X9.63-\ac{KDF} verwendet \cite{Apple_FindMySpec}.
-Aus einem im \ac{BLE}-Advertising übertragenen öffentlichen Schlüssel kann ohne Kenntnis des Master Beacon Keys nicht der nächste öffentliche Schlüssel abgeleitet werden.
-Durch regelmäßiges Wechseln des verwendeten Avertising Keys wird es einem Angreifer erschwert, ein verlorenes Gerät anhand der im Advertising übertragenen Daten zu verfolgen.
+Aus einem im \ac{BLE}-Advertising übertragenen öffentlichen Schlüssel kann somit, ohne Kenntnis des Master Beacon Keys, der nächste öffentliche Schlüssel nicht abgeleitet werden.
+Durch regelmäßiges Wechseln des verwendeten Avertising Keys wird es einem Angreifer erschwert, ein Lost Device anhand der im Advertising übertragenen Daten zu verfolgen.
 Da für die Verschlüsselung der Standortdaten nur die X-Koordinate des öffentlichen Schlüssels benötigt wird, kann auf die Übertragung der Y-Koordinate verzichtet werden \cite{Heinrich_FindMy}.
 
-Die Verschlüsselung der Standortdaten erfolgt mit dem \ac{AES}-Algorithmus in \ac{GCM}-Mode.
-Aus dem Advertising Key wird ein temporäres \ac{ECC}-Schlüsselpaar generiert aus dem über einen \ac{ECDH} Schlüsselaustauch und folgender Anwendung der ANSI X9.63-\ac{KDF} ein symmetrischer Schlüssel abgeleitet wird.
-Von diesem Schlüssel werden die ersten 16 Byte als Schlüssel für den \ac{AES}-Algorithmus und die folgenden 16 Byte als Initialisierungsvektor verwendet \cite{Heinrich_FindMy}.
+Die Verschlüsselung der Standortdaten erfolgt auf dem Finder Device mit dem \ac{AES}-Algorithmus im \ac{GCM}-Modus.
+Aus dem, vom Finder Device empfangenen, Advertising Key wird ein temporäres \ac{ECC}-Schlüsselpaar generiert, aus welchem über einen \ac{ECDH} Schlüsselaustauch ein geteiltes Geheimnis generiert und durch die Anwendung der ANSI X9.63-\ac{KDF} ein symmetrischer Schlüssel abgeleitet wird.
+Der Schlüsselaustausch verwendet den privaten Teil des temporären \ac{ECC}-Schlüssels und den öffentlichen Teil des empfangenen Advertising Keys.
+Von diesem werden die ersten 16 Byte als Schlüssel für den \ac{AES}-Algorithmus und die folgenden 16 Byte als Initialisierungsvektor verwendet \cite{Heinrich_FindMy}.
+Durch die Ausführung der Verschlüsselung auf dem Finder Device, kann die Batterie des Lost Devices geschont werden und die Lokalisierung verlorener Geräte bleibt länger möglich.
+Insbesondere bei AirTags oder Produkten von Drittanbietern kann das hilfreich sein, da diese Geräte, eine im Vergleich zu einem iPhone oder iPad, sehr geringe Batteriekapazität haben.
+Die kryptografischen Funktionen könnten den Stromverbrauch der Geräte deutlich erhöhen, wenn bei jedem Kontakt mit einem Finder-Device dieser komplexe Verschlüsselungsprozess ablaufen muss.
+Durch die Verschlüsselung auf den Finder Devices müssen die Lost Devices nur alle 15 Minuten einen neuen Schlüssel ableiten, was durch die geringere Zahl der Operationen eine deutlich geringere Belastung für die Batterie darstellt.
 
-Für die Entschlüsslung der Daten sind der öffentliche Teil des temporären Schlüssels und der private Teil des Advertising Keys notwendig.
+
+Für die Entschlüsselung kann das geteilte Geheimnis über den \ac{ECDH} Schlüsselaustausch mit dem öffentlichen Teil des temporären Schlüssels und dem privaten Teil des Advertising Keys berechnet werden.
+Der symmetrische Schlüssel entsteht wieder durch die Anwendung der ANSI X9.63-\ac{KDF} auf das geteilte Geheimnis.
 Damit ist sichergestellt, dass die verschlüsselten Daten nur vom Besitzer entschlüsselt werden können.
 Dieser kann die für das Advertisement verwendeten Schlüsselpaare unabhängig vom verlorenen Gerät aus dem Master Beacon Key ableiten und hat somit Zugriff auf die privaten Schlüssel.
-Der öffentliche Teil des temporären Schlüssels wird mit den verschlüsselten Daten auf Apples Server hochgeladen.
-Aus der Kombination beider kann der symmetrische Entschlüsselungsschlüssel abgeleitet werden und der Besitzer erhält Zugriff auf die Standortdaten \cite{Heinrich_FindMy}.
+Der öffentliche Teil des temporären Schlüssels und ein \ac{SHA}-256 Hash des verwendeten Advertisement Keys wird mit den verschlüsselten Daten auf Apples Server hochgeladen.
+Der Besitzer kann diese Daten abrufen und aus der Kombination des öffentlichen temporären Schlüssels und dem privaten Advertisement Keys das geteilte Geheimnis und somit den symmetrischen Schlüssel berechnen \cite{Heinrich_FindMy}.
 
-% Unterschiede zwischen AirTags+3rdParty Geräten und Apple-Endgeräten, Infos aus Spec!
+Da Geräte ohne Internetverbindung, wie zum Beispiel AirTags oder andere Geräte von Drittanbietern, die Master Beacon Keys nicht über die iCloud Synchronisation erhalten können, müssen diese Geräte auf andere Weise an einen initialen Schlüssel kommen.
+% TODO: Schlüsselaushandlung, Infos aus Spec
 
 \subsubsection{Ablauf beim Verlust eines Geräts}
 \label{sec:Verlust}
 
+Alle Apple Geräte mit aktivierter Bluetooth-Funktion, die für das Finden durch den „Wo ist?“ Dienst angemeldet sind, senden periodisch, in der Regel im Advertising Intervall von 2 s \ac{BLE}-Advertisements.
+Die im Advertisement enthaltenen Daten unterscheiden sich jedoch abhängig vom Zustand des Geräts.
+iPhones, iPads und MacBooks mit Internetverbindung und alle unterstützen Geräte mit einer aktiven \ac{BLE}-Verbindung mit einem Owner Device, gelten nicht als Lost Device und senden deshalb nur die ersten fünf Bytes des öffentlichen Advertisement Keys.
+Das Advertisement erfolgt vermutlich um erkennen zu können, wenn ein Gerät in der Nähe die Verbindung verliert.
+Die ersten fünf Byte des öffentlichen Schlüssels sollten in der Regel ausreichen um verschiedene Geräte voneinander unterscheiden zu können.
+Vermutlich werden Funktionen, wie die Warnung beim Zurücklassen eines Geräts \cite{Apple_FindMyWarning}, über diese Advertisement Daten umgesetzt.
+
 Sobald ein Gerät die Internetverbindung oder die \ac{BLE}-Verbindung zum Owner Device verliert, wird es als Lost Device angesehen.
-Um in diesem Zustand von anderen Geräten gefunden zu werden, beginnt das Gerät mit einem Advertising Intervall von 2 s \ac{BLE}-Advertisements zu senden \cite{Apple_FindMySpec}.
-Die Advertisement Pakete werden mit dem Typ \textit{manufacturer-specific data} gesendet, sodass neben angebotenen \ac{BLE}-Services auch eigene Daten übertragen werden können.
+Um in diesem Zustand von anderen Finder Devices gefunden zu werden, beginnt das Lost Device \ac{BLE}-Advertisements mit dem kompletten öffentlichen Advertisement Key zu senden \cite{Apple_FindMySpec}.
+Die Advertisement Pakete werden immer mit dem Typ \textit{manufacturer-specific data} gesendet, sodass neben angebotenen \ac{BLE}-Services auch eigene Daten übertragen werden können.
 Das Format erlaubt nach einer Firmen-ID von zwei Byte, maximal 27 weitere Byte zu übertragen.
 Da Apple, die manufacturer-specific data auch für andere Zwecke, wie zum Beispiel AirDrop nutzt, wird jeweils ein weiteres Byte für den Typ ($0x12$) des Pakets und dessen Länge verwendet.
-Zur Identifikation des verlorenen Geräts und zur Verschlüsselung der Standortdaten müssen die 28 Byte der X-Koordinate des aktuellen öffentlichen Schlüssels im Advertisement übertragen werden \cite{Heinrich_FindMy}.
+Zur Identifikation des Lost Device und zur Verschlüsselung der Standortdaten müssen die 28 Byte der X-Koordinate des aktuellen öffentlichen Schlüssels im Advertisement übertragen werden \cite{Heinrich_FindMy}.
 Jeder Schlüssel wird für 15 Minuten verwendet, um die Verfolgung des Geräts anhand der Advertising-Daten für Dritte zu erschweren.
+Nach Ablauf der 15 Minuten wird ein neuer Schlüssel abgeleitet und für die nächste Periode im Advertisement versendet.
 Da der Schlüssel aus dem Advertising alleine nicht reicht, um den nächsten Schlüssel abzuleiten, kann so die Privatsphäre im Vergleich zu Konkurrenzprodukten verbessert werden.
-Da die 25 Byte Payload nicht ausreichen, um die X-Koordinate des öffentlichen Schlüssels zu übertragen, wird zusätzlich die Advertising Address des Advertisement Pakets ausgenutzt.
+Die 25 Byte Payload reichen nicht aus, um die X-Koordinate des öffentlichen Schlüssels zu übertragen.
+Deshalb  wird zusätzlich die Advertising Address des Advertisement Pakets ausgenutzt.
 Die Advertising Address kann zum Schutz der Privatsphäre laut \ac{BLE}-Spezifikation \cite{Spec_BLE_5.3} von der tatsächlichen \ac{MAC}-Adresse des Geräts abweichen.
-Damit lässt sich dieses Feld auch zum Datentransfer ausnutzen.
-Apple speichert die ersten 46 Bit des öffentlichen Schlüssels in der Advertising Address, wobei die beiden \acp{MSB} des ersten Bytes jeweils auf 1 gesetzt werden müssen, um den \ac{BLE}-Standard zu erfüllen.
+Üblicherweise wird diese Funktion verwendet um über zufällige \ac{MAC}-Adressen die Nachverfolgbarkeit von Geräten und Rückschlüsse auf den Gerätehersteller zu erschweren.
+Durch Codierung von Daten in der zufälligen Adresse, kann das Feld jedoch für den Transfer beliebiger Daten ausgenutzt werden.
+Apple speichert die ersten 46 Bit des öffentlichen Schlüssels in der Advertising Address, wobei die beiden \acp{MSB} des ersten Bytes jeweils auf 1 gesetzt werden müssen, um der \ac{BLE}-Spezifikation zu genügen \cite{Heinrich_FindMy}.
 Die restlichen 170 Bit bestehend aus den Bytes 6 bis 27 und den fehlenden zwei Bits des Byte 0 werden im Advertising Payload übertragen \cite{Apple_FindMySpec}.
 \autoref{fig:apple_advertising} zeigt den resultierenden Aufbau eines Advertisement Pakets des „Wo ist?“ Dienstes.
 Die Teile, in welchen der öffentliche Schlüssel übertragen wird, sind gelb hinterlegt.
@@ -119,7 +141,7 @@ Dementsprechend wird dieses Byte vermutlich nur bei Drittanbieter-Produkten und 
 \end{figure}
 
 Standardmäßig scannen alle Apple-Geräte (Finder-Devices) im Hintergrund nach Advertisements, die die Firmen-ID von Apple enthalten.
-Wird ein Paket durch den Apple Payload Typ $0x12$ als Advertisement für den „Wo ist?“ Dienst identifiziert, wird zunächst die aktuelle Position bestimmt und ein sogenannter \textit{Location Report} erstellt.
+Wird ein Paket durch den Apple Payload Typ $0x12$ als Advertisement für den „Wo ist?“ Dienst identifiziert, wird vom Finder Device zunächst die aktuelle Position bestimmt und ein sogenannter \textit{Location Report} erstellt.
 Das Format dieses Reports ist in \autoref{fig:location_report} gezeigt.
 \begin{figure}
     \centering
