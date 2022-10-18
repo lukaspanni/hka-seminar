@@ -107,12 +107,20 @@ Da Geräte ohne Internetverbindung, wie zum Beispiel AirTags oder andere Geräte
 Alle Apple Geräte mit aktivierter Bluetooth-Funktion, die für das Finden durch den „Wo ist?“ Dienst angemeldet sind, senden periodisch, in der Regel im Advertising Intervall von 2 s \ac{BLE}-Advertisements.
 Die im Advertisement enthaltenen Daten unterscheiden sich jedoch abhängig vom Zustand des Geräts.
 iPhones, iPads und MacBooks mit Internetverbindung und alle unterstützen Geräte mit einer aktiven \ac{BLE}-Verbindung mit einem Owner Device, gelten nicht als Lost Device und senden deshalb nur die ersten fünf Bytes des öffentlichen Advertisement Keys.
-Das Advertisement erfolgt vermutlich um erkennen zu können, wenn ein Gerät in der Nähe die Verbindung verliert.
-Die ersten fünf Byte des öffentlichen Schlüssels sollten in der Regel ausreichen um verschiedene Geräte voneinander unterscheiden zu können.
-Vermutlich werden Funktionen, wie die Warnung beim Zurücklassen eines Geräts \cite{Apple_FindMyWarning}, über diese Advertisement Daten umgesetzt.
+Das Advertisement erfolgt vermutlich auch im nicht verlorenen Zustand um erkennen zu können, wenn ein Gerät in der Nähe die Verbindung verliert.
+Die ersten fünf Byte des öffentlichen Schlüssels sollten dabei in der Regel ausreichen um verschiedene Geräte voneinander unterscheiden zu können.
+Vermutlich werden Funktionen, wie die Warnung beim Zurücklassen eines Geräts \cite{Apple_FindMyWarning}, auf diese Art umgesetzt.
+\begin{figure}[ht]
+    \centering
+    \includegraphics[height=8cm]{findMy_screenshot}
+    \caption{Unterschiedliche Advertisement Daten abhängig vom Zustand des Geräts.}
+    \label{fig:findMy_screenshot}
+\end{figure}
 
 Sobald ein Gerät die Internetverbindung oder die \ac{BLE}-Verbindung zum Owner Device verliert, wird es als Lost Device angesehen.
 Um in diesem Zustand von anderen Finder Devices gefunden zu werden, beginnt das Lost Device \ac{BLE}-Advertisements mit dem kompletten öffentlichen Advertisement Key zu senden \cite{Apple_FindMySpec}.
+Der Screenshot der nRF-Connect App in \autoref{fig:findMy_screenshot} zeigt die verschiedenen Advertisement Daten bei unterschiedlichem Gerätezustand.
+Das erste mit „(Find My)“ gekennzeichnete Gerät ist ein iPad, dass sich nicht im verlorenen Zustand befindet, während das zweite so gekennzeichnete Gerät ein iPhone ohne Internetverbindung ist und demnach als Lost Device gilt.
 Die Advertisement Pakete werden immer mit dem Typ \textit{manufacturer-specific data} gesendet, sodass neben angebotenen \ac{BLE}-Services auch eigene Daten übertragen werden können.
 Das Format erlaubt nach einer Firmen-ID von zwei Byte, maximal 27 weitere Byte zu übertragen.
 Da Apple, die manufacturer-specific data auch für andere Zwecke, wie zum Beispiel AirDrop nutzt, wird jeweils ein weiteres Byte für den Typ (0x12) des Pakets und dessen Länge verwendet.
@@ -131,6 +139,7 @@ Die restlichen 170 Bit bestehend aus den Bytes 6 bis 27 und den fehlenden zwei B
 Die Teile, in welchen der öffentliche Schlüssel übertragen wird, sind gelb hinterlegt.
 Das als "Hint" bezeichnete Feld codiert laut Spezifikation \cite{Apple_FindMySpec} Byte 5 des öffentlichen Schlüssels, laut Heinrich \textit{et al.} \cite{Heinrich_FindMy} ist dieses Feld bei iOS immer 0.
 Mit einem eigenen \ac{BLE}-Scan konnte beobachtet werden, dass das Feld bei einem iOS-Gerät auf 0 gesetzt war, obwohl Byte 5 des öffentlichen Schlüssels ungleich 0 war.
+Dies ist auch auf dem Screenshot in \autoref{fig:findMy_screenshot} zu erkennen.
 Dementsprechend wird dieses Byte vermutlich nur bei Drittanbieter-Produkten und eventuell bei AirTags verwendet.
 % TODO: test mit Airtag?
 \begin{figure}
