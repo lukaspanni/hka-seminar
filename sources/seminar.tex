@@ -12,7 +12,11 @@
 \usepackage{multicol}
 \usepackage[hidelinks]{hyperref}
 \usepackage{color}
+\usepackage[nolist]{acronym}
+\usepackage{listings}
 \renewcommand\UrlFont{\color{blue}\rmfamily}
+
+\graphicspath{ {./img/} }
 
 \begin{document}
 
@@ -31,8 +35,13 @@
 % \keywords{ A \and B \and C }
 \end{abstract}
 
+\input{acronyms.tex}
 
 \input{sections/intro.tex}
+\newpage
+\input{sections/funktionsweise.tex}
+\input{sections/missbrauch.tex}
+\input{sections/gegenmaßnahmen.tex}
 
 % \subsubsection{Acknowledgements} Please place your acknowledgments at
 % the end of the paper, preceded by an unnumbered run-in heading (i.e.
