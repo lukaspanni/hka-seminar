@@ -1,9 +1,20 @@
 \section{Missbrauch des „Wo ist?“ Dienstes}
 \label{sec:Missbrauch}
 
+Das Hauptangriffsziel für Angreifer des „Wo ist?“ Dienstes sind die Standortdaten der Nutzer.
+Apple ergreift verschiedene Maßnahmen, um die Sicherheit der Standortdaten sicherzustellen, wie bei der Erläuterung der Funktionsweise in \autoref{sec:Funktionsweise_FindMy} bereits gezeigt wurde.
+Dennoch besteht Missbrauchspotenzial, gegen welches der Dienst nicht oder nicht ausreichend geschützt ist, wie unter anderem durch Tonetto \textit{et al.} \cite{Tonetto_FindMy} aufgezeigt.
+
+Bevor konkrete Missbrauchsszenarien präsentiert werden, gegen welche Apple unzureichende Maßnahmen ergreift, sollen zunächst die grundlegenden Sicherheitsziele \textit{Confidentiality}, \textit{Integrity} und \textit{Availability} und mögliche Angriffe auf diese Ziele erklärt werden.
+
+
+
 
 % zu schützendes Asset: Standortdaten
 % Sicherheitsziele: CIA
+%   Confidentiality: Abruf der Standortdaten durch Angreifer (direktes Abrufen von Standortdaten eines Nutzers von Apples server praktisch nicht möglich durch Verschlüsselung, aber über Umwege direktes und indirektes Tracking möglich)
+%   Integrity: Manipulation der Standortdaten durch Angreifer (Replay Angriff mit Advertising Keys möglich, manipuliert die gespeicherten Standortdaten, schon auf Server gespeicherte Daten können nur sehr schwer manipuliert werden)
+%   Availability: Abrufen der Standortdaten verhindern (Angriff auf Apples Server ist eher unrealistisch, Akku der AirTags entleeren im Vergleich zu anderen Systemen schwer, da AirTags allgemein  nur advertisen)
 
 
 % Konkrete Szenarien:
