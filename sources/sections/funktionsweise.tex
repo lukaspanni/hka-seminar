@@ -57,7 +57,8 @@ In der Spezifikation werden folgende vier Rollen definiert \cite{Apple_FindMySpe
 \end{figure}
 Apple erlaubt seit April 2021 auch Drittanbietern die Nutzung des „Wo ist?“ Netzwerks um die eigenen Produkte zu finden \cite{Apple_FindMy3rdParty}.
 Da die Spezifikation speziell für Drittanbieter erstellt wurde, wird das zu findende Gerät als \textit{Accessory} bezeichnet.
-In der folgenden Beschreibung wird jedoch der Begriff \textit{Lost Device} verwendet, der auch von Heinrich \textit{et al.} \cite{Heinrich_FindMy} verwendet wird und sowohl Produkte von Drittanbietern als auch von Apple abdeckt.
+In der folgenden Beschreibung wird jedoch meist der Begriff \textit{Lost Device} verwendet, der auch von Heinrich \textit{et al.} \cite{Heinrich_FindMy} verwendet wird und sowohl Produkte von Drittanbietern als auch von Apple abdeckt.
+Bei einzelnen Details gibt es Unterschiede zwischen Endgeräten von Apple und Accessories, welche jeweils speziell erwähnt werden.
 Das zu findende Gerät muss mit der Apple-ID des Besitzers verbunden sein, um gefunden werden zu können.
 Drittanbieter Geräte und AirTags müssen dazu vor der ersten Verwendung über einen Pairing-Prozess mit einem Apple-Gerät verbunden werden \cite{Apple_FindMySpec}.
 
@@ -99,9 +100,17 @@ Der öffentliche Teil des temporären Schlüssels und ein \ac{SHA}-256 Hash des 
 Der Besitzer kann diese Daten abrufen und aus der Kombination des öffentlichen temporären Schlüssels und dem privaten Advertising Keys das geteilte Geheimnis und somit den symmetrischen Schlüssel berechnen \cite{Heinrich_FindMy}.
 
 Da Geräte ohne Internetverbindung (Accessories), wie zum Beispiel AirTags oder andere Geräte von Drittanbietern, die Master Beacon Keys nicht über die iCloud Synchronisation erhalten können, müssen diese Geräte auf andere Weise an einen initialen Schlüssel kommen.
-Beim initialen Pairing mit einem Owner Device, werden vom Accessory und dem Owner Device gemeinsam ein \ac{ECC}-Schlüssel und zwei symmetrische Schlüssel berechnet.
-Diese Schlüssel entsprechen im Wesentlichen dem Master Beacon Key, der für die Ableitung der Advertising Keys verwendet wird \cite{Apple_FindMySpec}.
-Auf den konkreten Prozess des Pairing und die Unterschiede zwischen Accessories und anderen Apple-Geräten wird hier nicht weiter eingegangen.
+Beim initialen Pairing mit einem Owner Device, werden vom Accessory und dem Owner Device gemeinsam ein \ac{ECC}-Schlüssel und zwei symmetrische Schlüssel, in der Spezifikation als SKN und SKS bezeichnet \cite{Apple_FindMySpec}, berechnet.
+Diese Schlüssel können ebenfalls verschlüsselt über die iCloud Keychain mit anderen Geräten des selben Besitzers synchronisiert werden, damit dieser empfangene Standortdaten auf allen seinen Geräten entschlüsseln kann.
+Bei Accessories wird der Advertising Key abhängig vom Zustand des Geräts unterschiedlich berechnet.
+Ist das Gerät aktuell mit einem Owner Device verbunden oder war vor kurzem mit einem Owner Device verbunden (sogenannter Nearby State), wird der Advertising Key aus dem \ac{ECC}-Schlüssel und dem SKN (N = Nearby) abgeleitet.
+War das Gerät allerdings schon längere Zeit nicht mit einem Owner Device verbunden (sogenannter Separated State) wird der Advertising Key aus dem \ac{ECC}-Schlüssel und dem SKS (S = Separated) abgeleitet \cite{Apple_FindMySpec}.
+Außerdem ist das Intervall in welchem der verwendete Advertising Key gewechselt wird, abhängig vom Zustand des Geräts.
+Im Separated State wird der Schlüssel seltener gewechselt.
+Dies ist notwendig um das Anti-Tracking Feature der Accessories zu ermöglichen.
+Dabei erkennen Apple-Endgeräte, ob sich das gleiche Accessory längere Zeit in der Nähe befindet und können den Nutzer vor Tracking durch andere warnen.
+Insbesondere mit AirTags lässt sich anderen Personen sehr einfach folgen, da diese beispielsweise leicht in Autos, Taschen oder Kleidung versteckt werden können \cite{Mayberry_Tracking}.
+Auf solche Gefahren, die von Apple bereits getroffenen und die noch nötigen Gegenmaßnahmen wird in \autoref{sec:Missbrauch} und \autoref{sec:Gegenmaßnahmen} näher eingegangen.
 
 
 \subsubsection{Ablauf beim Verlust eines Geräts}
@@ -124,12 +133,14 @@ Sobald ein Gerät die Internetverbindung oder die \ac{BLE}-Verbindung zum Owner 
 Um in diesem Zustand von anderen Finder Devices gefunden zu werden, beginnt das Lost Device \ac{BLE}-Advertisements mit dem kompletten öffentlichen Advertising Key zu senden \cite{Apple_FindMySpec}.
 Der Screenshot der nRF-Connect App in \autoref{fig:findMy_screenshot} zeigt die verschiedenen Advertisement Daten bei unterschiedlichem Gerätezustand.
 Das erste mit „(Find My)“ gekennzeichnete Gerät ist ein iPad, dass sich nicht im verlorenen Zustand befindet, während das zweite so gekennzeichnete Gerät ein iPhone ohne Internetverbindung ist und demnach als Lost Device gilt.
+Ab iOS 15 werden auch von ausgeschalteten iPhones Advertisement Pakete gesendet um diese zum Beispiel auch bei angeblich leerem Akku finden zu können \cite{Classen_FindMy}.
 Die Advertisement Pakete werden immer mit dem Typ \textit{manufacturer-specific data} gesendet, sodass neben angebotenen \ac{BLE}-Services auch eigene Daten übertragen werden können.
 Das Format erlaubt nach einer Firmen-ID von zwei Byte, maximal 27 weitere Byte zu übertragen.
 Da Apple, die manufacturer-specific data auch für andere Zwecke, wie zum Beispiel AirDrop nutzt, wird jeweils ein weiteres Byte für den Typ (0x12) des Pakets und dessen Länge verwendet.
 Zur Identifikation des Lost Device und zur Verschlüsselung der Standortdaten müssen die 28 Byte der X-Koordinate des aktuellen öffentlichen Schlüssels im Advertisement übertragen werden \cite{Heinrich_FindMy}.
-Jeder Schlüssel wird für 15 Minuten verwendet, um die Verfolgung des Geräts anhand der Advertising-Daten für Dritte zu erschweren.
+Üblicherweise wird jeder Schlüssel für 15 Minuten verwendet, um die Verfolgung des Geräts anhand der Advertising-Daten für Dritte zu erschweren.
 Nach Ablauf der 15 Minuten wird ein neuer Schlüssel abgeleitet und für die nächste Periode im Advertisement versendet.
+Bei Accessories wird der Schlüssel im Lost Device Zustand für 24 Stunden verwendet \cite{Mayberry_Tracking}.
 Da der Schlüssel aus dem Advertising alleine nicht reicht, um den nächsten Schlüssel abzuleiten, kann so die Privatsphäre im Vergleich zu Konkurrenzprodukten verbessert werden.
 Die 25 Byte Payload reichen nicht aus, um die X-Koordinate des öffentlichen Schlüssels zu übertragen.
 Deshalb  wird zusätzlich die Advertising Address des Advertisement Pakets ausgenutzt.
@@ -141,9 +152,9 @@ Die restlichen 170 Bit bestehend aus den Bytes 6 bis 27 und den fehlenden zwei B
 \autoref{fig:apple_advertising} zeigt den resultierenden Aufbau eines Advertisement Pakets des „Wo ist?“ Dienstes.
 Die Teile, in welchen der öffentliche Schlüssel übertragen wird, sind gelb hinterlegt.
 Das als "Hint" bezeichnete Feld codiert laut Spezifikation \cite{Apple_FindMySpec} Byte 5 des öffentlichen Schlüssels, laut Heinrich \textit{et al.} \cite{Heinrich_FindMy} ist dieses Feld bei iOS immer 0.
+Mayberry \textit{et al.} \cite{Mayberry_Tracking} konnten beobachten, dass dieses Feld bei AirTags tatsächlich auf Byte 5 des öffentlichen Schlüssels gesetzt wird, konnten aber keine weitere Funktion des Felds für den „Wo ist?“ Dienst identifizieren.
 Mit einem eigenen \ac{BLE}-Scan konnte beobachtet werden, dass das Feld bei einem iOS-Gerät auf 0 gesetzt war, obwohl Byte 5 des öffentlichen Schlüssels ungleich 0 war.
 Dies ist auch auf dem Screenshot in \autoref{fig:findMy_screenshot} zu erkennen.
-Dementsprechend wird dieses Byte vermutlich nur bei Drittanbieter-Produkten und eventuell bei AirTags verwendet.
 % TODO: test mit Airtag?
 \begin{figure}
     \centering
