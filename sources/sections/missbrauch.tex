@@ -117,6 +117,8 @@ Für Angreifer ist der Angriff jedoch insgesamt so komplex, dass eine direkte Ve
 Heinrich \textit{et al.} \cite{Heinrich_FindMy} betrachten die Schlüsselrotation als ausreichend, um die Verfolgung von Geräten nach diesem Muster zu verhindern.
 Jedoch zum Zeitpunkt ihrer Analyse keine Geräte mit einem Intervall der Schlüsselrotation von mehr als 15 Minuten auf dem Markt.
 
+% TODO: eventuell mehr der Gegenmaßnahmen nach hinten verschieben und stattdessen mehr auf konkreten Missbrauch eingehen
+% eventuell auch die von Apple bereits getroffenen Gegenmaßnahmen mit Bewertung hier und alles andere später
 \subsection{Missbrauchsszenarien ohne ausreichende Gegenmaßnahmen}
 \label{sec:szenarien}
 
@@ -157,12 +159,50 @@ Dieses System ist so gestaltet, dass der aktuelle Standort vom Finder Device an 
 In diesem Szenario kann ein Angreifer durch häufiges senden von Standorten an das Lost Device unter Zuhilfenahme der energieintensiven Verschlüsselungsoperationen, die Batterie des Lost Devices entladen.
 Insbesondere für Accessories geringer Batteriekapazität ist dies ein relevantes Bedrohungsszenario.
 Da bei Apples System die Verschlüsselung nicht auf dem verlorenen Gerät, sondern auf dem Finder Device erfolgt, ist ein solcher Angriff vermutlich schwieriger.
-Dennoch besteht ein gewisses Potenzial, da zumindest Accesories \ac{BLE}-Verbindungen zulassen, um zum Beispiel einen Ton abzuspielen, was ebenfalls genutzt werden könnte, um die Batterie zu entladen \cite{Apple_FindMySpec}.
+Dennoch besteht ein gewisses Potenzial, da zumindest Accesories \ac{BLE}-Verbindungen zulassen, um zum Beispiel einen Ton abzuspielen, was ebenfalls genutzt werden könnte, um die Batterie zu entladen \cite{Heinrich_AirGuard}.
+
+\subsubsection{Direktes Tracking von Personen}
+Das Szenario des direkten Tracking von Personen bezieht sich auf die Verfolgung durch AirTags oder andere kleine Tracker.
+Durch die kleine Größe der Tracker können diese in Jacken, Rucksäcken oder an Fahrzeugen befestigt werden, um einzelne Personen gezielt zu verfolgen.
+Dieser Angriff wurde bereits vielfach in der Praxis beobachtet und für Stalking oder Autodiebstahl genutzt \cite{NYT_Airtags}.
+Der „Wo ist?“ Dienst bietet zwar eine Funktion zur „Unwanted tracking detection“, um Nutzer auf mögliche Verfolgung hinzuweisen \cite{Apple_FindMySpec}.
+Allerdings wurde bereits gezeigt, dass diese Funktion leicht umgangen werden kann \cite{Mayberry_Tracking} und in vielen Fällen nicht zuverlässig vor Tracking warnen kann \cite{Heinrich_AirGuard}.
+Darüber hinaus ist die Funktion nur für iOS-Geräte direkt verfügbar, sodass für Android-Nutzer keinerlei Warnung erfolgt.
+Demnach ist dieses Szenario durchaus ein Szenario ohne ausreichende Gegenmaßnahmen.
+Inzwischen bietet Apple eine App für Android an, um die Warnung vor Tracking auch für Android-Nutzer zu ermöglichen, welche jedoch von Heinrich \textit{et al.} \cite{Heinrich_AirGuard} mangels Features nicht als ausreichend angesehen wird.
+Die Drittanbieter-App \textit{AirGuard} für Android bietet eine ähnliche Warnfunktion, welche in Tests besser abschneidet als die Warnfunktion von iOS \cite{Heinrich_AirGuard}.
+Insbesondere erkennt nur AirGuard das Tracking durch inoffizielle Tracker.
+Solche Tracker, die das „Wo ist?“ Netzwerk ohne explizite Erlaubnis von Apple nutzen, können von Angreifern leicht aus kostengünstiger \ac{BLE}-Hardware und Open-Source Software selbst gebaut werden.
+Diese können die von Mayberry \textit{et al.} \cite{Mayberry_Tracking} vorgestellten Maßnahmen nutzen, um die offizielle Unwanted tracking detection zu umgehen.
+Inoffizielle Tracker, welche ein Intervall von weniger als einer Stunde für die Schlüsselrotation verwenden, können allerdings weder von der offiziellen Warnfunktion noch von AirGuard erkannt werden \cite{Heinrich_AirGuard}.
+
+
+\subsubsection{Indirektes Tracking von Personen}
+Beim indirekten Tracking werden Personen nicht durch Tracker direkt verfolgt.
+Stattdessen werden anhand der Uploadzeitpunkte von Location Reports Rückschlüsse auf die Bewegung von Personen gezogen.
+Dieses Missbrauchsszenario wurde von Tonetto \textit{et al.} \cite{Tonetto_FindMy} vorgestellt und kann nicht nur für das schadhafte Tracking von Personen genutzt werden, sondern auch als privatsphärefreundliche Funktion zum Crowd-Monitoring.
+Da Finder Devices Location Reports generell gebündelt hochladen, und Apples Server die Uploadzeitpunkte mit einer Genauigkeit von wenigen Millisekunden speichern, ist es für möglich, Location Reports, die vom gleichen Gerät stammen, anhand der Uploadzeitpunkte zu identifizieren \cite{Tonetto_FindMy}.
+Während Finder Devices mit Mobilfunkverbindung Location Reports in der Regel erst nach einigen Stunden hochladen, erfolgt der Upload bei einer \ac{WLAN}-Verbindung deutlich schneller.
+Wechselt ein Finder Device von einer Mobilfunkverbindung zu einer \ac{WLAN}-Verbindung werden die zwischengespeicherten Location Reports in der Regel kurz darauf hochgeladen.
+Unter der Annahme, dass Personen außerhalb einiger weniger Orte, wie zum Beispiel der eigenen Wohnung, nicht dauerhaft mit einem \ac{WLAN}-Netzwerk verbunden sind, werden außerhalb dieser Orte erstellte Location Reports in etwa zur gleichen Zeit hochgeladen \cite{Tonetto_FindMy}.
+
+Platziert ein Angreifer mehrere Tracker an verschiedenen Orten, erfassen Finder Devices diese und generieren jeweils Location Reports.
+Jeder dieser Location Reports gibt an, zu welchem Zeitpunkt das Finder Device an welcher Position war.
+Werden diese Location Reports gebündelt hochgeladen, kann der Angreifer die zusammengehörigen Location Reports anhand der Uploadzeitpunkte identifizieren.
+Aus den Positionen und Zeitpunkten der Erstellung der Reports kann die Bewegung des Finder Device rekonstruiert werden \cite{Tonetto_FindMy}.
+
+
+Zum privatsphärefreundlichen Crowd-Monitoring werden einzelne Tracker an öffentlichen Orten platziert.
+Finder Devices, die sich in der Nähe dieser Tracker befinden, generieren Location Reports.
+Diese Reports können von Apples Servern heruntergeladen werden und erlauben über die Anzahl der Reports Rückschlüsse auf die Anzahl der Personen, die sich in der Nähe des Trackers aufgehalten haben.
+Über die Verwendung mehrere Tracker lassen sich auch die Bewegungen von Menschenmassen rekonstruieren.
+Dieser Missbrauch des „Wo ist?“ Dienstes kann als Alternative zu aktuellen Bilderkennungs-basierten Crowd-Monitoring-Systemen verwendet werden und erlaubt eine ähnliche Genauigkeit.
+Zusätzlich ist dieser Ansatz privatsphärefreundlicher als die Bilderkennung, da keine personenbezogenen Daten erhoben werden \cite{Tonetto_FindMy}.
+
 
 
 % Konkrete Szenarien:
 % - Tracking von Personen
-%   - Direkt: Tracking durch AirTags/sonstige kleine Geräte ("Tracker")
 %   - Indirekt: wie von Tonetto et al. gezeigt -> über Tracker in der Umgebung, weniger genau
 % - Verdeckter Datentransfer
 %   - wie von Tonetto et al. und bei SendMy gezeigt

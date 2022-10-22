@@ -17,7 +17,8 @@ Das Funktionsprinzip ist dementsprechend vergleichsweise einfach.
 \end{figure}
 Qualität und Nützlichkeit für die Nutzer eines solchen Dienstes hängt aber stark von der Anzahl der Nutzer ab.
 Die Position eines verlorenen Geräts kann nur vom Tracking-Dienst abgerufen werden, wenn ein Nutzer des gleichen Dienstes ein \ac{BLE}-Advertisement des verlorenen Geräts empfangen und die Position an den Dienst übermittelt hat.
-Je mehr Nutzer ein Dienst hat, desto größer die Wahrscheinlichkeit, dass sich ein Nutzer vor kurzem in der Nähe des verlorenen Geräts befand und desto größer die Wahrscheinlichkeit, das verlorene Gerät zu finden.
+Weiterhin ist die Positionsbestimmung verlorener Geräte nur durch Android-Geräte im Hintergrund möglich, sodass die Zahl der Android-Nutzer, welche die zum Dienst zugehörige App installiert haben ausschlaggebend für die Funktion des Dienstes ist \cite{Heinrich_AirGuard}.
+Je mehr (Android) Nutzer ein Dienst hat, desto größer die Wahrscheinlichkeit, dass sich ein Nutzer vor kurzem in der Nähe des verlorenen Geräts befand und desto größer die Wahrscheinlichkeit, das verlorene Gerät zu finden.
 
 
 In allen untersuchten Systemen konnten Weller \textit{et al.} \cite{Weller_BLE_Finders} und Garg \textit{et al.} \cite{Garg_Secure_Tracker} unabhängig voneinander verschiedene Schwachstellen finden, die sowohl Privatsphäre als auch Sicherheit betreffen.
@@ -36,6 +37,8 @@ Diese Schwachstellen werden in \autoref{sec:Missbrauch} wieder aufgegriffen.
 Der vermutlich größte Vorteil des Dienstes liegt vermutlich aber in der großen Zahl der Geräte, welche aktiv die Positionsdaten verlorener Geräte sammeln.
 Laut Apple nehmen „hunderte[n] Millionen iPhone, iPad und Mac Geräte[n]“ \cite{Apple_WoIst} am „Wo ist?“ Dienst teil.
 Der größte Konkurrent Tile hatte im Jahr 2021 laut der bekannten Gadget-Review Webseite \textit{Pocket-Lint} 40 Millionen Nutzer und kann damit für die Lokalisierung auf ein deutlich kleineres Netzwerk zurückgreifen als Apple \cite{Tile_Network}.
+Zusätzlich sind Konkurrenten immer auf Android-Nutzer angewiesen, welche die App des Dienstes installiert haben, da die Bluetooth \ac{API} von iOS ein Scannen im Hintergrund nicht ermöglicht \cite{Heinrich_AirGuard}.
+Durch die standardmäßige Aktivierung des „Wo ist?“ Dienstes auf allen Apple Geräten kann Apple durch seine große Marktmacht mit dem Ausspielen eines einzelnen iOS-Updates ein deutlich größeres Netzwerk zur Lokalisierung von verlorenen Geräten aufbauen als jede Konkurrenz.
 
 
 Auf Basis des Reverse-Engineering des „Wo ist?“ Dienstes von Heinrich \textit{et al.} in \cite{Heinrich_FindMy} und der Spezifikation für Drittanbieter \cite{Apple_FindMySpec} wird im Folgenden die grundlegende Funktionsweise des Dienstes erläutert.
@@ -109,8 +112,8 @@ Außerdem ist das Intervall in welchem der verwendete Advertising Key gewechselt
 Im Separated State wird der Schlüssel seltener gewechselt.
 Dies ist notwendig um das Anti-Tracking Feature der Accessories zu ermöglichen.
 Dabei erkennen Apple-Endgeräte, ob sich das gleiche Accessory längere Zeit in der Nähe befindet und können den Nutzer vor Tracking durch andere warnen.
-Insbesondere mit AirTags lässt sich anderen Personen sehr einfach folgen, da diese beispielsweise leicht in Autos, Taschen oder Kleidung versteckt werden können \cite{Mayberry_Tracking}.
-Auf solche Gefahren, die von Apple bereits getroffenen und die noch nötigen Gegenmaßnahmen wird in \autoref{sec:Missbrauch} und \autoref{sec:Gegenmaßnahmen} näher eingegangen.
+Insbesondere mit AirTags lässt sich anderen Personen sehr einfach folgen, da diese beispielsweise leicht in Autos, Taschen oder Kleidung versteckt werden können \cite{Heinrich_AirGuard}.
+Auf solche Gefahren, sowie die von Apple bereits getroffenen und die noch nötigen Gegenmaßnahmen, wird in \autoref{sec:Missbrauch} und \autoref{sec:Gegenmaßnahmen} näher eingegangen.
 
 
 \subsubsection{Ablauf beim Verlust eines Geräts}
