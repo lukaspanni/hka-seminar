@@ -84,6 +84,21 @@ Für die Ableitung dieser sogenannten \textit{Advertising Keys} wird die ANSI X9
 Aus einem im \ac{BLE}-Advertising übertragenen öffentlichen Schlüssel kann somit, ohne Kenntnis des Master Beacon Keys, der nächste öffentliche Schlüssel nicht abgeleitet werden.
 Durch regelmäßiges Wechseln des verwendeten Avertising Keys wird es einem Angreifer erschwert, ein Lost Device anhand der im Advertising übertragenen Daten zu verfolgen.
 Da für die Verschlüsselung der Standortdaten nur die X-Koordinate des öffentlichen Schlüssels benötigt wird, kann auf die Übertragung der Y-Koordinate verzichtet werden \cite{Heinrich_FindMy}.
+%TODO: bild
+Geräte ohne Internetverbindung (Accessories), wie zum Beispiel AirTags oder Geräte von Drittanbietern, können die Master Beacon Keys nicht über die iCloud Synchronisation erhalten.
+Deshalb müssen diese Geräte auf andere Weise an einen initialen Schlüssel kommen.
+Beim ersten Pairing mit einem Owner Device, werden vom Accessory und dem Owner Device gemeinsam ein \ac{ECC}-Schlüsselpaar und zwei symmetrische Schlüssel, in der Spezifikation als SKN und SKS bezeichnet \cite{Apple_FindMySpec}, berechnet.
+Diese Schlüssel können ebenfalls verschlüsselt über die iCloud Keychain mit anderen Geräten des selben Besitzers synchronisiert werden.
+So wird ermöglicht, dass der Besitzer empfangene Standortdaten auf allen Geräten entschlüsseln kann.
+Abhängig vom Zustand in welchem sich das Accessory befindet, unterscheidet sich die Berechnung des Advertising Keys.
+Ist das Gerät aktuell mit einem Owner Device verbunden oder war vor kurzem mit einem Owner Device verbunden (sogenannter Nearby State), wird der Advertising Key aus dem \ac{ECC}-Schlüssel und dem SKN (N = Nearby) abgeleitet.
+War das Gerät allerdings schon längere Zeit nicht mit einem Owner Device verbunden (sogenannter Separated State) wird der Advertising Key aus dem \ac{ECC}-Schlüssel und dem SKS (S = Separated) abgeleitet \cite{Apple_FindMySpec}.
+Außerdem ist das Intervall in welchem der verwendete Advertising Key gewechselt wird, abhängig vom Zustand des Geräts.
+Im Separated State wird der Schlüssel seltener gewechselt.
+Dies ist notwendig um das Anti-Tracking Feature der Accessories zu ermöglichen.
+Dabei erkennen Apple-Endgeräte, ob sich das gleiche Accessory längere Zeit in der Nähe befindet und können den Nutzer vor Tracking durch andere warnen.
+Insbesondere mit AirTags lässt sich anderen Personen sehr einfach folgen, da diese beispielsweise leicht in Autos, Taschen oder Kleidung versteckt werden können \cite{Heinrich_AirGuard}.
+Auf solche Gefahren, sowie die von Apple bereits getroffenen und die noch nötigen Gegenmaßnahmen, wird in \autoref{sec:Missbrauch} und \autoref{sec:Gegenmassnahmen} näher eingegangen.
 
 Die Verschlüsselung der Standortdaten erfolgt auf dem Finder Device mit dem \ac{AES}-Algorithmus im \ac{GCM}-Modus.
 Aus dem, vom Finder Device empfangenen, Advertising Key wird ein temporäres \ac{ECC}-Schlüsselpaar generiert, aus welchem über einen \ac{ECDH} Schlüsselaustauch ein geteiltes Geheimnis generiert und durch die Anwendung der ANSI X9.63-\ac{KDF} ein symmetrischer Schlüssel abgeleitet wird.
@@ -92,7 +107,7 @@ Von diesem werden die ersten 16 Byte als Schlüssel für den \ac{AES}-Algorithmu
 Durch die Ausführung der Verschlüsselung auf dem Finder Device, kann die Batterie des Lost Devices geschont werden und die Lokalisierung verlorener Geräte bleibt länger möglich.
 Insbesondere bei AirTags oder Produkten von Drittanbietern kann das hilfreich sein, da diese Geräte, eine im Vergleich zu einem iPhone oder iPad, sehr geringe Batteriekapazität haben.
 Die kryptografischen Funktionen könnten den Stromverbrauch der Geräte deutlich erhöhen, wenn bei jedem Kontakt mit einem Finder-Device dieser komplexe Verschlüsselungsprozess ablaufen muss.
-Durch die Verschlüsselung auf den Finder Devices müssen die Lost Devices nur alle 15 Minuten einen neuen Schlüssel ableiten, was durch die geringere Zahl der Operationen eine deutlich geringere Belastung für die Batterie darstellt.
+Durch die Verschlüsselung auf den Finder Devices müssen die Lost Devices alle 15 Minuten beziehungsweise nur alle 24 Stunden bei Accessories einen neuen Schlüssel ableiten, was durch die geringere Zahl der Operationen eine deutlich geringere Belastung für die Batterie darstellt.
 
 
 Für die Entschlüsselung kann das geteilte Geheimnis über den \ac{ECDH} Schlüsselaustausch mit dem öffentlichen Teil des temporären Schlüssels und dem privaten Teil des Advertising Keys berechnet werden.
@@ -101,19 +116,6 @@ Damit ist sichergestellt, dass die verschlüsselten Daten nur vom Besitzer entsc
 Dieser kann die für das Advertisement verwendeten Schlüsselpaare unabhängig vom verlorenen Gerät aus dem Master Beacon Key ableiten und hat somit Zugriff auf die privaten Schlüssel.
 Der öffentliche Teil des temporären Schlüssels und ein \ac{SHA}-256 Hash des verwendeten Advertising Keys wird mit den verschlüsselten Daten auf Apples Server hochgeladen.
 Der Besitzer kann diese Daten abrufen und aus der Kombination des öffentlichen temporären Schlüssels und dem privaten Advertising Keys das geteilte Geheimnis und somit den symmetrischen Schlüssel berechnen \cite{Heinrich_FindMy}.
-
-Da Geräte ohne Internetverbindung (Accessories), wie zum Beispiel AirTags oder andere Geräte von Drittanbietern, die Master Beacon Keys nicht über die iCloud Synchronisation erhalten können, müssen diese Geräte auf andere Weise an einen initialen Schlüssel kommen.
-Beim initialen Pairing mit einem Owner Device, werden vom Accessory und dem Owner Device gemeinsam ein \ac{ECC}-Schlüssel und zwei symmetrische Schlüssel, in der Spezifikation als SKN und SKS bezeichnet \cite{Apple_FindMySpec}, berechnet.
-Diese Schlüssel können ebenfalls verschlüsselt über die iCloud Keychain mit anderen Geräten des selben Besitzers synchronisiert werden, damit dieser empfangene Standortdaten auf allen seinen Geräten entschlüsseln kann.
-Bei Accessories wird der Advertising Key abhängig vom Zustand des Geräts unterschiedlich berechnet.
-Ist das Gerät aktuell mit einem Owner Device verbunden oder war vor kurzem mit einem Owner Device verbunden (sogenannter Nearby State), wird der Advertising Key aus dem \ac{ECC}-Schlüssel und dem SKN (N = Nearby) abgeleitet.
-War das Gerät allerdings schon längere Zeit nicht mit einem Owner Device verbunden (sogenannter Separated State) wird der Advertising Key aus dem \ac{ECC}-Schlüssel und dem SKS (S = Separated) abgeleitet \cite{Apple_FindMySpec}.
-Außerdem ist das Intervall in welchem der verwendete Advertising Key gewechselt wird, abhängig vom Zustand des Geräts.
-Im Separated State wird der Schlüssel seltener gewechselt.
-Dies ist notwendig um das Anti-Tracking Feature der Accessories zu ermöglichen.
-Dabei erkennen Apple-Endgeräte, ob sich das gleiche Accessory längere Zeit in der Nähe befindet und können den Nutzer vor Tracking durch andere warnen.
-Insbesondere mit AirTags lässt sich anderen Personen sehr einfach folgen, da diese beispielsweise leicht in Autos, Taschen oder Kleidung versteckt werden können \cite{Heinrich_AirGuard}.
-Auf solche Gefahren, sowie die von Apple bereits getroffenen und die noch nötigen Gegenmaßnahmen, wird in \autoref{sec:Missbrauch} und \autoref{sec:Gegenmaßnahmen} näher eingegangen.
 
 
 \subsubsection{Ablauf beim Verlust eines Geräts}
