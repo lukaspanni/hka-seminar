@@ -6,7 +6,7 @@ Apple ergreift verschiedene Maßnahmen, um die Sicherheit der Standortdaten sich
 Dennoch besteht Missbrauchspotenzial, gegen welches der Dienst nicht oder nicht ausreichend geschützt ist, wie unter anderem durch Tonetto \textit{et al.} \cite{Tonetto_FindMy} aufgezeigt werden konnte.
 Zunächst werden in \autoref{tab:cia_findmy} die allgemeinen Sicherheitsziele Vertraulichkeit (\textit{Confidentiality}), Integrität (\textit{Integrity}) und Verfügbarkeit (\textit{Availability}) sowie mögliche Angriffsziele im Kontext des „Wo ist?“ Dienstes erklärt.
 Darauf aufbauend wird gezeigt, wie die von Apple implementierten Sicherheitsmaßnahmen die Sicherheitsziele in vielen Fällen unterstützen.
-Im Anschluss können in \autoref{sec:szenarien} konkrete Missbrauchsszenarien aufgezeigt werden, gegen welche Apple nur unzureichende Maßnahmen ergreift, und welche somit die Sicherheit und Privatsphäre der Nutzer und sogar Dritter gefährden können.
+Im Anschluss können in \autoref{sec:szenarien} konkrete Missbrauchsszenarien aufgezeigt werden, gegen welche Apple nur unzureichende Maßnahmen ergreift und welche somit die Sicherheit und Privatsphäre der Nutzer und sogar Dritter gefährden können.
 
 \begin{table}[h]
   \caption{Sicherheitsziele des „Wo ist?“ Dienstes und mögliche Angriffsziele.}
@@ -84,7 +84,7 @@ Dies kann für einen Angreifer zum Beispiel im Zusammenhang mit dem Diebstahl ei
 Die Beeinträchtigung der Integrität der Daten wird in \cite{Heinrich_FindMy} nicht als Ziel eines Angreifers untersucht.
 Jedoch ist ein gewisser Zusammenhang mit der Verfügbarkeit gegeben.
 Durch gezielte Manipulation der Daten kann der Besitzer beispielsweise nicht mehr unterscheiden welche Daten korrekt sind, was die Verfügbarkeit stark beeinträchtigen kann.
-Außerdem wird allgemeiner Missbrauch des „Wo ist?“ Dienstes für Zwecke, für welche dieser nicht konzipiert wurde, in \cite{Heinrich_FindMy} nicht explizit betrachtet.
+Außerdem wird allgemeiner Missbrauch des „Wo ist?“ Dienstes in \cite{Heinrich_FindMy} nicht explizit betrachtet.
 Solche Missbrauchsszenarien werden in \autoref{sec:szenarien} vorgestellt.
 
 
@@ -109,13 +109,13 @@ Auf dieses Szenario wird in \autoref{sec:szenarien} näher eingegangen.
 Die Schlüsselrotation der Advertising Keys im Intervall von 15 Minuten bei Endgeräten und bis zu 24 Stunden bei Accesories, wie in \autoref{sec:Funktionsweise_FindMy} beschrieben, trägt ebenfalls zur Vertraulichkeit der Standortdaten bei.
 Durch die regelmäßige Rotation der Schlüssel wird das Tracking von Geräten anhand der im Advertising gesendeten Daten erschwert.
 Damit richtet sich diese Maßnahme gezielt gegen das Tracking durch einen Angreifer in der Nähe (A2 mit Ziel (2) in \autoref{fig:adversary_models}).
-Außerdem müssten für einen solchen Angriff viele scannende Geräte so positioniert werden, dass auch bei Bewegung die Advertisement Pakete des zu verfolgenden Geräts von einem der scanner erfasst wird.
+Außerdem müssten für einen solchen Angriff viele scannende Geräte so positioniert werden, dass auch bei Bewegung die Advertisement Pakete des zu verfolgenden Geräts von einem der Scanner erfasst wird.
 Um größere Bereiche abzudecken, wären jedoch sehr viele scannende Geräte notwendig, was den Angriff bereits deutlich erschwert.
-In Verbindung mit der Schlüsselrotation ist die Verfolgung auch mit hohem Aufwand nur für das Intervall der Schlüsselrotation möglich.
+In Verbindung mit der Schlüsselrotation ist die Verfolgung, auch mit hohem Aufwand, nur für das Intervall der Schlüsselrotation möglich.
 Allerdings können AirTags und Drittanbieterprodukte durch das längere Intervall für bis zu 24 Stunden über einen solchen Angriff verfolgt werden.
 Für Angreifer ist der Angriff jedoch insgesamt so komplex, dass eine direkte Verfolgung des Opfers in den meisten Fällen praktikabler wäre.
 Heinrich \textit{et al.} \cite{Heinrich_FindMy} betrachten die Schlüsselrotation als ausreichend, um die Verfolgung von Geräten nach diesem Muster zu verhindern.
-Jedoch zum Zeitpunkt ihrer Analyse keine Geräte mit einem Intervall der Schlüsselrotation von mehr als 15 Minuten auf dem Markt.
+Jedoch waren zum Zeitpunkt ihrer Analyse keine Geräte mit einem Intervall der Schlüsselrotation von mehr als 15 Minuten auf dem Markt.
 
 % TODO: eventuell mehr der Gegenmaßnahmen nach hinten verschieben und stattdessen mehr auf konkreten Missbrauch eingehen
 % eventuell auch die von Apple bereits getroffenen Gegenmaßnahmen mit Bewertung hier und alles andere später
@@ -123,13 +123,14 @@ Jedoch zum Zeitpunkt ihrer Analyse keine Geräte mit einem Intervall der Schlüs
 \label{sec:szenarien}
 
 \subsubsection{Replay-Angriff}
-Durch die Ende-zu-Ende-Verschlüsselung und den authentifizierten Upload der Standortdaten kann die Integrität der Standortdaten in vielen Fällen geschützt werden.
+Durch die Ende-zu-Ende-Verschlüsselung und den authentifizierten Upload der Standortdaten, kann die Integrität der Standortdaten in vielen Fällen geschützt werden.
 Allerdings können über einen Replay-Angriff manipulierte Standortdaten, welche korrekt verschlüsselt sind und authentifiziert hochgeladen werden, auf Apples Server gelangen.
-Somit kann die Integrität der abgerufenen Standortdaten nicht mehr gewährleistet werden und die Verfügbarkeit der Standortdaten kann beeinträchtigt werden, da der Nutzer eventuell nicht mehr erkennen kann, welche Daten korrekt sind und somit keine verlässliche Standortinformation erhält \cite{Heinrich_FindMy}.
+Somit kann die Integrität der abgerufenen Standortdaten nicht mehr gewährleistet werden und die Verfügbarkeit der Standortdaten kann beeinträchtigt werden.
+Der Nutzer kann eventuell nicht mehr erkennen, welche Daten korrekt sind und kann somit keine verlässliche Standortinformation erhalten \cite{Heinrich_FindMy}.
 Dieser Angriff entspricht dem \ac{DOS}-Angriff durch einen Angreifer in der Nähe (A2 mit Ziel (3) in \autoref{fig:adversary_models}).
 
 Um einen solchen Angriff durchzuführen, kann ein Angreifer die Advertisement Pakete eines Gerätes aufzeichnen und an anderen Orten wieder abspielen.
-Geräte in der Nähe empfangen die Pakete und senden Standortdaten verschlüsseln und korrekt authentifiziert an Apple.
+Geräte in der Nähe empfangen diese Pakete und senden Standortdaten verschlüsselt und korrekt authentifiziert an Apple.
 Der Besitzer kann die manipulierten Standortdaten erhalten und diese eventuell als korrekt interpretieren.
 Es ist unklar, ob Apple gegen diese Art der Manipulation Maßnahmen ergreift.
 Das Design des Dienstes lässt prinzipiell verschiedene Maßnahmen zu, um den Angriff zumindest zu erkennen.
@@ -181,10 +182,10 @@ Inoffizielle Tracker, welche ein Intervall von weniger als einer Stunde für die
 Beim indirekten Tracking werden Personen nicht durch Tracker direkt verfolgt.
 Stattdessen werden anhand der Uploadzeitpunkte von Location Reports Rückschlüsse auf die Bewegung von Personen gezogen.
 Dieses Missbrauchsszenario wurde von Tonetto \textit{et al.} \cite{Tonetto_FindMy} vorgestellt und kann nicht nur für das schadhafte Tracking von Personen genutzt werden, sondern auch als privatsphärefreundliche Funktion zum Crowd-Monitoring.
-Da Finder Devices Location Reports generell gebündelt hochladen, und Apples Server die Uploadzeitpunkte mit einer Genauigkeit von wenigen Millisekunden speichern, ist es für möglich, Location Reports, die vom gleichen Gerät stammen, anhand der Uploadzeitpunkte zu identifizieren \cite{Tonetto_FindMy}.
-Während Finder Devices mit Mobilfunkverbindung Location Reports in der Regel erst nach einigen Stunden hochladen, erfolgt der Upload bei einer \ac{WLAN}-Verbindung deutlich schneller.
-Wechselt ein Finder Device von einer Mobilfunkverbindung zu einer \ac{WLAN}-Verbindung werden die zwischengespeicherten Location Reports in der Regel kurz darauf hochgeladen.
-Unter der Annahme, dass Personen außerhalb einiger weniger Orte, wie zum Beispiel der eigenen Wohnung, nicht dauerhaft mit einem \ac{WLAN}-Netzwerk verbunden sind, werden außerhalb dieser Orte erstellte Location Reports in etwa zur gleichen Zeit hochgeladen \cite{Tonetto_FindMy}.
+Da Finder Devices Location Reports generell gebündelt hochladen, und Apples Server die Uploadzeitpunkte mit einer Genauigkeit von wenigen Millisekunden speichern, ist es für Angreifer möglich, Location Reports, die vom gleichen Gerät stammen, anhand der Uploadzeitpunkte zu identifizieren \cite{Tonetto_FindMy}.
+Während Finder Devices mit Mobilfunkverbindung Location Reports in der Regel erst nach einigen Stunden hochladen, erfolgt der Upload bei einer WLAN-Verbindung deutlich schneller.
+Wechselt ein Finder Device von einer Mobilfunkverbindung zu einer WLAN-Verbindung, werden die zwischengespeicherten Location Reports in der Regel kurz darauf hochgeladen.
+Unter der Annahme, dass Personen außerhalb einiger weniger Orte, wie zum Beispiel der eigenen Wohnung, nicht dauerhaft mit einem WLAN-Netzwerk verbunden sind, werden außerhalb dieser Orte erstellte Location Reports in etwa zur gleichen Zeit hochgeladen \cite{Tonetto_FindMy}.
 
 Platziert ein Angreifer mehrere Tracker an verschiedenen Orten, erfassen Finder Devices diese und generieren jeweils Location Reports.
 Jeder dieser Location Reports gibt an, zu welchem Zeitpunkt das Finder Device an welcher Position war.
