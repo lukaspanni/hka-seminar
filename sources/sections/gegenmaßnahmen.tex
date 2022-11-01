@@ -2,3 +2,31 @@
 \label{sec:Gegenmassnahmen}
 
 
+% M1
+Das Design des Dienstes lässt prinzipiell verschiedene Maßnahmen zu, um den Angriff zumindest zu erkennen.
+Die „Wo ist?“ App könnte die Plausibilität der Daten prüfen und unplausible Daten dem Nutzer als eventuell manipuliert anzeigen.
+Eine Plausibilitätsprüfung wäre zum Beispiel anhand der Zeitpunkte der Standortdaten möglich.
+Große Veränderungen des Standorts in kurzer Zeit könnten auf einen Replay-Angriff hindeuten.
+Außerdem könnte das Owner Device bestimmen, welcher Advertising Key zum Zeitpunkt der Generierung des Location Reports aktiv war und so überprüfen ob der Location Report mit dem passenden Advertising Key erstellt wurde, oder ob ein älterer Schlüssel verwendet wurde.
+So könnte zumindest der Zeitraum eines Replay-Angriffs auf das Intervall der Schlüsselrotation eingegrenzt werden.
+
+
+% M2
+Gegen solche Angriffe können keinerlei IT-Security-Maßnahmen ergriffen werden.
+Jedoch ließe sich die Auffindbarkeit von Trackern durch selteneres Advertisement verringern, wodurch ein Angreifer mehr Zeit benötigen würde, um den Tracker zu finden.
+Diese Maßnahme würde allerdings gleichzeitig das Tracking anderer Personen unter Verwendung eines versteckten Trackers erleichtern.
+Generell ist der „Wo ist?“ Dienst nicht als Hilfsmittel gegen Diebstahl konzipiert und wird auch nicht als solches beworben \cite{Apple_WoIst}.
+
+
+% M3
+Da bei Apples System die Verschlüsselung nicht auf dem verlorenen Gerät, sondern auf dem Finder Device erfolgt, ist ein solcher Angriff vermutlich schwieriger.
+Dennoch besteht ein gewisses Potenzial, da zumindest Accesories \ac{BLE}-Verbindungen zulassen, um zum Beispiel einen Ton abzuspielen, was ebenfalls genutzt werden könnte, um die Batterie zu entladen \cite{Heinrich_AirGuard}.
+
+% M4
+
+Inzwischen bietet Apple eine App für Android an, um die Warnung vor Tracking auch für Android-Nutzer zu ermöglichen, welche jedoch von Heinrich \textit{et al.} \cite{Heinrich_AirGuard} mangels Features nicht als ausreichend angesehen wird.
+Die Drittanbieter-App \textit{AirGuard} für Android bietet eine ähnliche Warnfunktion, welche in Tests besser abschneidet als die Warnfunktion von iOS \cite{Heinrich_AirGuard}.
+Insbesondere erkennt nur AirGuard das Tracking durch inoffizielle Tracker.
+Solche Tracker, die das „Wo ist?“ Netzwerk ohne explizite Erlaubnis von Apple nutzen, können von Angreifern leicht aus kostengünstiger \ac{BLE}-Hardware und Open-Source Software selbst gebaut werden.
+Diese können die von Mayberry \textit{et al.} \cite{Mayberry_Tracking} vorgestellten Maßnahmen nutzen, um die offizielle Unwanted tracking detection zu umgehen.
+Inoffizielle Tracker, welche ein Intervall von weniger als einer Stunde für die Schlüsselrotation verwenden, können allerdings weder von der offiziellen Warnfunktion noch von AirGuard erkannt werden \cite{Heinrich_AirGuard}.
