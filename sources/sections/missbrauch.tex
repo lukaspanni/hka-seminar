@@ -125,11 +125,11 @@ Jedoch waren zum Zeitpunkt ihrer Analyse keine Geräte mit einem Intervall der S
 
 Im Folgenden sind sieben Missbrauchsszenarien aufgeführt, welche nicht ausreichend durch Gegenmaßnahmen unterbunden werden.
 Gegen einige werden gar keine Maßnahmen getroffen, andere Gegenmaßnahmen lassen sich leicht umgehen und sind dementsprechend nicht ausreichend.
-Weiterhin ist \nameref{missbrauch:5} nicht als negativer Missbrauch zu verstehen, da der „Wo ist?“ Dienst in diesem Fall nicht zur Beeinträchtigung, sondern zur Steigerung der Privatsphäre genutzt wird.
+Weiterhin ist Szenario \nameref{missbrauch:4} nicht als negativer Missbrauch zu verstehen, da der „Wo ist?“ Dienst in diesem Fall nicht zur Beeinträchtigung, sondern zur Steigerung der Privatsphäre genutzt wird.
 Weil dieser Anwendungsfall jedoch nicht von Apple vorgesehen ist, handelt es sich dennoch um Missbrauch.
 Die Szenarien basieren größtenteils auf den Arbeiten von Heinrich \textit{et al.} \cite{Heinrich_FindMy}, Tonetto \textit{et al.} \cite{Tonetto_FindMy}, Mayberry \textit{et al.} \cite{Mayberry_Tracking} und Garg \textit{et al.} \cite{Garg_Secure_Tracker}.
 
-\subsubsection[Szenario M1]{M1: Replay-Angriff}
+\subsubsection[M1]{M1: Replay-Angriff}
 \label{missbrauch:1}
 Durch die Ende-zu-Ende-Verschlüsselung und den authentifizierten Upload der Standortdaten, kann die Integrität der Standortdaten in vielen Fällen geschützt werden.
 Allerdings können über einen Replay-Angriff manipulierte Standortdaten, welche korrekt verschlüsselt sind und authentifiziert hochgeladen werden, auf Apples Server gelangen.
@@ -143,26 +143,30 @@ Der Besitzer erhält die manipulierten Standortdaten interpretiert diese als kor
 Es ist unklar, ob Apple gegen diese Art der Manipulation Maßnahmen ergreift.
 
 
-\subsubsection[Szenario M2]{M2: Angriff auf die Verfügbarkeit durch Angreifer mit physischem Zugriff}
-\label{missbrauch:2}
+\subsubsection[M2.1]{M2.1: Angriff auf die Verfügbarkeit durch Angreifer mit physischem Zugriff}
+\label{missbrauch:2.1}
 Die Verfügbarkeit der Standortdaten ist für die Betrachtung im Rahmen dieser Arbeit weniger relevant, da das Design des Dienstes vergleichsweise wenige Auswirkungen auf die Verfügbarkeit hat.
 Dennoch ist die Verfügbarkeit durch verschiedene Angriffe bedroht.
 Zum Beispiel könnte ein direkter \ac{DOS} Angriff auf die Server von Apple erfolgen, was allerdings als unwahrscheinliches Bedrohungsszenario angesehen werden kann.
-Relevanter sind hingegen Angriffe auf die Verfügbarkeit der Standortdaten durch physischen Zugriff oder die Nähe des Angreifers zum verlorenen Gerät.
-Bei physischem Zugriff, beispielsweise in Zusammenhang mit Diebstahl, kann zum Beispiel durch Zerstörung des Geräts oder durch das Entfernen der Batterie, verhindert werden, dass neue Standortinformationen des Geräts generiert werden.
-Die Zerstörung eines Endgeräts bei einem Diebstahl desselben wäre wenig zielführend.
-Allerdings ist die Zerstörung eines Trackers, wie eines AirTags, beim Diebstahl des Gegenstandes, an welchem der Tracker befestigt ist, ein wahrscheinliches Szenario.
-In diesem Fall würde jedoch auch das Entfernen des Trackers vom gestohlenen Gegenstand oder das Entfernen der Batterie aus dem Tracker ausreichen, um die Nachverfolgbarkeit des Gegenstandes zu verhindern.
+Relevanter ist ein Angriff durch einen Angreifer mit physischem Zugriff auf das Lost Device.
+Beispielsweise in Zusammenhang mit Diebstahl eines Gegenstandes, an welchem ein AirTag befestigt ist, kann durch Zerstörung oder Entfernen der Batterie, verhindert werden, dass neue Standortinformationen hochgeladen werden.
+In diesem Kontext ist auch das Entfernen des AirTags vom Gegenstand möglich um die weitere Lokalisierung zu verhindern.
+Da keine neuen, gültigen Standortdaten erzeugt werden, ist die Verfügbarkeit eingeschränkt.
 
-\subsubsection[Szenario M3]{M3: Angriff auf die Verfügbarkeit durch nahe Angreifer}
-\label{missbrauch:3}
-Bei dem von Garg \textit{et al.} \cite{Garg_Secure_Tracker} als sicher vorgeschlagenen Systemen ist neben dem Entfernen der Batterie auch das gezielte Entladen dieser ohne physischen Zugriff möglich.
+\subsubsection[M2.2]{M2.2: Angriff auf die Verfügbarkeit durch Angreifer in der Nähe}
+\label{missbrauch:2.2}
+Zur Einschränkung der Verfügbarkeit der Standortdaten, reicht es auch aus, wenn ein Angreifer sich in der Nähe des Geräts befindet.
+Zum Beispiel ist bei dem von Garg \textit{et al.} \cite{Garg_Secure_Tracker} als sicher vorgeschlagenen Systemen neben dem Entfernen der Batterie auch das gezielte Entladen dieser ohne physischen Zugriff möglich.
 Dieses System ist so gestaltet, dass der aktuelle Standort vom Finder Device an das Lost Device gesendet wird, welches die Daten verschlüsselt zurückgibt.
 In diesem Szenario kann ein Angreifer durch häufiges senden von Standorten an das Lost Device unter Zuhilfenahme der energieintensiven Verschlüsselungsoperationen, die Batterie des Lost Devices entladen.
-Insbesondere für Accessories geringer Batteriekapazität ist dies ein relevantes Bedrohungsszenario.
+Ein Angriff nach diesem Schema kann auch Apples System betreffen.
+Insbesondere für Accessories geringer Batteriekapazität ist die gezielte Entladung ein relevantes Bedrohungsszenario.
+Da jedoch beim „Wo ist?“ Dienst die Verschlüsselung nicht auf dem Lost Device erfolgt, muss der Angriff leicht variiert werden.
+Accessories müssen die Möglichkeit bieten, einen Ton abzuspielen \cite{Apple_FindMySpec}.
+Diese Funktion kann durch jeden in \ac{BLE}-Reichweite ausgelöst werden \cite{Heinrich_AirGuard} und genutzt werden, um die Batterie zu entladen.
 
-\subsubsection[Szenario M4]{M4: Direktes Tracking von Personen}
-\label{missbrauch:4}
+\subsubsection[M3]{M3: Direktes Tracking von Personen}
+\label{missbrauch:3}
 Das Szenario des direkten Tracking von Personen bezieht sich auf die Verfolgung durch AirTags oder andere kleine Tracker.
 Durch die kleine Größe der Tracker können diese in Jacken, Rucksäcken oder an Fahrzeugen befestigt werden, um einzelne Personen gezielt zu verfolgen.
 Dieser Angriff wurde bereits vielfach in der Praxis beobachtet und für Stalking oder Autodiebstahl genutzt \cite{NYT_Airtags}.
@@ -172,8 +176,8 @@ Darüber hinaus ist die Funktion nur für iOS-Geräte direkt verfügbar, sodass 
 Demnach sind die Gegenmaßnahmen des „Wo ist?“ Dienstes gegen das direkte Tracking von Personen nicht als ausreichend zu bewerten.
 
 
-\subsubsection[Szenario M5]{M5: Indirektes Tracking von Personen}
-\label{missbrauch:5}
+\subsubsection[M4]{M4: Indirektes Tracking von Personen}
+\label{missbrauch:4}
 Beim indirekten Tracking werden Personen nicht durch Tracker direkt verfolgt.
 Stattdessen werden anhand der Uploadzeitpunkte von Location Reports Rückschlüsse auf die Bewegung von Personen gezogen.
 Dieses Missbrauchsszenario wurde von Tonetto \textit{et al.} \cite{Tonetto_FindMy} vorgestellt und kann nicht nur für das schadhafte Tracking von Personen genutzt werden, sondern auch als privatsphärefreundliche Funktion zum Crowd-Monitoring.
@@ -196,8 +200,8 @@ Dieser Missbrauch des „Wo ist?“ Dienstes kann als Alternative zu aktuellen B
 Zusätzlich ist dieser Ansatz besser für die Privatsphäre der Betroffenen als die Bilderkennung, da keine personenbezogenen Daten erhoben werden \cite{Tonetto_FindMy}.
 
 
-\subsection{M6: Verdeckter Datentransfer}
-\label{missbrauch:6}
+\subsection{M5: Verdeckter Datentransfer}
+\label{missbrauch:5}
 Tonetto \textit{et al.} \cite{Tonetto_FindMy} und Bräunlein \cite{braeunlein_sendmy} zeigen unabhängig voneinander, dass der „Wo ist?“ Dienst auch für einen verdeckten Datentransfer mit einer niedrigen Übertragungsrate ausgenutzt werden kann.
 Dabei werden Finder Devices dazu genutzt, Daten an Apples Server zu übertragen, welche vom Angreifer heruntergeladen und dekodiert werden können.
 Beide verwenden für das Senden der Daten einen Nachbau eines AirTags, bestehend aus einem \ac{BLE}-fähigen Mikrocontroller.
@@ -231,8 +235,8 @@ Zusätzlich muss der Empfänger weniger Anfragen an Apples Server stellen, da nu
 Bräunleins Verfahren benötigt zwei Anfragen an Apples Server pro übertragenem Bit.
 
 
-\subsection{M7: Korrelation von Standorten durch Apple}
-\label{missbrauch:7}
+\subsection{M6: Korrelation von Standorten durch Apple}
+\label{missbrauch:6}
 
 Das zweite Ziel des Angreifermodells des Dienstanbieters (A4 in \autoref{fig:adversary_models}) bezieht sich auf die Korrelation von Standorten mehrerer Nutzer.
 Heinrich \textit{et al.} \cite{Heinrich_FindMy} zeigen, dass durch den authentifizierten Up- und Download, die Korrelation durch Apple theoretisch möglich ist.
