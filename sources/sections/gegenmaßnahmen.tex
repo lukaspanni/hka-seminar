@@ -21,14 +21,15 @@ Auf Apples Server können Manipulationen hingegen nicht erkannt werden, da dazu 
 Die Nutzer haben keine Möglichkeit, sich vor einem Replay-Angriff zu schützen.
 Deaktivieren des „Wo ist?“ Dienstes verhindert zwar, dass manipulierte Standortdaten empfangen werden, jedoch können gar keine Standortdaten mehr empfangen werden.
 
-\subsubsection{Gegenmaßnahmen zu \nameref{missbrauch:2.1} und \nameref{missbrauch:2.2}}
+\subsection{Gegenmaßnahmen zu \nameref{missbrauch:2.1} und \nameref{missbrauch:2.2}}
 
 Gegen physische Angriffe auf ein Lost Device kann das Design des „Wo ist?“ Dienstes nicht schützen.
 Demnach hat Apple kaum Möglichkeiten, die Nutzer vor solchen physischen Angriffen zu schützen.
 Die Zerstörung des Geräts könnte maximal erschwert, aber nicht verhindert werden.
 Durch eine fest verbaute Batterie könnte das Entfernen der Batterie ebenfalls nur erschwert aber nicht verhindert werden.
 
-Indirekt lassen sich physische Angriffe weiter erschweren, indem die Advertisement-Intervalle verlängert werden, wodurch ein Angreifer mehr Zeit benötigen würde, um das Lost Device zu finden.
+Indirekt lassen sich physische Angriffe durch die Verlängerung der Advertisement-Intervalle weiter erschweren.
+Dadurch würde ein Angreifer mehr Zeit benötigen, um das Lost Device zu finden.
 Diese Maßnahme würde allerdings gleichzeitig das Tracking anderer Personen unter Verwendung eines versteckten Trackers (\nameref{missbrauch:3}) erleichtern.
 Generell ist der „Wo ist?“ Dienst nicht als Hilfsmittel gegen Diebstahl konzipiert und wird auch nicht als solches beworben \cite{Apple_WoIst}, weshalb Apple hier keine weiteren Maßnahmen ergreift.
 
@@ -43,12 +44,58 @@ Das Entfernen des Lautsprechers von Accessories wäre eine Möglichkeit die Entl
 Da die Entladung durch das Abspielen von Tönen jedoch generell als eher unwahrscheinlich anzusehen ist, ist diese Maßnahme vermutlich nicht notwendig.
 
 
-\subsubsection{Gegenmaßnahmen zu \nameref{missbrauch:3}}
-% TODO: genauere Beschreibung des Anti-Tracking systems, eventuell mehr von missbrauch hierher
+\subsection{Gegenmaßnahmen zu \nameref{missbrauch:3}}
 
+Wie bereits in \nameref{missbrauch:3} beschrieben, schützt die aktuell von Apple umgesetzte Maßnahme gegen direktes Tracking nur unzureichend.
+Das \ac{UT}-Feature setzt sich aus verschiedenen Funktionen zusammen.
+Zum einen müssen kleine Accessories einen Ton abspielen, wenn sie mindestens drei Tage vom Gerät des Besitzers getrennt sind und eine Bewegung erkennen \cite{Apple_FindMySpec}.
+Da der Lautsprecher bei AirTags beispielsweise einfach entfernt werden kann, und AirTags ohne Lautsprecher auf verschiedenen Online-Marktplätzen erhältlich sind, trägt diese Funktion kaum zum Schutz vor Stalking bei \cite{Heinrich_AirGuard}.
+Zum anderen kann iOS die Verfolgung durch ein Accessory eines anderen Nutzers erkennen und eine Warnung anzeigen.
+Dazu werden \ac{BLE}-Advertisements von Accesories, welche seit mehr als zehn Minuten empfangen werden und dem Gerät mindestens 840 Meter gefolgt sind, als verdächtig markiert.
+Warnungen werden allerdings zur Vermeidung von false positives verzögert angezeigt.
+Heinrich \textit{et al.} \cite{Heinrich_AirGuard} zeigen, dass die Warnungen erst mehrere Stunden nach der Erkennung oder bei Rückkehr des Benutzers an den von iOS als Zuhause bestimmten Ort angezeigt werden.
+Ein Angreifer kann die Position seines Opfers also, ohne die \ac{UT} umgehen zu müssen, mindestens mehrere Stunden oder sogar bis zu dessen Zuhause verfolgen, ohne eine Warnung auszulösen.
+Besitzt das Opfer kein Apple-Gerät, ist eine unbegrenzte Verfolgung möglich.
 Inzwischen bietet Apple eine App für Android an, um die Warnung vor Tracking auch für Android-Nutzer zu ermöglichen, welche jedoch von Heinrich \textit{et al.} \cite{Heinrich_AirGuard} mangels Features nicht als ausreichend angesehen wird.
-Die Drittanbieter-App \textit{AirGuard} für Android bietet eine ähnliche Warnfunktion, welche in Tests besser abschneidet als die Warnfunktion von iOS \cite{Heinrich_AirGuard}.
-Insbesondere erkennt nur AirGuard das Tracking durch inoffizielle Tracker.
-Solche Tracker, die das „Wo ist?“ Netzwerk ohne explizite Erlaubnis von Apple nutzen, können von Angreifern leicht aus kostengünstiger \ac{BLE}-Hardware und Open-Source Software selbst gebaut werden.
-Diese können die von Mayberry \textit{et al.} \cite{Mayberry_Tracking} vorgestellten Maßnahmen nutzen, um die offizielle Unwanted tracking detection zu umgehen.
-Inoffizielle Tracker, welche ein Intervall von weniger als einer Stunde für die Schlüsselrotation verwenden, können allerdings weder von der offiziellen Warnfunktion noch von AirGuard erkannt werden \cite{Heinrich_AirGuard}.
+Die Open-Source App \textit{AirGuard} für Android bietet eine ähnliche Warnfunktion, welche in Tests besser abschneidet als die Warnfunktion von iOS.
+Für iOS ist dieser besser Schutz aufgrund von Einschränkungen der Bluetooth-\acp{API} nicht verfügbar \cite{Heinrich_AirGuard}.
+
+Weiterhin konnte in \cite{Heinrich_AirGuard,Mayberry_Tracking} gezeigt werden, dass die \ac{UT} Funktionen von iOS mit geringem Aufwand umgangen werden können.
+Angreifer können beispielsweise inoffizielle Tracker nutzen.
+Solche Tracker, die das „Wo ist?“ Netzwerk ohne explizite Erlaubnis von Apple nutzen, lassen sich leicht aus kostengünstiger \ac{BLE}-Hardware und Open-Source Software zusammenbauen.
+Inoffizielle Tracker müssen die Spezifikation von Apple nicht einhalten und können dennoch das „Wo ist?“ Netzwerk nutzen.
+Unter anderem können diese das Status-Feld des \ac{BLE}-Advertisement immer 0 senden, was den Tracker als verlorenes Endgerät ausweist.
+Verlorene Endgeräte werden für das \ac{UT}-Feature nicht betrachtet \cite{Heinrich_AirGuard,Mayberry_Tracking}.
+Dieses Problem könnte leicht durch ein Software-Update behoben werden.
+Die AirGuard-App setzt diese Funktion bereits um \cite{Heinrich_AirGuard}.
+
+Allerdings existieren weitere Wege, \ac{UT} zu umgehen.
+Wird der von inoffiziellen Trackern im \ac{BLE}-Advertisement gesendete öffentliche Schlüssel häufiger gewechselt, kann iOS nicht erkennen, dass es sich um den gleichen Tracker handelt, und keine Warnung anzeigen.
+Dazu lassen sich eine feste Zahl von Schlüsseln oder die jeweilige Ableitung aus einem bekannten Schlüssel verwenden.
+Damit können Tracker nicht mehr von Endgeräten ohne Internetverbindung unterschieden werden.
+Nach den Untersuchungen von Mayberry \textit{et al.} \cite{Mayberry_Tracking} lässt sich dieses Problem nicht durch ein einfaches Software-Update beheben.
+Stattdessen wäre eine bedeutende Anpassung des Dienstes selbst nötig, um das Umgehen der \ac{UT} auf diese Art zu verhindern.
+Apple hat demnach keine Möglichkeit diese Schwachstelle zu beheben, ohne die grundlegende Funktionsweise des Dienstes zu verändern.
+Auch die AirGuard-App ist nicht in der Lage, automatische Warnungen zu generieren, wenn ein Tracker den öffentlichen Schlüssel häufig wechselt \cite{Heinrich_AirGuard}.
+
+Nutzer können sich vor Tracking durch offizielle Tracker warnen lassen, indem sie entweder ein iOS-Gerät, oder die AirGuard-App verwenden.
+Weiterhin können inoffizielle Tracker, welche nur das Status-Feld manipulieren, von der AirGuard-App erkannt werden und Android-Nutzer auch in diesem Fall gewarnt werden.
+Durch manuelle \ac{BLE}-Scans der Umgebung haben Nutzer von AirGuard außerdem die Möglichkeit, beliebige Geräte, welche den „Wo ist?“ Dienst nutzen in der Nähe zu erkennen.
+In einem solchen Scan würden auch inoffizielle Tracker, die den verwendeten Schlüssel häufig wechseln angezeigt werden.
+Allerdings können diese von anderen Apple-Geräte nicht unterschieden werden, sodass der Nutzer selbst die Entscheidung treffen muss, ob ein im Scan auftauchendes Gerät ein Tracker ist oder nicht.
+
+\subsection{Gegenmaßnahmen zu \nameref{missbrauch:4}}
+
+Das Missbrauchsszenario \nameref{missbrauch:4} lässt sich sowohl für den Erhalt der Privatsphäre als auch für die Beeinträchtigung der Privatsphäre nutzen.
+Damit sind Gegenmaßnahmen wünschenswert, welche den positiven Nutzen erhalten und gleichzeitig die mögliche negativen Nutzung verhindern.
+% TODO: geht das, was kann Apple konkret tun
+% Gegenmaßnahmen:
+%   - Empfangszeitstempel entfernen, bzw. Genauigkeit einschränken
+%   - Upload randomisieren
+%   - Upload nach zufälliger zurückgelegter Distanz
+% => alle Maßnahmen nur gegen negativen Missbrauch, für Crowd-Monitoring sind Uploadzeitpunkte nicht relevant, sondern nur die Zeitstempel beim erkennen
+% gilt nicht unbedingt für Bewegung von Menschenmengen (der vorgestellte Ansatz korreliert gemeinsam hochgeladene Reports)
+
+
+\subsection{Gegenmaßnahmen zu \nameref{missbrauch:5}}
+\subsection{Gegenmaßnahmen zu \nameref{missbrauch:6}}

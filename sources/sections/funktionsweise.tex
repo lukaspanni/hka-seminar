@@ -195,22 +195,24 @@ Durch Codierung von Daten in der zufälligen Adresse, kann das Feld jedoch für 
 Apple speichert die ersten 46 Bit des öffentlichen Schlüssels in der Advertising Address, wobei die beiden \acp{MSB} des ersten Bytes jeweils auf 1 gesetzt werden müssen, um der \ac{BLE}-Spezifikation zu genügen.
 Die restlichen 170 Bit, bestehend aus den Bytes 6 bis 27 und den fehlenden zwei Bits des Byte 0 werden im Advertising Payload übertragen \cite{Apple_FindMySpec,Heinrich_FindMy}.
 \autoref{fig:apple_advertising} zeigt den resultierenden Aufbau eines Advertisement Pakets des „Wo ist?“ Dienstes.
-Die Teile, in welchen der öffentliche Schlüssel übertragen wird, sind gelb hinterlegt.
-Das als "Hint" bezeichnete Feld codiert laut Spezifikation \cite{Apple_FindMySpec} Byte 5 des öffentlichen Schlüssels, laut Heinrich \textit{et al.} \cite{Heinrich_FindMy} ist dieses Feld bei iOS allerdings immer 0.
-Mayberry \textit{et al.} \cite{Mayberry_Tracking} konnten beobachten, dass dieses Feld bei AirTags tatsächlich auf Byte 5 des öffentlichen Schlüssels gesetzt wird, konnten aber keine weitere Funktion des Felds für den „Wo ist?“ Dienst identifizieren.
-Somit wird das Feld nur bei Accessories gesetzt.
-Da weder in \cite{Heinrich_FindMy} noch in \cite{Mayberry_Tracking} eine Funktion dieses Felds identifiziert werden kann und die Spezifikation \cite{Apple_FindMySpec} keine weitere Information zu diesem Feld enthält, wird angenommen, dass es aktuell keine spezielle Funktion erfüllt.
-\begin{figure}
+\begin{figure}[ht]
     \centering
     \includegraphics[width=0.9\textwidth]{apple_advertising.pdf}
     \caption{Aufbau der Advertisement Pakete des „Wo ist?“ Dienstes.}
     \label{fig:apple_advertising}
 \end{figure}
+Die Teile, in welchen der öffentliche Schlüssel übertragen wird, sind gelb hinterlegt.
+Das Status-Feld kodiert neben dem ungefähren Akkustand in den Stufen \textit{„Full“}, \textit{„Medium“}, \textit{„Low“} und \textit{„Very Low“} den Typ des Geräts \cite{Mayberry_Tracking}.
+Dabei wird zwischen Apple Endgeräten (iPhone, iPad, MacBook), AirTags, Drittanbieterprodukten und Kopfhörern unterschieden \cite{Heinrich_AirGuard}.
+Das als "Hint" bezeichnete Feld codiert laut Spezifikation \cite{Apple_FindMySpec} Byte 5 des öffentlichen Schlüssels, laut Heinrich \textit{et al.} \cite{Heinrich_FindMy} ist dieses Feld bei iOS allerdings immer 0.
+Mayberry \textit{et al.} \cite{Mayberry_Tracking} konnten beobachten, dass dieses Feld bei AirTags tatsächlich auf Byte 5 des öffentlichen Schlüssels gesetzt wird, konnten aber keine weitere Funktion des Felds für den „Wo ist?“ Dienst identifizieren.
+Somit wird das Feld nur bei Accessories gesetzt.
+Da weder in \cite{Heinrich_FindMy} noch in \cite{Mayberry_Tracking} eine Funktion dieses Felds identifiziert werden kann und die Spezifikation \cite{Apple_FindMySpec} keine weitere Information zu diesem Feld enthält, wird angenommen, dass es aktuell keine spezielle Funktion erfüllt.
 
 Standardmäßig scannen alle Apple-Geräte (Finder-Devices) im Hintergrund nach Advertisements, die die Firmen-ID von Apple enthalten.
 Wird ein Paket durch den Apple Payload Typ 0x12 als Advertisement für den „Wo ist?“ Dienst identifiziert, wird vom Finder Device zunächst die aktuelle Position bestimmt und ein Location Report erstellt.
 Das Format dieses Reports ist in \autoref{fig:location_report} gezeigt.
-\begin{figure}
+\begin{figure}[ht]
     \centering
     \includegraphics[width=0.85\textwidth]{location_report}
     \caption{Format des Location Reports \cite{Heinrich_FindMy}}

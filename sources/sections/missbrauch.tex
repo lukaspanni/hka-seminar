@@ -170,7 +170,7 @@ Diese Funktion kann durch jeden in \ac{BLE}-Reichweite ausgelöst werden \cite{H
 Das Szenario des direkten Tracking von Personen bezieht sich auf die Verfolgung durch AirTags oder andere kleine Tracker.
 Durch die kleine Größe der Tracker können diese in Jacken, Rucksäcken oder an Fahrzeugen befestigt werden, um einzelne Personen gezielt zu verfolgen.
 Dieser Angriff wurde bereits vielfach in der Praxis beobachtet und für Stalking oder Autodiebstahl genutzt \cite{NYT_Airtags}.
-Der „Wo ist?“ Dienst bietet zwar eine Funktion zur „Unwanted tracking detection“, um Nutzer auf mögliche Verfolgung hinzuweisen \cite{Apple_FindMySpec}.
+Der „Wo ist?“ Dienst bietet zwar eine Funktion zur \ac{UT}, um Nutzer auf mögliche Verfolgung hinzuweisen \cite{Apple_FindMySpec}.
 Allerdings wurde bereits gezeigt, dass diese Funktion leicht umgangen werden kann \cite{Mayberry_Tracking} und in vielen Fällen nicht zuverlässig vor Tracking warnen kann \cite{Heinrich_AirGuard}.
 Darüber hinaus ist die Funktion nur für iOS-Geräte direkt verfügbar, sodass für Android-Nutzer keinerlei Warnung erfolgt.
 Demnach sind die Gegenmaßnahmen des „Wo ist?“ Dienstes gegen das direkte Tracking von Personen nicht als ausreichend zu bewerten.
@@ -180,7 +180,7 @@ Demnach sind die Gegenmaßnahmen des „Wo ist?“ Dienstes gegen das direkte Tr
 \label{missbrauch:4}
 Beim indirekten Tracking werden Personen nicht durch Tracker direkt verfolgt.
 Stattdessen werden anhand der Uploadzeitpunkte von Location Reports Rückschlüsse auf die Bewegung von Personen gezogen.
-Dieses Missbrauchsszenario wurde von Tonetto \textit{et al.} \cite{Tonetto_FindMy} vorgestellt und kann nicht nur für das schadhafte Tracking von Personen genutzt werden, sondern auch als privatsphärefreundliche Funktion zum Crowd-Monitoring.
+Dieses Missbrauchsszenario wurde von Tonetto \textit{et al.} \cite{Tonetto_FindMy} vorgestellt und kann nicht nur für das schadhafte Tracking von Personen genutzt werden, sondern auch zum Crowd-Monitoring unter Wahrung der Privatsphäre.
 Da Finder Devices Location Reports generell gebündelt hochladen, und Apples Server die Uploadzeitpunkte mit einer Genauigkeit von wenigen Millisekunden speichern, ist es für Angreifer möglich, Location Reports, die vom gleichen Gerät stammen, anhand der Uploadzeitpunkte zu identifizieren \cite{Tonetto_FindMy}.
 Während Finder Devices mit Mobilfunkverbindung Location Reports in der Regel erst nach einigen Stunden hochladen, erfolgt der Upload bei einer WLAN-Verbindung deutlich schneller.
 Wechselt ein Finder Device von einer Mobilfunkverbindung zu einer WLAN-Verbindung, werden die zwischengespeicherten Location Reports in der Regel kurz darauf hochgeladen.
@@ -192,15 +192,25 @@ Werden diese Location Reports gebündelt hochgeladen, kann der Angreifer die zus
 Aus den Positionen und Zeitpunkten der Erstellung der Reports kann die Bewegung des Finder Device rekonstruiert werden \cite{Tonetto_FindMy}.
 
 
-Zum privatsphärefreundlichen Crowd-Monitoring werden einzelne Tracker an öffentlichen Orten platziert.
-Finder Devices, die sich in der Nähe dieser Tracker befinden, generieren Location Reports.
-Diese Reports können von Apples Servern heruntergeladen werden und erlauben über die Anzahl der Reports Rückschlüsse auf die Anzahl der Personen, die sich in der Nähe des Trackers aufgehalten haben.
-Über die Verwendung mehrere Tracker lassen sich auch die Bewegungen von Menschenmassen rekonstruieren.
-Dieser Missbrauch des „Wo ist?“ Dienstes kann als Alternative zu aktuellen Bilderkennungs-basierten Crowd-Monitoring-Systemen verwendet werden und erlaubt eine ähnliche Genauigkeit.
-Zusätzlich ist dieser Ansatz besser für die Privatsphäre der Betroffenen als die Bilderkennung, da keine personenbezogenen Daten erhoben werden \cite{Tonetto_FindMy}.
+Zur Nutzung zum Crowd-Monitoring werden einzelne Tracker an öffentlichen Orten platziert.
+Finder Devices, die sich in der Nähe dieser Tracker befinden, generieren Location Reports für diese.
+Diese Reports können von Apples Servern heruntergeladen werden und erlauben über die Anzahl der Reports für einen bestimmten Tracker Rückschlüsse auf die Anzahl der iPhone-Nutzer, die sich in der Nähe des Trackers aufgehalten haben.
+Die Zahl der iPhone-Nutzer kann verwendet werden, um die Gesamtzahl der Personen zu schätzen, beispielsweise unter Einbeziehung eines KI-Systems.
+Durch die Verzögerung beim Upload der Reports sind die Daten allerdings ebenfalls nur mit einer gewissen Verzögerung verfügbar \cite{Tonetto_FindMy}.
+
+Über die Verwendung mehrere Tracker lassen sich auch die Bewegungen von Menschenmengen rekonstruieren.
+Dabei werden die Tracker an verschiedenen Orten platziert und die Location Reports der Finder Devices heruntergeladen.
+Anhand der Uploadzeitpunkte der Reports kann bestimmt werden, welche Reports vom gleichen Finder Device stammen \cite{Tonetto_FindMy}.
+Darauf aufbauend kann die Zeit bestimmt werden, die das Finder Device benötigt hat, die Distanz zwischen jeweils zwei Trackern zurückzulegen.
+Alternativ könnte, über das oben vorgestellte Verfahren, die Anzahl der Personen in der Nähe jedes Trackers zu verschiedenen Zeiten bestimmt werden und auf Basis der Veränderungen Rückschlüsse auf die Bewegungen der Menschenmengen gezogen werden.
 
 
-\subsection{M5: Verdeckter Datentransfer}
+Dieser Missbrauch des „Wo ist?“ Dienstes kann als Alternative zu aktuellen Crowd-Monitoring-Systemen, welche auf Bilderkennung oder der Auswertung von Wi-Fi Management Frames basieren, verwendet werden und erlaubt eine ähnliche Genauigkeit.
+Zusätzlich ist dieser Ansatz besser für die Privatsphäre der Betroffenen, da keine personenbezogenen Daten erhoben werden \cite{Tonetto_FindMy}.
+Deshalb wird dieser Einsatzzweck als „positiver“ Missbrauch des „Wo ist?“ Dienstes bewertet.
+
+
+\subsection[M5]{M5: Verdeckter Datentransfer}
 \label{missbrauch:5}
 Tonetto \textit{et al.} \cite{Tonetto_FindMy} und Bräunlein \cite{braeunlein_sendmy} zeigen unabhängig voneinander, dass der „Wo ist?“ Dienst auch für einen verdeckten Datentransfer mit einer niedrigen Übertragungsrate ausgenutzt werden kann.
 Dabei werden Finder Devices dazu genutzt, Daten an Apples Server zu übertragen, welche vom Angreifer heruntergeladen und dekodiert werden können.
@@ -235,7 +245,7 @@ Zusätzlich muss der Empfänger weniger Anfragen an Apples Server stellen, da nu
 Bräunleins Verfahren benötigt zwei Anfragen an Apples Server pro übertragenem Bit.
 
 
-\subsection{M6: Korrelation von Standorten durch Apple}
+\subsection[M6]{M6: Korrelation von Standorten durch Apple}
 \label{missbrauch:6}
 
 Das zweite Ziel des Angreifermodells des Dienstanbieters (A4 in \autoref{fig:adversary_models}) bezieht sich auf die Korrelation von Standorten mehrerer Nutzer.
@@ -246,3 +256,8 @@ Daraus lässt sich folgern, welche Nutzer sich zu welcher Zeit an einem gemeinsa
 Apple könnte diese Informationen nutzen, um soziale Beziehungen zwischen Nutzern zu bestimmen und diese, zum Beispiel zu Werbezwecken, zu analysieren.
 In \cite{Heinrich_FindMy} wird zusätzlich aufgezeigt, dass diese Daten auch von Strafverfolgungsbehörden genutzt werden könnten, um unter anderem die Identität von Demonstrationsteilnehmern zu bestimmen.
 Jedoch ist nicht klar, ob Apple diese Daten tatsächlich speichert und nutzt.
+% TODO: weiter darauf eingehen; auch: wie ist die Rechstlage z.B. in den USA?
+
+
+
+% TODO Tabelle zur Zusammenfassung der Missbrauchsszenarien: Angreifermodell, Ziel, Betroffene, Auswirkungen 
