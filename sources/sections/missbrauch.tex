@@ -143,7 +143,7 @@ Der Besitzer erhält die manipulierten Standortdaten interpretiert diese als kor
 Es ist unklar, ob Apple gegen diese Art der Manipulation Maßnahmen ergreift.
 
 
-\subsubsection[M2.1]{M2.1: Angriff auf die Verfügbarkeit durch Angreifer mit physischem Zugriff}
+\subsubsection[M2.1]{M2.1: \ac{DOS}: Angreifer mit physischem Zugriff}
 \label{missbrauch:2.1}
 Die Verfügbarkeit der Standortdaten ist für die Betrachtung im Rahmen dieser Arbeit weniger relevant, da das Design des Dienstes vergleichsweise wenige Auswirkungen auf die Verfügbarkeit hat.
 Dennoch ist die Verfügbarkeit durch verschiedene Angriffe bedroht.
@@ -153,7 +153,7 @@ Beispielsweise in Zusammenhang mit Diebstahl eines Gegenstandes, an welchem ein 
 In diesem Kontext ist auch das Entfernen des AirTags vom Gegenstand möglich um die weitere Lokalisierung zu verhindern.
 Da keine neuen, gültigen Standortdaten erzeugt werden, ist die Verfügbarkeit eingeschränkt.
 
-\subsubsection[M2.2]{M2.2: Angriff auf die Verfügbarkeit durch Angreifer in der Nähe}
+\subsubsection[M2.2]{M2.2: \ac{DOS}: Angreifer in der Nähe}
 \label{missbrauch:2.2}
 Zur Einschränkung der Verfügbarkeit der Standortdaten, reicht es auch aus, wenn ein Angreifer sich in der Nähe des Geräts befindet.
 Zum Beispiel ist bei dem von Garg \textit{et al.} \cite{Garg_Secure_Tracker} als sicher vorgeschlagenen Systemen neben dem Entfernen der Batterie auch das gezielte Entladen dieser ohne physischen Zugriff möglich.
@@ -260,4 +260,33 @@ Jedoch ist nicht klar, ob Apple diese Daten tatsächlich speichert und nutzt.
 
 
 
-% TODO Tabelle zur Zusammenfassung der Missbrauchsszenarien: Angreifermodell, Ziel, Betroffene, Auswirkungen 
+
+%TODO: sinnvoll?
+\subsection{Zusammenfassung Missbrauchsszenarien ohne ausreichende Gegenmaßnahmen}
+In \autoref{tab:missbrauchsszenarien} werden die Missbrauchsszenarien zusammengefasst, gegen welche von Apple aktuell keine ausreichenden Gegenmaßnahmen ergriffen werden.
+Dazu sind die Zielsetzung des Angreifers und mögliche Betroffene eines solchen Angriffs aufgeführt
+
+\begin{table}[ht]
+  \caption{Zusammenfassung der Missbrauchsszenarien \nameref{missbrauch:1} bis \nameref{missbrauch:6}.}
+  \label{tab:missbrauchsszenarien}
+  \begin{tabularx}{\textwidth}{ |l|X|X|X| }
+    \hline
+    \textbf{Szenario} & \textbf{Beschreibung} & \textbf{Angriffsziel} & \textbf{Betroffene}\\
+    \Xhline{0.5mm}
+    \hline
+    \nameref{missbrauch:1} & Replay-Angriff & Integrität, Verfügbarkeit & Nutzer des „Wo ist?“ Dienstes \\
+    \hline
+    \nameref{missbrauch:2.1} & \ac{DOS}: Angreifer mit physischer Zugriff & Verfügbarkeit & Nutzer des „Wo ist?“ Dienstes \\
+    \hline
+    \nameref{missbrauch:2.2} & \ac{DOS}: Angreifer in der Nähe & Verfügbarkeit & Nutzer des „Wo ist?“ Dienstes \\
+    \hline
+    \nameref{missbrauch:3} & Direktes Tracking & Vertraulichkeit & Jeder \\
+    \hline
+    \nameref{missbrauch:4} & Indirektes Tracking & Vertraulichkeit & Nutzer des „Wo ist?“ Dienstes  \\
+    \hline
+    \nameref{missbrauch:5} & Verdeckter Datentransfer & Ausnutzung zur Datenübertragung & Apple \\
+    \hline
+    \nameref{missbrauch:6} & Korrelation von Nutzerstandorten & Vertraulichkeit & Nutzer des „Wo ist?“ Dienstes \\
+    \hline
+  \end{tabularx}
+\end{table}
