@@ -88,14 +88,35 @@ Allerdings können diese von anderen Apple-Geräte nicht unterschieden werden, s
 
 Das Missbrauchsszenario \nameref{missbrauch:4} lässt sich sowohl für den Erhalt der Privatsphäre als auch für die Beeinträchtigung der Privatsphäre nutzen.
 Damit sind Gegenmaßnahmen wünschenswert, welche den positiven Nutzen erhalten und gleichzeitig die mögliche negativen Nutzung verhindern.
-% TODO: geht das, was kann Apple konkret tun
-% Gegenmaßnahmen:
-%   - Empfangszeitstempel entfernen, bzw. Genauigkeit einschränken
-%   - Upload randomisieren
-%   - Upload nach zufälliger zurückgelegter Distanz
-% => alle Maßnahmen nur gegen negativen Missbrauch, für Crowd-Monitoring sind Uploadzeitpunkte nicht relevant, sondern nur die Zeitstempel beim erkennen
-% gilt nicht unbedingt für Bewegung von Menschenmengen (der vorgestellte Ansatz korreliert gemeinsam hochgeladene Reports)
+Der negative Missbrauch durch indirektes Tracking beruht darauf, gemeinsam hochgeladene Location Reports korrelieren zu können.
+Dazu werden die Upload-Zeitstempel verwendet, die von Apples Servern beim Empfang gespeichert werden.
+Tonetto \textit{et al.} \cite{Tonetto_FindMy} schlagen daher eine Reduktion der Genauigkeit der Zeitstempel oder deren komplette Abschaffung als Gegenmaßnahmen vor.
+Alternativ kann auch der Upload der einzelnen Location Reports zufällig verteilt werden.
+Konkret werden zufällige Zeitintervalle oder zufällige seit der Erstellung zurückgelegte Distanzen vorgeschlagen.
+
+Diese Gegenmaßnahmen sind alle geeignet, die Korrelation mehrerer Location Reports zumindest zu erschweren.
+Damit ist auch die Rekonstruktion von Bewegungen und die indirekte Verfolgung von Personen nicht mehr möglich. 
+
+Der positive Missbrauch des Crowd-Monitoring wird durch diese Gegenmaßnahmen nicht komplett verhindert.
+Insbesondere die Abschätzung von Personendichten ist nicht davon Abhängig, Location Reports des gleichen Geräts miteinander in Verbindung zu bingen und ist demnach uneingeschränkt weiterhin möglich.
+%TODO: eventuell Crowd-Flow als Begriff verwenden
+Die Rekonstruktion der Bewegung von Menschenmengen, nach der in \cite{Tonetto_FindMy} vorgestellten Methode, verwendet jedoch die Zeitstempel des Uploads und ist nicht mehr möglich.
+Allerdings ließen sich die Bewegungen auch anhand der Veränderung der Personendichte über die Zeit abschätzen.
+Die Genauigkeit dieser Alternative im Vergleich ist mangels Untersuchung durch die Autoren nicht bekannt.
+Weitere Gegenmaßnahmen, welche auch die Abschätzung der Personendichte verhindern könnten, werden nicht vorgeschlagen.
+Da dieses Szenario nur von der Möglichkeit Location Reports abzurufen abhängt, können kaum Gegenmaßnahmen getroffen werden, welche nicht die Funktionsweise des Dienstes an sich ändern.
+Die Limitierung der zurückgegebenen Anzahl von Location Reports könnte diese Methode zwar erschweren, allerdings würde so vermutlich auch die Genauigkeit der Standortinformationen von tatsächlich verlorenen Geräten reduziert werden.
+
+Die Nutzer können sich gegen positiven und negativen Missbrauch, nach Szenario \nameref{missbrauch:4}, nur schwer schützen.
+Abschaltung der \ac{BLE}-Funktion des Gerätes gilt, neben dem Opt-Out aus dem „Wo ist?“ Dienst, als einzige brauchbare Möglichkeit den Missbrauch zu verhindern.
+Durch regelmäßige Verbindung mit einem WLAN-Netzwerk wäre es möglich, die Korrelation von Location Reports zumindest zu erschweren, da weniger Location Reports gebündelt hochgeladen würden. 
+Jedoch ist die Verbindung mit einem WLAN-Netzwerk nicht immer möglich und auch nicht immer gewünscht.
+Sinnvole Schutzmaßnahmen müssen demnach von Apple getroffen werden.
+%TODO: in jedem Abschnitt eine Einschätzung ob die Nutzer sich gut schützen können 
 
 
 \subsection{Gegenmaßnahmen zu \nameref{missbrauch:5}}
+
 \subsection{Gegenmaßnahmen zu \nameref{missbrauch:6}}
+
+
