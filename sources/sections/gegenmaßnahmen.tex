@@ -111,12 +111,40 @@ Die Nutzer können sich gegen positiven und negativen Missbrauch, nach Szenario 
 Abschaltung der \ac{BLE}-Funktion des Gerätes gilt, neben dem Opt-Out aus dem „Wo ist?“ Dienst, als einzige brauchbare Möglichkeit den Missbrauch zu verhindern.
 Durch regelmäßige Verbindung mit einem WLAN-Netzwerk wäre es möglich, die Korrelation von Location Reports zumindest zu erschweren, da weniger Location Reports gebündelt hochgeladen würden. 
 Jedoch ist die Verbindung mit einem WLAN-Netzwerk nicht immer möglich und auch nicht immer gewünscht.
-Sinnvole Schutzmaßnahmen müssen demnach von Apple getroffen werden.
+Sinnvolle Schutzmaßnahmen müssen demnach von Apple getroffen werden.
 %TODO: in jedem Abschnitt eine Einschätzung ob die Nutzer sich gut schützen können 
 
 
 \subsection{Gegenmaßnahmen zu \nameref{missbrauch:5}}
+Der verdeckte Datentransfer über den „Wo ist?“ Dienst betrifft nicht die Privatsphäre der Nutzer.
+Außerdem ist nur eine sehr geringe Datenrate möglich, was dieses Missbrauchsszenario für Angreifer in der Praxis weniger interessant macht.
+Dennoch hat Apple ein berechtigtes Interesse, den kostenlosen Datentransfer über seinen Dienst zu verhindern.
+Dazu schlagen die Autoren von \cite{Tonetto_FindMy} vor, die Anzahl der Location Reports, die von einem Finder Device hochgeladen werden können, zu begrenzen.
+Durch andere Finder Devices in der Nähe, reicht diese Begrenzung nicht aus um den verdeckten Datentransfer zu verhindern.
+Zusätzlich kann die Anzahl der Location Reports pro Advertising Key begrenzt werden.
+Die Kodierung, wie von Bräunlein \cite{braeunlein_sendmy} vorgeschlagen, wäre davon nicht betroffen, da für jedes Bit der Nachricht ein eigener Advertising Key verwendet wird.
+Als weitere Gegenmaßnahme kann die Anzahl der von einem Gerät abrufbaren Location Reports begrenzt werden.
+Somit ließe sich vermeiden, dass ein Angreifer alle für die Kodierung der Nachricht verwendeten Location Reports erhält.
+Durch die Verwendung von mehreren Geräten zum Abruf der Reports könnte auch diese Maßnahme umgangen werden.
+Apple könnte auch den Abruf von Location Reports auf Lost Devices beschränken, die unter der gleichen Apple-ID registriert sind.
+Eine Registrierung, die die Zuordnung eines hochgeladenen Location Reports zu einer Apple-ID erlaubt, ist jedoch nicht vorgesehen und erfordert eine signifikante Anpassung des Dienstes.
+Entweder müsste der \ac{MBK} mit der Apple-ID verknüpft werden, was die Ende-zu-Ende-Verschlüsselung aufweicht, oder Lost Devices müssten im \ac{BLE}-Advertisement Daten senden, die das Gerät mit einer Apple-ID verknüpfbar machen.
+Letzteres würde die Verfolgbarkeit von Lost Devices anhand der \ac{BLE}-Advertisements im Vergleich zum aktuellen System erleichtern.
+Zusätzlich bietet bereits die aktuelle Implementierung keine Möglichkeit noch mehr Daten in einem einzelnen Advertisement-Paket zu senden.
+
+
+Nutzer können nur durch Opt-Out aus dem „Wo ist?“ Dienst oder durch Abschaltung der \ac{BLE}-Funktion des Gerätes die Mitwirkung am verdeckten Datentransfer verhindern.
+Allerdings sind die Nutzer davon nicht direkt betroffen und Gegenmaßnahmen sind daher nicht zwingend notwendig.
 
 \subsection{Gegenmaßnahmen zu \nameref{missbrauch:6}}
+Um die Korrelation der Standortdaten zu verhindern, muss entweder der Upload oder der Download der Location Reports ohne Authentifizierung erfolgen.
+Ein unauthentifizierter Upload würde jedoch den Upload gefälschter von Location Reports erleichtern, da dafür kein Apple-Gerät mehr benötigt würde.
+Die Auswirkungen gefälschter Location Reports sind mit den Auswirkungen von Replay-Angriffen nach Szenario \nameref{missbrauch:1} vergleichbar und könnten die Verfügbarkeit und Integrität der Standortdaten gefährden.
+Der Download könnte prinzipiell ohne Authentifizierung erfolgen, da die Location Reports Ende-zu-Ende-verschlüsselt sind und auch die aktuelle Implementierung nicht prüfen kann, ob ein Location Report zur Apple-ID gehört, die den Download anfordert.
+Diese Maßnahme wird auch von Heinrich \textit{et al.} \cite{Heinrich_FindMy} vorgeschlagen.
+In Verbindung mit den gegen andere Missbrauchsszenarien vorgeschlagenen Gegenmaßnahmen, wäre es jedoch möglich, dass der Download authentifiziert erfolgen muss.
+Weiterhin ist fraglich, inwieweit Apple ein Interesse daran hat, die Korrelation der Standorte der Nutzer zu verhindern.
+Es ist nicht bekannt, ob Apple dieses Missbrauchsszenario für eigene Zwecke nutzt.
 
-
+Nutzer können sich gegen dieses Missbrauchsszenario nur durch Abschaltung der \ac{BLE}-Funktion oder durch Opt-Out aus dem „Wo ist?“ Dienst schützen.
+Außerdem lässt sich der Missbrauch durch keine Maßnahmen der Nutzer erschweren.
