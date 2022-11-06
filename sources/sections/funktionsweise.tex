@@ -17,7 +17,8 @@ Das Funktionsprinzip ist dementsprechend vergleichsweise einfach.
 \end{figure}
 Qualität und Nützlichkeit für die Nutzer eines solchen Dienstes hängt aber stark von der Anzahl der Nutzer ab.
 Die Position eines verlorenen Geräts kann nur vom Tracking-Dienst abgerufen werden, wenn ein Nutzer des gleichen Dienstes ein \ac{BLE}-Advertisement des verlorenen Geräts empfangen und die Position an den Dienst übermittelt hat.
-Je mehr Nutzer ein Dienst hat, desto größer die Wahrscheinlichkeit, dass sich ein Nutzer vor kurzem in der Nähe des verlorenen Geräts befand und desto größer die Wahrscheinlichkeit, das verlorene Gerät zu finden.
+Weiterhin ist die Positionsbestimmung verlorener Geräte nur durch Android-Geräte im Hintergrund möglich, sodass die Zahl der Android-Nutzer, welche die zum Dienst zugehörige App installiert haben ausschlaggebend für die Funktion des Dienstes ist \cite{Heinrich_AirGuard}.
+Je mehr (Android) Nutzer ein Dienst hat, desto größer die Wahrscheinlichkeit, dass sich einer dieser vor kurzem in der Nähe des verlorenen Geräts befand und desto größer wahrscheinlicher kann das verlorene Gerät gefunden werden.
 
 
 In allen untersuchten Systemen konnten Weller \textit{et al.} \cite{Weller_BLE_Finders} und Garg \textit{et al.} \cite{Garg_Secure_Tracker} unabhängig voneinander verschiedene Schwachstellen finden, die sowohl Privatsphäre als auch Sicherheit betreffen.
@@ -29,26 +30,28 @@ Außerdem bot keiner der von Garg \textit{et al.} \cite{Garg_Secure_Tracker} unt
 \subsection{Funktionsweise des „Wo ist?“ Dienstes im Detail}
 \label{sec:Funktionsweise_FindMy}
 Auf seiner Informationsseite über den „Wo ist?“ Dienst gibt Apple an: „Geräte in der Nähe senden den Standort [...] sicher an iCloud weiter [...]. Zum Schutz der Privatsphäre passiert das alles anonym und verschlüsselt“ \cite{Apple_WoIst}.
-Apple erhebt demnach den Anspruch einen Dienst anzubieten, der nicht nur sicherer, sondern auch besser für die Privatsphäre der Nutzer ist als die Dienste der Konkurrenz.
+Apple erhebt demnach den Anspruch einen Dienst anzubieten, der, im Vergleich zu den Diensten der Konkurrenz, nicht nur sicherer, sondern auch besser für die Privatsphäre der Nutzer ist.
 Vergangene Untersuchungen haben allerdings bereits gezeigt, dass auch Apples Dienst einige Schwachstellen aufweist \cite{Heinrich_FindMy,Tonetto_FindMy}.
 Diese Schwachstellen werden in \autoref{sec:Missbrauch} wieder aufgegriffen.
 
-Der vermutlich größte Vorteil des Dienstes liegt vermutlich aber in der großen Zahl der Geräte, welche aktiv die Positionsdaten verlorener Geräte sammeln.
+Der vermutlich größte Vorteil des Dienstes liegt aber in der großen Zahl der Geräte, welche aktiv die Positionsdaten verlorener Geräte sammeln.
 Laut Apple nehmen „hunderte[n] Millionen iPhone, iPad und Mac Geräte[n]“ \cite{Apple_WoIst} am „Wo ist?“ Dienst teil.
 Der größte Konkurrent Tile hatte im Jahr 2021 laut der bekannten Gadget-Review Webseite \textit{Pocket-Lint} 40 Millionen Nutzer und kann damit für die Lokalisierung auf ein deutlich kleineres Netzwerk zurückgreifen als Apple \cite{Tile_Network}.
+Zusätzlich sind Konkurrenten immer auf Android-Nutzer angewiesen, welche die App des Dienstes installiert haben, da die Bluetooth \ac{API} von iOS ein Scannen im Hintergrund nicht ermöglicht \cite{Heinrich_AirGuard}.
+Durch die standardmäßige Aktivierung des „Wo ist?“ Dienstes auf allen Apple Geräten kann Apple durch seine große Marktmacht mit dem Ausspielen eines einzelnen iOS-Updates ein deutlich größeres Netzwerk zur Lokalisierung von verlorenen Geräten aufbauen als jede Konkurrenz.
 
 
-Auf Basis des Reverse-Engineering des „Wo ist?“ Dienstes von Heinrich \textit{et al.} in \cite{Heinrich_FindMy} und der Spezifikation für Drittanbieter \cite{Apple_FindMySpec} wird im Folgenden die grundlegende Funktionsweise des Dienstes erläutert.
+Auf Basis des Reverse-Engineering des „Wo ist?“ Dienstes von Heinrich \textit{et al.} in \cite{Heinrich_FindMy} und der Spezifikation für Drittanbieter \cite{Apple_FindMySpec}, wird im Folgenden die grundlegende Funktionsweise des Dienstes erläutert.
 Dabei wird insbesondere darauf eingegangen, welche Maßnahmen Apple ergreift um Sicherheit und Privatsphäre der Nutzer besser zu schützen als die konkurrierenden Dienste. 
 
 In der Spezifikation werden folgende vier Rollen definiert \cite{Apple_FindMySpec}:
 \begin{itemize}
     \item \textbf{Owner Device}: Alle Geräte, in denen die Apple-ID des Besitzers hinterlegt ist.
     \item \textbf{Accessory}: Das zu findende Gerät.
-    \item \textbf{Find My network}: Die Menge aller Apple-Geräte, mit aktivierter „Wo ist?“ Funktion. Einzelne Geräte werden jeweils als \textbf{Finder Device} bezeichnet.
-    \item \textbf{Apple Server}: Server der die Standortinformationen speichert.
+    \item \textbf{Find My network}: Die Menge aller Apple-Geräte, mit aktivierter „Wo ist?“ Funktion. Einzelne Geräte werden jeweils als \textbf{Finder Device} bezeichnet. Diese sind für das erstellen sogenannter \textit{Location Reports} verantwortlich.
+    \item \textbf{Apple Server}: Server der die Location Reports speichert.
 \end{itemize}
-\autoref{fig:findMy_roles} zeigt die Rollen, deren Beziehungen und die jeweiligen Aufgaben wie in der Spezifikation angegeben.
+\autoref{fig:findMy_roles} zeigt die Rollen, deren Beziehungen und die jeweiligen Aufgaben, wie in der Spezifikation angegeben.
 \begin{figure}
     \centering
     \includegraphics[width=0.9\textwidth]{findMy_roles}
@@ -57,7 +60,7 @@ In der Spezifikation werden folgende vier Rollen definiert \cite{Apple_FindMySpe
 \end{figure}
 Apple erlaubt seit April 2021 auch Drittanbietern die Nutzung des „Wo ist?“ Netzwerks um die eigenen Produkte zu finden \cite{Apple_FindMy3rdParty}.
 Da die Spezifikation speziell für Drittanbieter erstellt wurde, wird das zu findende Gerät als \textit{Accessory} bezeichnet.
-In der folgenden Beschreibung wird jedoch meist der Begriff \textit{Lost Device} verwendet, der auch von Heinrich \textit{et al.} \cite{Heinrich_FindMy} verwendet wird und sowohl Produkte von Drittanbietern als auch von Apple abdeckt.
+In der folgenden Beschreibung wird jedoch meist der Begriff \textit{Lost Device} verwendet, der auch von Heinrich \textit{et al.} \cite{Heinrich_FindMy} benutzt wird und sowohl Produkte von Drittanbietern als auch von Apple abdeckt.
 Bei einzelnen Details gibt es Unterschiede zwischen Endgeräten von Apple und Accessories, welche jeweils speziell erwähnt werden.
 Das zu findende Gerät muss mit der Apple-ID des Besitzers verbunden sein, um gefunden werden zu können.
 Drittanbieter Geräte und AirTags müssen dazu vor der ersten Verwendung über einen Pairing-Prozess mit einem Apple-Gerät verbunden werden \cite{Apple_FindMySpec}.
@@ -66,60 +69,98 @@ Drittanbieter Geräte und AirTags müssen dazu vor der ersten Verwendung über e
 \label{sec:Kryptografie}
 
 Um bessere Sicherheit und Privatsphäre als die Konkurrenz zu bieten, setzt Apple auf asymmetrische \ac{ECC} Verschlüsselung.
-Standortdaten werden immer Ende-zu-Ende verschlüsselt, sodass potenzielle Angreifer die Positionen der Nutzer nicht verfolgen können, sollten sie an Standortdaten gelangen.
-Durch den verwendeten Prozess zur Verschlüsselung kann auch Apple selbst nicht auf die Standortdaten zugreifen.
+Standortdaten werden immer mit einer Ende-zu-Ende-Verschlüsselung vor unbefugtem Zugriff geschützt.
+So können weder Apple noch potenzielle Angreifer die Standortdaten der Nutzer auslesen.
 Nur der Besitzer des Geräts kann die Standortdaten zur Lokalisierung des Geräts entschlüsseln \cite{Greenberg_FindMyCrypto}.
 
-
-Jedes Owner Device erstellt zunächst den sogenannten \textit{Master Beacon Key}, bestehend aus einem \ac{ECC} Schlüsselpaar und einem symmetrischen Schlüssel.
-Diese Schlüssel werden über den iCloud Dienst zwischen allen Geräten mit der gleichen Apple-ID synchronisiert.
+Die Schlüsselgenerierung ist in \autoref{fig:crypto_keygen} dargestellt und wird im Folgenden näher erläutert.
+Jedes Owner Device \textit{a)} erzeugt zunächst ein \ac{ECC} Schlüsselpaar $K_{ECC}$ und einen symmetrischen Schlüssel $SK$ \textit{(1)}.
+Diese bilden zusammen den sogenannten \textit{\ac{MBK}} ($MBK = K_{ECC} + SK$).
+Diese \acp{MBK} werden über den iCloud Dienst zwischen allen Geräten mit der gleichen Apple-ID synchronisiert \textit{(2)}.
 Um die Schlüssel bei der Synchronisierung zu schützen, werden sie mit einem symmetrischen Schlüssel, aus der als sicher geltenden iCloud Keychain, verschlüsselt \cite{Heinrich_FindMy,Afonin_iCloudKeychain}.
-Der private Schlüssel des \ac{ECC}-Schlüssels sowie der symmetrische Schlüssel des Master Beacon Keys müssen geheim bleiben.
-Auch der öffentliche Teil des \ac{ECC}-Schlüssels im Master Beacon Key, wird nie über \ac{BLE} übertragen.
-Stattdessen wird der Master Beacon Key verwendet, um temporär gültige Schlüssel abzuleiten, die im \ac{BLE}-Advertising übertragen werden können.
-Für die Ableitung dieser sogenannten \textit{Advertising Keys} wird die ANSI X9.63-\ac{KDF} verwendet \cite{Apple_FindMySpec}.
-Aus einem im \ac{BLE}-Advertising übertragenen öffentlichen Schlüssel kann somit, ohne Kenntnis des Master Beacon Keys, der nächste öffentliche Schlüssel nicht abgeleitet werden.
-Durch regelmäßiges Wechseln des verwendeten Avertising Keys wird es einem Angreifer erschwert, ein Lost Device anhand der im Advertising übertragenen Daten zu verfolgen.
-Da für die Verschlüsselung der Standortdaten nur die X-Koordinate des öffentlichen Schlüssels benötigt wird, kann auf die Übertragung der Y-Koordinate verzichtet werden \cite{Heinrich_FindMy}.
 
-Die Verschlüsselung der Standortdaten erfolgt auf dem Finder Device mit dem \ac{AES}-Algorithmus im \ac{GCM}-Modus.
-Aus dem, vom Finder Device empfangenen, Advertising Key wird ein temporäres \ac{ECC}-Schlüsselpaar generiert, aus welchem über einen \ac{ECDH} Schlüsselaustauch ein geteiltes Geheimnis generiert und durch die Anwendung der ANSI X9.63-\ac{KDF} ein symmetrischer Schlüssel abgeleitet wird.
-Der Schlüsselaustausch verwendet den privaten Teil des temporären \ac{ECC}-Schlüssels und den öffentlichen Teil des empfangenen Advertising Keys.
-Von diesem werden die ersten 16 Byte als Schlüssel für den \ac{AES}-Algorithmus und die folgenden 16 Byte als Initialisierungsvektor verwendet \cite{Heinrich_FindMy}.
-Durch die Ausführung der Verschlüsselung auf dem Finder Device, kann die Batterie des Lost Devices geschont werden und die Lokalisierung verlorener Geräte bleibt länger möglich.
-Insbesondere bei AirTags oder Produkten von Drittanbietern kann das hilfreich sein, da diese Geräte, eine im Vergleich zu einem iPhone oder iPad, sehr geringe Batteriekapazität haben.
-Die kryptografischen Funktionen könnten den Stromverbrauch der Geräte deutlich erhöhen, wenn bei jedem Kontakt mit einem Finder-Device dieser komplexe Verschlüsselungsprozess ablaufen muss.
-Durch die Verschlüsselung auf den Finder Devices müssen die Lost Devices nur alle 15 Minuten einen neuen Schlüssel ableiten, was durch die geringere Zahl der Operationen eine deutlich geringere Belastung für die Batterie darstellt.
+   
+Geräte ohne Internetverbindung (Accessories), wie zum Beispiel AirTags oder Geräte von Drittanbietern, können ihre \acp{MBK} nicht selbst über die iCloud synchronisieren.
+Deshalb müssen diese Geräte vor der ersten Verwendung mit einem Owner Device verbunden werden.
+Beim ersten Pairing, werden vom Accessory \textit{a')} und dem Owner Device gemeinsam $K_{ECC}$ sowie zwei symmetrische Schlüssel, in der Spezifikation als $SKN$ und $SKS$ bezeichnet, berechnet \textit{(1')} \cite{Apple_FindMySpec}.
+Aus diesen Schlüsseln lassen sich zwei unterschiedliche \acp{MBK} generieren.
+Abhängig vom Zustand des Accessories bildet sich der verwendete \ac{MBK} aus dem \ac{ECC}-Schlüsselpaar und einem der beiden symmetrischen Schlüsseln.
+War das Gerät schon längere Zeit nicht mit einem Owner Device verbunden (sogenannter \textit{Separated State}), wird der SKS (S = Separated) als symmetrischer Schlüssel verwendet ($MBK_{separated} = K_{ECC} + SKS$).
+Solange das Gerät mit einem Owner Device verbunden ist sowie kurzzeitig nach dem Verlust der Verbindung (sogenannter \textit{Nearby State}), wird stattdessen der SKN (N = Nearby) verwendet ($MBK_{nerby} = K_{ECC} + SKN$) \cite{Apple_FindMySpec}.
+Beide möglichen \acp{MBK} werden verschlüsselt über den iCloud Dienst mit allen Geräten des Besitzers synchronisiert \textit{(2)}.
+Anhand dieser Schlüssel können die für die Verschlüsselung der Standortdaten verwendeten Schlüssel berechnet werden.
+So wird ermöglicht, dass verschlüsselte Standortdaten des „Wo ist?“ Dienstes auf allen Owner Devices entschlüsselt werden können \cite{Heinrich_AirGuard}.
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.9\textwidth]{krypto_keygen.pdf}
+    \caption{Generierung und Synchronisierung der Master Beacon Keys.}
+    \label{fig:crypto_keygen}
+\end{figure}
 
 
-Für die Entschlüsselung kann das geteilte Geheimnis über den \ac{ECDH} Schlüsselaustausch mit dem öffentlichen Teil des temporären Schlüssels und dem privaten Teil des Advertising Keys berechnet werden.
-Der symmetrische Schlüssel entsteht wieder durch die Anwendung der ANSI X9.63-\ac{KDF} auf das geteilte Geheimnis.
-Damit ist sichergestellt, dass die verschlüsselten Daten nur vom Besitzer entschlüsselt werden können.
-Dieser kann die für das Advertisement verwendeten Schlüsselpaare unabhängig vom verlorenen Gerät aus dem Master Beacon Key ableiten und hat somit Zugriff auf die privaten Schlüssel.
-Der öffentliche Teil des temporären Schlüssels und ein \ac{SHA}-256 Hash des verwendeten Advertising Keys wird mit den verschlüsselten Daten auf Apples Server hochgeladen.
-Der Besitzer kann diese Daten abrufen und aus der Kombination des öffentlichen temporären Schlüssels und dem privaten Advertising Keys das geteilte Geheimnis und somit den symmetrischen Schlüssel berechnen \cite{Heinrich_FindMy}.
+Um die Standortdaten der Nutzer zu schützen, werden diese mit dem \ac{AES}-Algorithmus im \ac{GCM} auf dem Finder Device Ende-zu-Ende verschlüsselt.
+Der für die Verschlüsselung verwendete Schlüssel darf nur dem Owner Device und dem Finder Device, welches die Standortdaten verschlüsselt, bekannt sein.
+Dazu muss das Lost Device in den \ac{BLE} Advertisement Paketen einen Schlüssel übertragen, aus welchem sowohl das Finder Device als auch ein Owner Device den \ac{AES} Schlüssel berechnen können.
+Da allerdings gleichzeitig die Verfolgung eines Lost Device anhand der im Advertising übertragenen Daten nicht möglich sein soll, muss der sogenannte \textit{Advertising Key} regelmäßig gewechselt werden.
+Die ANSI X9.63-\ac{KDF} wird verwendet, um temporär gültige Advertising Keys abzuleiten \cite{Apple_FindMySpec,Heinrich_FindMy}.
+Ein abgeleiteter Advertising Key $AK_i$ wird jeweils für eine definierte Zeit in \ac{BLE}-Advertisement Paketen übertragen, bevor zum nächsten Schlüssel $AK_{i+1}$ gewechselt wird.
+Für die Ableitung von $AK_{i+1}$ wird neben $AK_{i}$, auch der \ac{MBK} benötigt.
+Damit ist es für Außenstehende nicht möglich, den folgenden Advertising Key zu berechnen oder mehrere Advertising Keys miteinander in Verbindung zu bringen.
+Durch das regelmäßige Wechseln des verwendeten Avertising Keys lässt sich verhindern, dass ein Angreifer ein Lost Device anhand der im Advertising übertragenen Daten verfolgen kann \cite{Heinrich_FindMy}.
+Eine Verfolgung ist jeweils nur für das Intervall der Schlüsselrotation möglich.
 
-Da Geräte ohne Internetverbindung (Accessories), wie zum Beispiel AirTags oder andere Geräte von Drittanbietern, die Master Beacon Keys nicht über die iCloud Synchronisation erhalten können, müssen diese Geräte auf andere Weise an einen initialen Schlüssel kommen.
-Beim initialen Pairing mit einem Owner Device, werden vom Accessory und dem Owner Device gemeinsam ein \ac{ECC}-Schlüssel und zwei symmetrische Schlüssel, in der Spezifikation als SKN und SKS bezeichnet \cite{Apple_FindMySpec}, berechnet.
-Diese Schlüssel können ebenfalls verschlüsselt über die iCloud Keychain mit anderen Geräten des selben Besitzers synchronisiert werden, damit dieser empfangene Standortdaten auf allen seinen Geräten entschlüsseln kann.
-Bei Accessories wird der Advertising Key abhängig vom Zustand des Geräts unterschiedlich berechnet.
-Ist das Gerät aktuell mit einem Owner Device verbunden oder war vor kurzem mit einem Owner Device verbunden (sogenannter Nearby State), wird der Advertising Key aus dem \ac{ECC}-Schlüssel und dem SKN (N = Nearby) abgeleitet.
-War das Gerät allerdings schon längere Zeit nicht mit einem Owner Device verbunden (sogenannter Separated State) wird der Advertising Key aus dem \ac{ECC}-Schlüssel und dem SKS (S = Separated) abgeleitet \cite{Apple_FindMySpec}.
+Bei Accessories ist der für die Ableitung der Advertising Keys verwendete \ac{MBK} vom Zustand des Geräts abhängig.
+Im Nearby State, wird für die Schlüsselableitung der $MBK_{nerby}$ verwendet.
+Im Separated State wird hingegen der $MBK_{separated}$ eingesetzt \cite{Apple_FindMySpec}.
 Außerdem ist das Intervall in welchem der verwendete Advertising Key gewechselt wird, abhängig vom Zustand des Geräts.
 Im Separated State wird der Schlüssel seltener gewechselt.
-Dies ist notwendig um das Anti-Tracking Feature der Accessories zu ermöglichen.
+Dies ist unter anderem notwendig um das Anti-Tracking Feature der Accessories zu ermöglichen.
 Dabei erkennen Apple-Endgeräte, ob sich das gleiche Accessory längere Zeit in der Nähe befindet und können den Nutzer vor Tracking durch andere warnen.
-Insbesondere mit AirTags lässt sich anderen Personen sehr einfach folgen, da diese beispielsweise leicht in Autos, Taschen oder Kleidung versteckt werden können \cite{Mayberry_Tracking}.
-Auf solche Gefahren, die von Apple bereits getroffenen und die noch nötigen Gegenmaßnahmen wird in \autoref{sec:Missbrauch} und \autoref{sec:Gegenmaßnahmen} näher eingegangen.
+Insbesondere mit AirTags lässt sich anderen Personen sehr einfach folgen, da diese beispielsweise leicht in Autos, Taschen oder Kleidung versteckt werden können \cite{Heinrich_AirGuard}.
+Auf solche Gefahren, sowie die von Apple bereits getroffenen und die noch nötigen Gegenmaßnahmen, wird in \autoref{sec:Missbrauch} und \autoref{sec:Gegenmassnahmen} näher eingegangen.
 
+
+Aus dem Advertising Key $AK_i$ des Lost Device \textit{c)}, welcher von einem Finder Device \textit{b)} empfangen wird, muss ein \ac{AES}-Schlüssel für die Ende-zu-Ende-Verschlüsselung der Standortdaten abgeleitet werden.
+Dieser darf nur dem Finder Device und den Owner Devices bekannt sein.
+Um diesen Anforderungen gerecht zu werden wird zunächst ein temporäres \ac{ECC}-Schlüsselpaar ($K_{ECC}'$) generiert.
+Über einen \ac{ECDH} Schlüsselaustausch wird aus dem privaten Teil von $K_{ECC}'$ und dem öffentlichen Teil von $AK_i$ ein geteiltes Geheimnis ($s$) berechnet.
+Durch die Anwendung der ANSI X9.63-\ac{KDF} auf $s$ wird ein symmetrischer Schlüssel $e$ abgeleitet.
+Von diesem werden die ersten 16 Byte als Schlüssel für den \ac{AES}-Algorithmus und die folgenden 16 Byte als Initialisierungsvektor verwendet \cite{Heinrich_FindMy}.
+Der Prozess zur Ableitung des symmetrischen Verschlüsselungsschlüssels ist in \autoref{fig:krypto_encryption} schematisch dargestellt.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{krypto_encryption.pdf}
+    \caption{Ableitung des \ac{AES}-Schlüssels für die Ende-zu-Ende-Verschlüsselung der Standortdaten.}
+    \label{fig:krypto_encryption}
+\end{figure}
+
+Durch die Ausführung der Verschlüsselung auf dem Finder Device, kann die Batterie des Lost Devices geschont werden und die Lokalisierung verlorener Geräte bleibt länger möglich.
+Insbesondere bei AirTags oder Produkten von Drittanbietern kann das hilfreich sein, da diese Geräte eine im Vergleich zu einem iPhone oder iPad, sehr geringe Batteriekapazität haben.
+Die kryptografischen Funktionen könnten den Stromverbrauch der Geräte deutlich erhöhen, wenn bei jedem Kontakt mit einem Finder-Device dieser komplexe Verschlüsselungsprozess ablaufen muss.
+Insbesondere in Umgebungen mit vielen potenziellen Finder Devices wäre der Aufwand für die Verschlüsselung auf dem Lost Device sehr groß.
+In einer solchen Umgebung werden vermutlich seltener neue Schlüssel abgeleitet als Finder Devices Location Reports erstellen.
+Dies gilt vor allem für Accessories, welche den Schlüssel im Separated State nur alle 24 Stunden wechseln.
+
+
+Für die Entschlüsselung der Standortdaten kann $s$ über den \ac{ECDH} Schlüsselaustausch mit dem öffentlichen Teil von $K_{ECC}'$ und dem privaten Teil von $AK_i$ berechnet werden.
+Der symmetrische Schlüssel entsteht wieder durch die Anwendung der ANSI X9.63-\ac{KDF} auf das geteilte Geheimnis.
+Dazu muss der öffentliche Teil von $K_{ECC}'$ im Location Report enthalten sein.
+Außerdem muss das Owner Device erkennen können, welcher Advertising Key verwendet wurde.
+Deshalb enthält jeder Location Report einen \ac{SHA}-256 Hashwert des öffentlichen Teils von $AK_i$.
+Das Format der Location Reports wird im nachfolgenden näher erläutert und ist in  \autoref{fig:location_report} dargestellt.
+Anhand des Hashwerts kann das Owner Device so lange neue Advertising Keys ableiten, bis der Hashwert mit dem im Location Report enthaltenen übereinstimmt.
+Dieser Advertising Key kann dann für den Schlüsselaustausch verwendet werden.
+Durch die Verwendung des \ac{ECDH} Schlüsselaustauschs kann sichergestellt werden, dass die Standortdaten nur mithilfe des privaten Teils von $AK_i$ entschlüsselt werden können.
+Dieser ist nur mit Zugriff auf den \ac{MBK} des Lost Device berechenbar und kann damit nur von Owner Devices bestimmt werden.
 
 \subsubsection{Ablauf beim Verlust eines Geräts}
 \label{sec:Verlust}
 
 Alle Apple Geräte mit aktivierter Bluetooth-Funktion, die für das Finden durch den „Wo ist?“ Dienst angemeldet sind, senden periodisch, in der Regel im Advertising Intervall von 2 s \ac{BLE}-Advertisements.
 Die im Advertisement enthaltenen Daten unterscheiden sich jedoch abhängig vom Zustand des Geräts.
-iPhones, iPads und MacBooks mit Internetverbindung und alle unterstützen Geräte mit einer aktiven \ac{BLE}-Verbindung mit einem Owner Device, gelten nicht als Lost Device und senden deshalb nur die ersten fünf Bytes des öffentlichen Advertising Keys.
-Das Advertisement erfolgt vermutlich auch im nicht verlorenen Zustand um erkennen zu können, wenn ein Gerät in der Nähe die Verbindung verliert.
+iPhones, iPads und MacBooks mit Internetverbindung und alle unterstützen Geräte mit einer aktiven \ac{BLE}-Verbindung zu einem Owner Device, gelten nicht als Lost Device und senden deshalb nur die ersten fünf Bytes des öffentlichen Advertising Keys $AK_i$.
+Das Advertisement erfolgt vermutlich auch im nicht verlorenen Zustand, um erkennen zu können, wenn ein Gerät in der Nähe die Verbindung verliert.
 Die ersten fünf Byte des öffentlichen Schlüssels sollten dabei in der Regel ausreichen um verschiedene Geräte voneinander unterscheiden zu können.
 Vermutlich werden Funktionen, wie die Warnung beim Zurücklassen eines Geräts \cite{Apple_FindMyWarning}, auf diese Art umgesetzt.
 \begin{figure}[ht]
@@ -130,61 +171,69 @@ Vermutlich werden Funktionen, wie die Warnung beim Zurücklassen eines Geräts \
 \end{figure}
 
 Sobald ein Gerät die Internetverbindung oder die \ac{BLE}-Verbindung zum Owner Device verliert, wird es als Lost Device angesehen.
-Um in diesem Zustand von anderen Finder Devices gefunden zu werden, beginnt das Lost Device \ac{BLE}-Advertisements mit dem kompletten öffentlichen Advertising Key zu senden \cite{Apple_FindMySpec}.
+Um in diesem Zustand von anderen Finder Devices gefunden werden zu können, beginnt das Lost Device den kompletten öffentlichen Teil des aktuellen Advertising Keys $AK_i$ in seinen \ac{BLE}-Advertisements zu senden \cite{Apple_FindMySpec}.
 Der Screenshot der nRF-Connect App in \autoref{fig:findMy_screenshot} zeigt die verschiedenen Advertisement Daten bei unterschiedlichem Gerätezustand.
-Das erste mit „(Find My)“ gekennzeichnete Gerät ist ein iPad, dass sich nicht im verlorenen Zustand befindet, während das zweite so gekennzeichnete Gerät ein iPhone ohne Internetverbindung ist und demnach als Lost Device gilt.
-Ab iOS 15 werden auch von ausgeschalteten iPhones Advertisement Pakete gesendet um diese zum Beispiel auch bei angeblich leerem Akku finden zu können \cite{Classen_FindMy}.
+Das erste mit „(Find My)“ gekennzeichnete Gerät ist ein iPad, dass sich aufgrund einer vorhandenen Internetverbindung nicht im verlorenen Zustand befindet.
+Das zweite so gekennzeichnete Gerät ist ein iPhone ohne Internetverbindung und gilt demnach als Lost Device, weshalb hier der gesamte öffentliche Schlüssel im Advertisement Paket enthalten ist.
+Ab iOS 15 werden auch ausgeschaltete iPhones als Lost Devices angesehen und Advertisement Pakete gesendet.
+So kann ein Gerät zum Beispiel auch gefunden werden, wenn es sich aufgrund niedriger Akkuladung abschaltet oder es bei einem Diebstahl abgeschaltet wird \cite{Classen_FindMy}.
 Die Advertisement Pakete werden immer mit dem Typ \textit{manufacturer-specific data} gesendet, sodass neben angebotenen \ac{BLE}-Services auch eigene Daten übertragen werden können.
 Das Format erlaubt nach einer Firmen-ID von zwei Byte, maximal 27 weitere Byte zu übertragen.
 Da Apple, die manufacturer-specific data auch für andere Zwecke, wie zum Beispiel AirDrop nutzt, wird jeweils ein weiteres Byte für den Typ (0x12) des Pakets und dessen Länge verwendet.
-Zur Identifikation des Lost Device und zur Verschlüsselung der Standortdaten müssen die 28 Byte der X-Koordinate des aktuellen öffentlichen Schlüssels im Advertisement übertragen werden \cite{Heinrich_FindMy}.
+Zur Identifikation des Lost Device und zur Verschlüsselung der Standortdaten müssen die 28 Byte der X-Koordinate des $AK_i$ im Advertisement übertragen werden.
+Auf die Übertragung der Y-Koordinate kann verzichtet werden, da diese für den \ac{ECDH}-Schlüsselaustausch nicht benötigt wird \cite{Heinrich_FindMy}.
+
 Üblicherweise wird jeder Schlüssel für 15 Minuten verwendet, um die Verfolgung des Geräts anhand der Advertising-Daten für Dritte zu erschweren.
 Nach Ablauf der 15 Minuten wird ein neuer Schlüssel abgeleitet und für die nächste Periode im Advertisement versendet.
 Bei Accessories wird der Schlüssel im Lost Device Zustand für 24 Stunden verwendet \cite{Mayberry_Tracking}.
-Da der Schlüssel aus dem Advertising alleine nicht reicht, um den nächsten Schlüssel abzuleiten, kann so die Privatsphäre im Vergleich zu Konkurrenzprodukten verbessert werden.
-Die 25 Byte Payload reichen nicht aus, um die X-Koordinate des öffentlichen Schlüssels zu übertragen.
-Deshalb  wird zusätzlich die Advertising Address des Advertisement Pakets ausgenutzt.
+Da der Schlüssel aus dem Advertising alleine nicht ausreicht, um den nächsten Schlüssel abzuleiten, kann so die Privatsphäre im Vergleich zu Konkurrenzprodukten verbessert werden.
+Die möglichen 25 Byte Payload eines Advertisement Pakets reichen nicht aus, um die 28 Byte der X-Koordinate des öffentlichen Schlüssels zu übertragen.
+Deshalb  wird zusätzlich die Advertising Address des Advertisement Pakets ausgenutzt \cite{Heinrich_FindMy}.
 Die Advertising Address kann zum Schutz der Privatsphäre laut \ac{BLE}-Spezifikation \cite{Spec_BLE_5.3} von der tatsächlichen \ac{MAC}-Adresse des Geräts abweichen.
-Üblicherweise wird diese Funktion verwendet um über zufällige \ac{MAC}-Adressen die Nachverfolgbarkeit von Geräten und Rückschlüsse auf den Gerätehersteller zu erschweren.
+Üblicherweise wird diese Funktion verwendet, um über zufällige \ac{MAC}-Adressen die Nachverfolgbarkeit von Geräten sowie Rückschlüsse auf den Gerätehersteller anhand der ersten drei Byte zu erschweren.
 Durch Codierung von Daten in der zufälligen Adresse, kann das Feld jedoch für den Transfer beliebiger Daten ausgenutzt werden.
-Apple speichert die ersten 46 Bit des öffentlichen Schlüssels in der Advertising Address, wobei die beiden \acp{MSB} des ersten Bytes jeweils auf 1 gesetzt werden müssen, um der \ac{BLE}-Spezifikation zu genügen \cite{Heinrich_FindMy}.
-Die restlichen 170 Bit bestehend aus den Bytes 6 bis 27 und den fehlenden zwei Bits des Byte 0 werden im Advertising Payload übertragen \cite{Apple_FindMySpec}.
+Apple speichert die ersten 46 Bit des öffentlichen Schlüssels in der Advertising Address, wobei die beiden \acp{MSB} des ersten Bytes jeweils auf 1 gesetzt werden müssen, um der \ac{BLE}-Spezifikation zu genügen.
+Die restlichen 170 Bit, bestehend aus den Bytes 6 bis 27 und den fehlenden zwei Bits des Byte 0 werden im Advertising Payload übertragen \cite{Apple_FindMySpec,Heinrich_FindMy}.
 \autoref{fig:apple_advertising} zeigt den resultierenden Aufbau eines Advertisement Pakets des „Wo ist?“ Dienstes.
-Die Teile, in welchen der öffentliche Schlüssel übertragen wird, sind gelb hinterlegt.
-Das als "Hint" bezeichnete Feld codiert laut Spezifikation \cite{Apple_FindMySpec} Byte 5 des öffentlichen Schlüssels, laut Heinrich \textit{et al.} \cite{Heinrich_FindMy} ist dieses Feld bei iOS immer 0.
-Mayberry \textit{et al.} \cite{Mayberry_Tracking} konnten beobachten, dass dieses Feld bei AirTags tatsächlich auf Byte 5 des öffentlichen Schlüssels gesetzt wird, konnten aber keine weitere Funktion des Felds für den „Wo ist?“ Dienst identifizieren.
-Mit einem eigenen \ac{BLE}-Scan konnte beobachtet werden, dass das Feld bei einem iOS-Gerät auf 0 gesetzt war, obwohl Byte 5 des öffentlichen Schlüssels ungleich 0 war.
-Dies ist auch auf dem Screenshot in \autoref{fig:findMy_screenshot} zu erkennen.
-% TODO: test mit Airtag?
-\begin{figure}
+\begin{figure}[ht]
     \centering
     \includegraphics[width=0.9\textwidth]{apple_advertising.pdf}
     \caption{Aufbau der Advertisement Pakete des „Wo ist?“ Dienstes.}
     \label{fig:apple_advertising}
 \end{figure}
+Die Teile, in welchen der öffentliche Schlüssel übertragen wird, sind gelb hinterlegt.
+Das Status-Feld kodiert neben dem ungefähren Akkustand in den Stufen \textit{„Full“}, \textit{„Medium“}, \textit{„Low“} und \textit{„Very Low“} den Typ des Geräts \cite{Mayberry_Tracking}.
+Dabei wird zwischen Apple Endgeräten (iPhone, iPad, MacBook), AirTags, Drittanbieterprodukten und Kopfhörern unterschieden \cite{Heinrich_AirGuard}.
+Das als "Hint" bezeichnete Feld codiert laut Spezifikation \cite{Apple_FindMySpec} Byte 5 des öffentlichen Schlüssels, laut Heinrich \textit{et al.} \cite{Heinrich_FindMy} ist dieses Feld bei iOS allerdings immer 0.
+Mayberry \textit{et al.} \cite{Mayberry_Tracking} konnten beobachten, dass dieses Feld bei AirTags tatsächlich auf Byte 5 des öffentlichen Schlüssels gesetzt wird, konnten aber keine weitere Funktion des Felds für den „Wo ist?“ Dienst identifizieren.
+Somit wird das Feld nur bei Accessories gesetzt.
+Da weder in \cite{Heinrich_FindMy} noch in \cite{Mayberry_Tracking} eine Funktion dieses Felds identifiziert werden kann und die Spezifikation \cite{Apple_FindMySpec} keine weitere Information zu diesem Feld enthält, wird angenommen, dass es aktuell keine spezielle Funktion erfüllt.
 
 Standardmäßig scannen alle Apple-Geräte (Finder-Devices) im Hintergrund nach Advertisements, die die Firmen-ID von Apple enthalten.
-Wird ein Paket durch den Apple Payload Typ 0x12 als Advertisement für den „Wo ist?“ Dienst identifiziert, wird vom Finder Device zunächst die aktuelle Position bestimmt und ein sogenannter \textit{Location Report} erstellt.
+Wird ein Paket durch den Apple Payload Typ 0x12 als Advertisement für den „Wo ist?“ Dienst identifiziert, wird vom Finder Device zunächst die aktuelle Position bestimmt und ein Location Report erstellt.
 Das Format dieses Reports ist in \autoref{fig:location_report} gezeigt.
-\begin{figure}
+\begin{figure}[ht]
     \centering
     \includegraphics[width=0.85\textwidth]{location_report}
     \caption{Format des Location Reports \cite{Heinrich_FindMy}}
     \label{fig:location_report}
 \end{figure}
-Der Hauptbestandteil des Reports sind die wie oben beschrieben verschlüsselten Standortinformationen, bestehend aus Koordinaten, Genauigkeit und Status.
-Außerdem sind sowohl der temporäre Schlüssel, welcher vom Finder-Device aus dem Advertising Key abgeleitet und für den \ac{ECDH}-Schlüsselaustausch genutzt wurde, und der \ac{AES}-\ac{GCM} Authentication Tag teil des Reports.
+Die Hauptbestandteile des Reports sind die wie oben beschrieben verschlüsselten Standortinformationen, bestehend aus Koordinaten, Genauigkeit und Status.
+Außerdem sind sowohl der öffentliche Teil des temporären Schlüssels $K_{ECC}'$, welcher vom Finder-Device für den \ac{ECDH}-Schlüsselaustausch genutzt wurde, und der \ac{AES}-\ac{GCM} Authentication Tag, Teil des Reports.
 Daneben findet sich unter anderem der Zeitstempel zum Zeitpunkt der Erstellung des Reports.
-Beim Upload wird der Report mit einem \ac{SHA}-256 Hash des verwendeten Advertising Keys verknüpft, um die Identifizierung zu ermöglichen \cite{Heinrich_FindMy}.
+Beim Upload wird der Report mit einem \ac{SHA}-256 Hash des öffentlichen Teils von $AK_i$ verknüpft, um die Identifizierung zu ermöglichen \cite{Heinrich_FindMy}.
 Im Vergleich zu konkurrierenden Diensten ist die Verschlüsselung ein wichtiger Schritt, um die Sicherheit und Privatsphäre des Dienstes zu verbessern.
+
+
 Meist werden Reports nicht unmittelbar nach der Erstellung hochgeladen.
 Stattdessen sammelt das Gerät mehrere Reports und lädt diese gebündelt hoch.
 Der empfangende Server ordnet den Reports zusätzlich den Zeitstempel zum Zeitpunkt des Datenempfangs zu.
 Tonetto \textit{et al.} \cite{Tonetto_FindMy} haben gezeigt, dass die Art der Internetverbindung beeinflusst, wann die Reports hochgeladen werden.
-So liegt der Median für den Upload eines Reports bei aktiver WLAN-Verbindung bei 15 Minuten während bei aktiver Mobilfunkverbindung der Median bei 3 Stunden liegt.
-Der Upload erfolgt über einen HTTPS-Request, der zusätzlich über den Header authentifiziert wird.
+So liegt der Median für den Upload eines Reports bei aktiver WLAN-Verbindung bei 15 Minuten.
+Ist keine WLAN-Verbindung, sondern nur eine Mobilfunkverbindung vorhanden, werden die Reports im Median nach 3 Stunden hochgeladen.
+Der Upload erfolgt über einen HTTPS-Request, der zusätzlich über den HTTP-Header authentifiziert wird.
 Dieser Header enthält unter anderem ein Identitäts-Zertifikat des Geräts und eine Signatur des Requests.
-Diese Signatur wird mit dem privaten Schlüssel erstellt, welcher in einem speziellen Sicherheitsbereich, dem \textit{Secure Enclave Processor} des Geräts gespeichert ist, welcher das unberechtigte Auslesen verhindert.
+Diese Signatur wird mit dem privaten Schlüssel erstellt, der in einem speziellen Sicherheitsbereich, dem \textit{Secure Enclave Processor} des Geräts gespeichert ist, welcher das unberechtigte Auslesen verhindert.
 Somit kann vermutlich sichergestellt werden, dass nur Apple Geräte in der Lage sind Reports hochzuladen, was das Erstellen gefälschter Reports erschwert \cite{Heinrich_FindMy}.
 
 
@@ -194,7 +243,7 @@ So können die verschlüsselten Location Reports heruntergeladen und anschließe
 \autoref{lst:findmy_result} zeigt die Struktur der Antwort auf einen solchen Request in gekürzter Form.
 Die Antwort besteht aus einem Array von Objekten, die jeweils den Hash des Advertising Keys, einen verschlüsselten Location Report und Metadaten, darunter den Zeitstempel des Datenempfangs, enthalten.
 Anhand des Hashes kann der für die Entschlüsselung zu verwendende Advertising Key bestimmt werden.
-Entschlüsselte Standortdaten aus mehreren Reports können kombiniert werden, um Genauigkeit bei der Positionsermittlung zu erhöhen.
+Entschlüsselte Standortdaten aus mehreren Reports können kombiniert werden, um die Genauigkeit bei der Positionsermittlung zu erhöhen.
 Gleichzeitig können die Daten mehrerer Reports auch dazu verwendet werden, den Pfad des verlorenen Geräts zu rekonstruieren.
 Dafür können bis zu sieben Tage alte Positionen vom Server abgerufen werden \cite{Heinrich_FindMy}.
 
