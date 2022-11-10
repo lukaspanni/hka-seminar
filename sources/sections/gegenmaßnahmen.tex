@@ -23,7 +23,7 @@ Jedoch sind diese Maßnahmen nur durch Apple, durch eine Aktualisierung der „W
 Auf Apples Server können Manipulationen hingegen nicht erkannt werden, da dazu die Standortdaten entschlüsselt werden müssten.
 
 Die Nutzer haben keine Möglichkeit, sich vor einem Replay-Angriff zu schützen.
-Sobald ein Gerät Advertisement-Pakete sendet, könnten diese von einem Angreifer aufgezeichnet und für einen Replay-Angriff verwendet werden.
+Sobald ein Gerät Advertisement Pakete sendet, könnten diese von einem Angreifer aufgezeichnet und für einen Replay-Angriff verwendet werden.
 
 
 \subsection{Gegenmaßnahmen zu \nameref{missbrauch:2.1} und \nameref{missbrauch:2.2}}
@@ -33,7 +33,7 @@ Demnach hat Apple kaum Möglichkeiten, die Nutzer vor solchen physischen Angriff
 Die Zerstörung des Geräts könnte maximal erschwert, aber nicht verhindert werden.
 Durch eine fest verbaute Batterie könnte das Entfernen der Batterie ebenfalls nur erschwert aber nicht verhindert werden.
 
-Indirekt lassen sich physische Angriffe durch die Verlängerung der Advertisement-Intervalle weiter erschweren.
+Indirekt lassen sich physische Angriffe durch die Verlängerung der Advertisement Intervalle weiter erschweren.
 Dadurch würde ein Angreifer mehr Zeit benötigen, um das Lost Device zu finden.
 Diese Maßnahme würde allerdings gleichzeitig das Tracking anderer Personen unter Verwendung eines versteckten Trackers (\nameref{missbrauch:3}) erleichtern.
 Generell ist der „Wo ist?“ Dienst nicht als Hilfsmittel gegen Diebstahl konzipiert und wird auch nicht als solches beworben \cite{Apple_WoIst}, weshalb Apple hier keine weiteren Maßnahmen ergreift.
@@ -55,6 +55,7 @@ Wie bereits in \nameref{missbrauch:3} beschrieben, schützt die aktuell von Appl
 Das \ac{UT}-Feature setzt sich aus verschiedenen Funktionen zusammen.
 Zum einen müssen kleine Accessories einen Ton abspielen, wenn sie mindestens drei Tage vom Gerät des Besitzers getrennt sind und eine Bewegung erkennen \cite{Apple_FindMySpec}.
 Da der Lautsprecher bei AirTags beispielsweise einfach entfernt werden kann, und AirTags ohne Lautsprecher auf verschiedenen Online-Marktplätzen erhältlich sind, trägt diese Funktion kaum zum Schutz vor Stalking bei \cite{Heinrich_AirGuard}.
+Zusätzlich konnten Roth \textit{et al.} \cite{Roth_airtags} zeigen, dass die Firmware von AirTags manipuliert werden kann, um diese Funktion zu deaktivieren oder anzupassen.
 Zum anderen kann iOS die Verfolgung durch ein Accessory eines anderen Nutzers erkennen und eine Warnung anzeigen.
 Dazu werden \ac{BLE}-Advertisements von Accesories, welche seit mehr als zehn Minuten empfangen werden und dem Gerät mindestens 840 Meter gefolgt sind, als verdächtig markiert.
 Warnungen werden allerdings zur Vermeidung von false positives verzögert angezeigt.
@@ -66,9 +67,9 @@ Die Open-Source App \textit{AirGuard} für Android bietet eine ähnliche Warnfun
 Für iOS ist dieser besser Schutz aufgrund von Einschränkungen der Bluetooth-\acp{API} nicht verfügbar \cite{Heinrich_AirGuard}.
 
 Weiterhin konnte in \cite{Heinrich_AirGuard,Mayberry_Tracking} gezeigt werden, dass die \ac{UT} Funktionen von iOS mit geringem Aufwand umgangen werden können.
-Angreifer können beispielsweise inoffizielle Tracker nutzen.
-Solche Tracker, die das „Wo ist?“ Netzwerk ohne explizite Erlaubnis von Apple nutzen, lassen sich leicht aus kostengünstiger \ac{BLE}-Hardware und Open-Source Software zusammenbauen.
-Inoffizielle Tracker müssen die Spezifikation von Apple nicht einhalten und können dennoch das „Wo ist?“ Netzwerk nutzen.
+Angreifer können dazu inoffizielle Tracker nutzen.
+Solche Tracker, die das „Wo ist?“ Netzwerk ohne explizite Erlaubnis von Apple nutzen, lassen sich leicht aus kostengünstiger \ac{BLE}-Hardware und Open-Source Software zusammenbauen \cite{Heinrich,Heinrich_OpenHaystack,Mayberry_Tracking,Heinrich_AirGuard}.
+Inoffizielle Tracker müssen die Spezifikation von Apple nicht einhalten und können den Dienst trotzdem nutzen.
 Unter anderem können diese das Status-Feld des \ac{BLE}-Advertisement immer 0 senden, was den Tracker als verlorenes Endgerät ausweist.
 Verlorene Endgeräte werden für das \ac{UT}-Feature nicht betrachtet \cite{Heinrich_AirGuard,Mayberry_Tracking}.
 Dieses Problem könnte leicht durch ein Software-Update behoben werden.
@@ -116,7 +117,6 @@ Die Nutzer können sich gegen positiven und negativen Missbrauch, nach Szenario 
 Durch regelmäßige Verbindung mit einem WLAN-Netzwerk wäre es möglich, die Korrelation von Location Reports zumindest zu erschweren, da weniger Location Reports gebündelt hochgeladen würden. 
 Jedoch ist die Verbindung mit einem WLAN-Netzwerk nicht immer möglich und auch nicht immer gewünscht.
 Sinnvolle Schutzmaßnahmen müssen demnach von Apple getroffen werden.
-%TODO: in jedem Abschnitt eine Einschätzung ob die Nutzer sich gut schützen können 
 
 
 \subsection{Gegenmaßnahmen zu \nameref{missbrauch:5}}
@@ -134,7 +134,7 @@ Apple könnte auch den Abruf von Location Reports auf Lost Devices beschränken,
 Eine Registrierung, die die Zuordnung eines hochgeladenen Location Reports zu einer Apple-ID erlaubt, ist jedoch nicht vorgesehen und erfordert eine signifikante Anpassung des Dienstes.
 Entweder müsste der \ac{MBK} mit der Apple-ID verknüpft werden, was die Ende-zu-Ende-Verschlüsselung aufweicht, oder Lost Devices müssten im \ac{BLE}-Advertisement Daten senden, die das Gerät mit einer Apple-ID verknüpfbar machen.
 Letzteres würde die Verfolgbarkeit von Lost Devices anhand der \ac{BLE}-Advertisements im Vergleich zum aktuellen System erleichtern.
-Zusätzlich bietet bereits die aktuelle Implementierung keine Möglichkeit noch mehr Daten in einem einzelnen Advertisement-Paket zu senden.
+Zusätzlich bietet bereits die aktuelle Implementierung keine Möglichkeit noch mehr Daten in einem einzelnen Advertisement Paket zu senden.
 
 Da dieses Szenario die Privatsphäre der Nutzer nicht gefährdet wird auf die Erarbeitung möglicher Gegenmaßnahmen verzichtet.
 
