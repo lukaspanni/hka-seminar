@@ -1,22 +1,29 @@
 
 \section{Einleitung}
 
-Apples „Wo ist?“ Dienst erlaubt es seinen Nutzern, ihre Apple-Geräte zu lokalisieren.
-Der Dienst ist auch in der Lage die Position von Geräten zu bestimmen, welche nicht mit dem Internet verbunden sind.
-Dazu nutzt Apple die große Verbreitung seiner Geräte, welche den Standort von anderen Apple-Geräten an Apple übermitteln können.
-Bei 62,6 Millionen Smartphone Nutzern in Deutschland \cite{Statista_SmartphonesDeutschland} und einem iPhone Anteil von 35,3 \% \cite{Statscounter_Marktanteil_iOS} gibt es in Deutschland knapp 22 Millionen iPhones, welche standardmäßig die Standortdaten anderer an Apple senden.
-Zu den iPhones kommen allerdings noch iPads und MacBooks, die ebenfalls standardmäßig das „Wo ist?“ Netzwerk unterstützen.
+Apples „Wo ist?“ Dienst wurde dazu entwickelt, verlorene und vergessene Apple-Geräte zu lokalisieren.
+Dabei ist der Dienst in der Lage nicht nur Geräte mit Internetverbindung zu lokalisieren, sondern auch Geräte zu finden, die aktuell keine Verbindung haben oder nicht internetfähig sind.
 
-Obwohl die Standortdaten pseudonymisiert und verschlüsselt werden, lässt sich das „Wo ist?“ Netzwerk für Zwecke missbrauchen, welche nicht von Apple vorgesehen sind.
-Dazu zählen unter anderem die Verfolgung von Personen, die Ausnutzung für eine versteckte Datenübertragung und die Verwendung als Tool zur Analyse von Menschenströmen.
-Insbesondere die Verfolgung von Personen ist ein starker Eingriff in die Privatsphäre der betroffenen Nutzer.
+Zur Positionsbestimmung von Geräten ohne Internetverbindung nutzt Apple die große Verbreitung seiner Geräte aus.
+Bei 62,6 Millionen Smartphone Nutzern in Deutschland \cite{Statista_SmartphonesDeutschland} und Apples Marktanteil von 35,3 \% \cite{Statscounter_Marktanteil_iOS} gibt es in Deutschland knapp 22 Millionen iPhones, welche den „Wo ist?“ Dienst standardmäßig unterstützen.
+Zudem nehmen auch iPads und MacBooks ohne anderslautende Einstellung am Netzwerk des Dienstes teil und unterstützen das Finden verlorener Geräte.
+
+iPhones, iPads und MacBooks können Geräte in der Nähe erkennen, welche den „Wo ist?“ Dienst nutzen und den aktuellen Standort speichern und an Apple übermitteln.
+Wie andere Dienste mit ähnlicher Funktionalität verwendet Apple zur Erkennung von Geräten in der Nähe den \ac{BLE}-Standard.
+
+
+Obwohl die Standortdaten pseudonymisiert und verschlüsselt werden, lässt sich der „Wo ist?“ Dienst für Zwecke missbrauchen, welche nicht von Apple vorgesehen sind.
+Dazu zählen unter anderem die Verfolgung von Personen, die Ausnutzung für die kostenfreie versteckte Übertragung von beliebigen Daten und die Verwendung zur Analyse von Menschenströmen.
+Insbesondere die Verfolgung stellt einen starken Eingriff in die Privatsphäre der betroffenen Personen dar.
 Durch die große Verbreitung von Apple-Produkten sind viele Menschen potenzielle Opfer eines solchen Missbrauchs des „Wo ist?“ Netzwerks.
-Darüber hinaus beschränken sich einzelne mögliche Angriffe nicht nur auf die Nutzer von Apple-Geräten, sondern können auch die Privatsphäre anderer Personen beeinträchtigen.
+Darüber hinaus beschränkt sich eine Möglichkeit der Verfolgung nicht auf Nutzer des Dienstes, sondern kann zur Verfolgung von beliebigen Personen und Gegenständen missbraucht werden.
+Für Personen, die sich schützen wollen, existieren nur wenige Gegenmaßnahmen, welche zusätzlich nicht jeden Missbrauch abdecken und teilweise leicht umgangen werden können.
 
-% TODO: Weiter ausführen sobald andere Abschnitte weiter sind
-In den folgenden Abschnitten werden zunächst relevante Grundlagen zur Privatsphäre im \ac{IOT} allgemein, zu \ac{BLE} und zu crowdsourced-tracking basierend auf \ac{BLE} eingeführt. 
-In \autoref{sec:Funktionsweise_FindMy} wird auf Grundlage der allgemeinen Funktionsweise von crowdsource-tracking, das Funktionsprinzip des „Wo ist?“ Dienstes genauer vorgestellt.
-Im Anschluss wird in \autoref{sec:Missbrauch} aufgezeigt, wie das „Wo ist?“ Netzwerk für verschiedene, nicht von Apple vorgesehene, Anwendungszwecke missbraucht werden kann.
-Abschließend sollen in \autoref{sec:Gegenmaßnahmen} mögliche Gegenmaßnahmen diskutiert werden.
-Dabei soll gezeigt werden, inwiefern Nutzer des Systems sich selbst schützen können, und an welchen Stellen Apple das System anpassen muss, um Schwachstellen zu beseitigen.
-%TODO: auf Sicherheits-Properties definiert von Garg et al. und als sicher vorgestellte Systeme (Weller et al., Garg et al. -> eventuell diese miteinander vergleichen) eingehen
+
+In den folgenden Abschnitten werden zunächst einige relevante Grundlagen zu den Basistechnologien des „Wo ist?“ Dienstes, \ac{BLE} und \ac{ECC} erläutert.
+Darauf aufbauend wird die allgemeine Funktionsweise von crowdsourced-tracking mittels \ac{BLE} erläutert, die sowohl Apples Implementierung als auch Konkurrenzdiensten zugrunde liegt.
+In \autoref{sec:Funktionsweise_FindMy} werden das Funktionsprinzip des „Wo ist?“ Dienstes und die Unterschiede zu anderen Diensten genauer vorgestellt.
+Dabei liegt ein besonderer Fokus auf der Umsetzung von Sicherheitsmaßnahmen, welche die Standortinformationen der Nutzer vor unbefugtem Zugriff schützen sollen.
+Im Anschluss wird in \autoref{sec:Missbrauch} an ... konkreten Szenarien aufgezeigt, wie der „Wo ist?“ Dienst, trotz Gegenmaßnahmen, von Dritten und von Apple selbst missbraucht werden kann.
+Abschließend werden in \autoref{sec:Gegenmassnahmen} mögliche Gegenmaßnahmen für jedes Szenario erarbeitet und diskutiert.
+Dabei soll gezeigt werden, inwiefern Nutzer des Systems sich selbst schützen können, und an welchen Stellen Apple das System anpassen muss, um vorhandene Schwachstellen zu beseitigen, falls dies möglich ist.
