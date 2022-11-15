@@ -1,9 +1,10 @@
 \section{Grundlagen}
 \label{sec:grundlagen}
+
 %TODO: Grundlagen Privatsphäre im IoT, Kryptografie, BLE
 
 \subsection{\ac{BLE}}
-
+\label{sec:ble}
 Für die Erklärung der Funktionsweise ist insbesondere der Advertising-Mechanismus von \ac{BLE} relevant.
 Der \ac{BLE}-Standard ist auf Kurzstreckenkommunikation bei geringem Energieverbrauch ausgelegt.
 Das Advertising wird dazu verwendet, das Gerät für andere Geräte in der Umgebung auffindbar zu machen.
@@ -25,3 +26,25 @@ Um Advertisement-Pakete zu empfangen, müssen die Advertising-Kanäle abgehört 
 Dazu wechseln die Geräte jeweils auf einen der Kanäle und erfassen Advertisement-Pakete für eine definierte Zeit.
 Anschließend wird nach einer Wartezeit auf den nächsten Kanal gewechselt \cite{Spec_BLE_5.3}.
 Wie häufig und wie lange Apple-Geräte im Hintergrund die Kanäle nach Advertisement-Paketen anderer Apple-Geräte abhören, ist nicht bekannt.
+
+\section{Asymmetrische Kryptografie}
+\label{sec:asymmetrische_kryptografie}
+Asymmetrische Verschlüsselungsverfahren sind alle Verfahren, welche für die Verschlüsselung und die Entschlüsselung zwei verschiedene Schlüssel verwenden.
+Der für die Verschlüsselung verwendete Schlüssel muss dabei nicht geheim gehalten werden, da verschlüsselte Nachrichten mit diesem nicht entschlüsselt werden können.
+Daher heißt der Verschlüsselungsschlüssel auch öffentlicher Schlüssel oder \textit{public key}.
+Der Entschlüsselungsschlüssel, auch privater Schlüssel oder \textit{private key} genannt, muss hingegen geheim gehalten werden \cite[S. 173ff.]{Krypto}.
+
+Die asymmetrische Verschlüsselung löst somit das Problem des Schlüsselaustauschs bei symmetrischen Verschlüsselungsverfahren, bei denen nur ein Schlüssel existiert, welcher geheim gehalten werden muss.
+Jedoch sind asymmetrische Verfahren meist rechenintensiver und damit langsamer als symmetrische Verfahren mit vergleichbarem Sicherheitsniveau.
+Oft werden deshalb Hybride Verfahren verwendet \cite[S. 178f.]{Krypto}.
+Auch für die Verschlüsselung der Standortdaten in Apples „Wo ist“ Dienst wird ein hybrides Verfahren verwendet, welches in \autoref{sec:Funktionsweise_FindMy} näher erläutert wird.
+
+Für den „Wo ist“ Dienst wird \ac{ECC} verwendet.
+Auf elliptischen Kurven basierende Verfahren erreichen ein vergleichbares Sicherheitsniveau mit kürzeren Schlüsseln als andere asymmetrische Verfahren \cite[S. 273.]{Krypto}.
+Dieser Vorteil wird ausgenutzt, damit der öffentliche Schlüssel in Advertisement-Paketen übertragen werden kann.
+Meist kommen standardisierte elliptische Kurven zum Einsatz, Apple nutzt beispielsweise die NIST P-224 Kurve \cite{Heinrich_FindMy}.
+Jede Kurve wird durch eine Primzahl, zwei Kurvenkoeffizenten und einen primitiven Punkt auf der Kurve definiert.
+Der private Schlüssel ist eine zufällige ganze Zahl.
+Durch die Multiplikation des privaten Schlüssels mit dem primitiven Punkt wird der öffentliche Schlüssel als Punkt auf der Kurve berechnet.
+Der öffentliche Schlüssel wird in Form der X und Y Koordinate des Punktes angegeben.
+Weiterhin lässt sich der öffentliche Schlüssel in der Praxis auf eine Koordinate reduzieren \cite[S. 284f.]{Krypto}.
