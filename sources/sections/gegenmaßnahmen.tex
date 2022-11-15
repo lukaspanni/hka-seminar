@@ -26,27 +26,23 @@ Die Nutzer haben keine Möglichkeit, sich vor einem Replay-Angriff zu schützen.
 Sobald ein Gerät Advertisement Pakete sendet, könnten diese von einem Angreifer aufgezeichnet und für einen Replay-Angriff verwendet werden.
 
 
-\subsection{Gegenmaßnahmen zu \nameref{missbrauch:2.1} und \nameref{missbrauch:2.2}}
+\subsection{Gegenmaßnahmen zu \nameref{missbrauch:2}}
 
-Gegen physische Angriffe auf ein Lost Device kann das Design des „Wo ist?“ Dienstes nicht schützen.
-Demnach hat Apple kaum Möglichkeiten, die Nutzer vor solchen physischen Angriffen zu schützen.
-Die Zerstörung des Geräts könnte maximal erschwert, aber nicht verhindert werden.
-Durch eine fest verbaute Batterie könnte das Entfernen der Batterie ebenfalls nur erschwert aber nicht verhindert werden.
+Schutz gegen die Entladung der Batterie durch Angreifer in der Nähe ist nur schwierig umsetzbar.
+Da bei Apples System die Verschlüsselung nicht auf dem verlorenen Gerät, sondern auf dem Finder Device erfolgt, ist dieser Angriff vermutlich aufwändiger als beim System von Garg \textit{et al.} \cite{Garg_Secure_Tracker}.
+Außerdem ist das Abspielen eines Tons vergleichsweise auffällig und damit für Angreifer nicht in jeder Situation gut geeignet.
 
-Indirekt lassen sich physische Angriffe durch die Verlängerung der Advertisement Intervalle weiter erschweren.
-Dadurch würde ein Angreifer mehr Zeit benötigen, um das Lost Device zu finden.
-Diese Maßnahme würde allerdings gleichzeitig das Tracking anderer Personen unter Verwendung eines versteckten Trackers (\nameref{missbrauch:3}) erleichtern.
-Generell ist der „Wo ist?“ Dienst nicht als Hilfsmittel gegen Diebstahl konzipiert und wird auch nicht als solches beworben \cite{Apple_WoIst}, weshalb Apple hier keine weiteren Maßnahmen ergreift.
+Als Gegenmaßnahme könnte Apple die Funktion Töne abzuspielen entfernen, was den Angriff nicht komplett verhindern, aber erschweren kann.
+Allerdings ist diese Funktion Teil der Schutzmaßnahmen gegen direktes Tracking und die Entfernung dieser Funktion würde die Maßnahmen zur \ac{UT} abschwächen.
 
-Schutz gegen die Entladung der Batterie durch Angreifer in der Nähe ist ebenfalls nur schwierig umsetzbar.
-Da bei Apples System die Verschlüsselung nicht auf dem verlorenen Gerät, sondern auf dem Finder Device erfolgt, ist dieser Angriff bereits aufwändiger als beim System von Garg \textit{et al.} \cite{Garg_Secure_Tracker}.
-Außerdem ist das Abspielen eines Tons vergleichsweise auffällig und damit generell für Angreifer eher nicht geeignet.
-Zusätzlich könnte auf die Funktion einen Ton abzuspielen komplett verzichtet werden, was den Angriff weiter erschweren würde.
-Allerdings ist diese Funktion Teil der Schutzmaßnahmen gegen direktes Tracking und die Entfernung dieser Funktion würde die Nutzer schlechter vor direktem Tracking schützen.
-
-Die Nutzer haben ebenfalls kaum Möglichkeiten sich gegen die Szenarien \nameref{missbrauch:2.1} und \nameref{missbrauch:2.2} zu schützen. 
+Die Nutzer haben kaum Möglichkeiten sich gegen dieses Szenario zu schützen. 
 Das Entfernen des Lautsprechers von Accessories wäre eine Möglichkeit die Entladung durch Angreifer in der Nähe zu erschweren.
 Da die Entladung durch das Abspielen von Tönen jedoch auffällig und demnach als eher unwahrscheinlich anzusehen ist, ist diese Maßnahme nur bedingt sinnvoll.
+
+Gegen physische Angriffe auf ein Lost Device kann das Design des „Wo ist?“ Dienstes nicht schützen.
+Die Zerstörung des Geräts könnte maximal erschwert, aber nicht verhindert werden.
+Durch eine fest verbaute Batterie könnte das Entfernen der Batterie ebenfalls nur erschwert aber nicht verhindert werden.
+Da der „Wo ist?“ Dienst nicht als Hilfsmittel gegen Diebstahl konzipiert ist und nicht als solches beworben \cite{Apple_WoIst} wird, wird Apple vermutlich auch in Zukunft keine Maßnahmen gegen physische Angriffe ergreifen.
 
 
 \subsection{Gegenmaßnahmen zu \nameref{missbrauch:3}}
@@ -105,7 +101,7 @@ Diese Gegenmaßnahmen sind alle geeignet, die Korrelation mehrerer Location Repo
 Damit ist auch die Rekonstruktion von Bewegungen und die indirekte Verfolgung von Personen nicht mehr möglich. 
 
 Der positive Missbrauch des Crowd-Monitoring wird durch diese Gegenmaßnahmen nicht komplett verhindert.
-Insbesondere die Abschätzung von Personendichten ist nicht davon abhängig, Location Reports des gleichen Geräts miteinander in Verbindung zu bingen und ist demnach uneingeschränkt weiterhin möglich.
+Insbesondere die Abschätzung von Personendichten ist nicht davon abhängig, Location Reports des gleichen Geräts miteinander in Verbindung zu bringen und ist demnach uneingeschränkt weiterhin möglich.
 %TODO: eventuell Crowd-Flow als Begriff verwenden
 Die Rekonstruktion der Bewegung von Menschenmengen, nach der in \cite{Tonetto_FindMy} vorgestellten Methode, verwendet jedoch die Zeitstempel des Uploads und ist nicht mehr möglich.
 Allerdings ließen sich die Bewegungen auch anhand der Veränderung der Personendichte über die Zeit abschätzen.
