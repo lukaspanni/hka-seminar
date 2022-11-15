@@ -124,7 +124,7 @@ Jedoch waren zum Zeitpunkt ihrer Analyse keine Geräte mit einem Intervall der S
 \subsection{Missbrauchsszenarien ohne ausreichende Gegenmaßnahmen}
 \label{sec:szenarien}
 
-Im Folgenden sind sieben Missbrauchsszenarien aufgeführt, welche nicht ausreichend durch Gegenmaßnahmen unterbunden werden.
+Im Folgenden sind sechs Missbrauchsszenarien aufgeführt, welche nicht ausreichend durch Gegenmaßnahmen unterbunden werden.
 Gegen einige werden gar keine Maßnahmen getroffen, andere Gegenmaßnahmen lassen sich leicht umgehen und sind dementsprechend nicht ausreichend.
 Weiterhin ist Szenario \nameref{missbrauch:4} nicht als negativer Missbrauch zu verstehen, da der „Wo ist?“ Dienst in diesem Fall nicht zur Beeinträchtigung, sondern zur Steigerung der Privatsphäre genutzt wird.
 Weil dieser Anwendungsfall jedoch nicht von Apple vorgesehen ist, handelt es sich dennoch um Missbrauch.
@@ -144,28 +144,29 @@ Der Besitzer erhält die manipulierten Standortdaten interpretiert diese als kor
 Es ist unklar, ob Apple gegen diese Art der Manipulation Maßnahmen ergreift.
 
 
-\subsubsection[M2.1]{M2.1: \ac{DOS}: Angreifer mit physischem Zugriff}
-\label{missbrauch:2.1}
+\subsubsection[M2]{M2: \ac{DOS}: Angreifer in der Nähe}
+\label{missbrauch:2}
 Die Verfügbarkeit der Standortdaten ist für die Betrachtung im Rahmen dieser Arbeit weniger relevant, da das Design des Dienstes vergleichsweise wenige Auswirkungen auf die Verfügbarkeit hat.
 Dennoch ist die Verfügbarkeit durch verschiedene Angriffe bedroht.
 Zum Beispiel könnte ein direkter \ac{DOS} Angriff auf die Server von Apple erfolgen, was allerdings als unwahrscheinliches Bedrohungsszenario angesehen werden kann.
-Relevanter ist ein Angriff durch einen Angreifer mit physischem Zugriff auf das Lost Device.
-Beispielsweise in Zusammenhang mit Diebstahl eines Gegenstandes, an welchem ein AirTag befestigt ist, kann durch Zerstörung oder Entfernen der Batterie, verhindert werden, dass neue Standortinformationen hochgeladen werden.
-In diesem Kontext ist auch das Entfernen des AirTags vom Gegenstand möglich um die weitere Lokalisierung zu verhindern.
-Da keine neuen, gültigen Standortdaten erzeugt werden, ist die Verfügbarkeit eingeschränkt.
+Zur Einschränkung der Verfügbarkeit der Standortdaten, reicht es auch aus, wenn ein Angreifer sich in der Nähe eines Lost Devices befindet.
 
-%TODO: eventuell als "weitere Angriffer" auslagern
-\subsubsection[M2.2]{M2.2: \ac{DOS}: Angreifer in der Nähe}
-\label{missbrauch:2.2}
-Zur Einschränkung der Verfügbarkeit der Standortdaten, reicht es auch aus, wenn ein Angreifer sich in der Nähe des Geräts befindet.
-Zum Beispiel ist bei dem von Garg \textit{et al.} \cite{Garg_Secure_Tracker} als sicher vorgeschlagenen Systemen neben dem Entfernen der Batterie auch das gezielte Entladen dieser ohne physischen Zugriff möglich.
-Dieses System ist so gestaltet, dass der aktuelle Standort vom Finder Device an das Lost Device gesendet wird, welches die Daten verschlüsselt zurückgibt.
-In diesem Szenario kann ein Angreifer durch häufiges senden von Standorten an das Lost Device unter Zuhilfenahme der energieintensiven Verschlüsselungsoperationen, die Batterie des Lost Devices entladen.
-Ein Angriff nach diesem Schema kann auch Apples System betreffen.
-Insbesondere für Accessories geringer Batteriekapazität ist die gezielte Entladung ein relevantes Bedrohungsszenario.
+Garg \textit{et al.} \cite{Garg_Secure_Tracker} zeigen bei einem von ihnen entwickelten Alternativen Dienst, dass ein Angreifer in der \ac{BLE}-Reichweite des Geräts in der Lage ist, die Batterie des Geräts zu gezielt zu entladen.
+Beim betroffenen System wird der aktuelle Standort vom Finder Device an das Lost Device gesendet, welches die Daten verschlüsselt zurückgibt.
+Da sowohl Verschlüsselung als auch aktive \ac{BLE}-Kommunikation vergleichsweise energieintensiv sind, kann ein Angreifer durch das häufige Anfragen der Verschlüsselung die Batterie des Gerät entladen.
+
+Ein Angriff nach diesem Schema kann prinzipiell auch Apples System betreffen.
+Insbesondere für Accessories mit üblicherweise geringer Batteriekapazität ist die gezielte Entladung ein relevantes Bedrohungsszenario.
 Da jedoch beim „Wo ist?“ Dienst die Verschlüsselung nicht auf dem Lost Device erfolgt, muss der Angriff leicht variiert werden.
-Accessories müssen die Möglichkeit bieten, einen Ton abzuspielen \cite{Apple_FindMySpec}.
-Diese Funktion kann durch jeden in \ac{BLE}-Reichweite ausgelöst werden \cite{Heinrich_AirGuard} und genutzt werden, um die Batterie zu entladen.
+Laut Apples Spezifikation müssen Accessories die Möglichkeit bieten, einen Ton abzuspielen.
+Diese Funktion ist Teil der \ac{UT} und soll Nutzer vor direktem Tracking, wie in \nameref{missbrauch:3} beschrieben, warnen \cite{Apple_FindMySpec}.
+Zur Auffindung versteckter Accessories lässt sich diese Funktion jedoch von jedem Gerät in \ac{BLE}-Reichweite missbrauchen \cite{Heinrich_AirGuard}.
+Das Abspielen von Tönen kann so lange wiederholt werden, bis die Batterie des Lost Devices entladen ist.
+
+Ein weiterer Angriff auf die Verfügbarkeit ist für Angreifer mit physischem Zugriff möglich.
+Durch Entfernen der Batterie oder Zerstörung des Accessories lässt sich die Verfügbarkeit der Standortdaten für den Besitzer des Geräts einschränken.
+Dies kann Angreifern, beispielsweise im Zusammenhang mit Diebstahl, helfen, die Auffindbarkeit gestohlener Gegenstände zu verringern.
+Allerdings stellt dieser Angriff keinen echten Missbrauch des „Wo ist?“ Dienstes dar, da keinerlei Funktionen des Dienstes genutzt werden.
 
 \subsubsection[M3]{M3: Direktes Tracking von Personen}
 \label{missbrauch:3}
