@@ -1,4 +1,27 @@
-\section{Grundlagen und Hintergrund}
+\section{Grundlagen}
 \label{sec:grundlagen}
-
 %TODO: Grundlagen Privatsphäre im IoT, Kryptografie, BLE
+
+\subsection{\ac{BLE}}
+
+Für die Erklärung der Funktionsweise ist insbesondere der Advertising-Mechanismus von \ac{BLE} relevant.
+Der \ac{BLE}-Standard ist auf Kurzstreckenkommunikation bei geringem Energieverbrauch ausgelegt.
+Das Advertising wird dazu verwendet, das Gerät für andere Geräte in der Umgebung auffindbar zu machen.
+Dazu werden Advertisement-Pakete im Abstand von einem sogenannten \textit{Advertising-Intervall} gesendet \cite{Spec_BLE_5.3}.
+Für das Advertising stellt der \ac{BLE}-Standard drei der 40 verfügbaren Kanäle im Frequenzbereich von 2,4 GHz bis 2,4835 GHz zur Verfügung.
+Jedes Advertisement-Paket wird nacheinander, mit einer zufälligen Verzögerung zur Kollisionsvermeidung, in jedem der drei Kanäle gesendet.
+Das minimale Advertising-Intervall beträgt 20 Millisekunden, das maximale 10,24 Sekunden \cite{Spec_BLE_5.3}.
+Je länger das Intervall, desto geringer ist der Energieverbrauch des Geräts, das die Advertisement-Pakete sendet.
+Allerdings leidet die Auffindbarkeit unter langen Intervallen.
+Apple verwendet für den „Wo ist“ Dienst als Kompromiss zwischen optimaler Auffindbarkeit und minimalem Energieverbrauch ein Advertising-Intervall von zwei Sekunden \cite{Apple_FindMySpec}.
+
+
+Der \ac{BLE}-Standard erlaubt es, beliebige Daten in einem Advertisement-Paket zu versenden, sofern der Typ des Pakets als \textit{manufacturer-specific-data} festgelegt wird.
+In diesem Fall kann das Paket 27 Byte Nutzdaten enthalten \cite{Spec_BLE_5.3}.
+Da Apple für andere Dienste, wie beispielsweise AirDrop, ebenfalls \ac{BLE} nutzt, kommt ein proprietäres Format für die Nutzdaten zum Einsatz \cite{Heinrich_FindMy}.
+Das genaue Format für den „Wo ist“ Dienst wird in \autoref{fig:apple_advertising} vorgestellt.
+
+Um Advertisement-Pakete zu empfangen, müssen die Advertising-Kanäle abgehört werden.
+Dazu wechseln die Geräte jeweils auf einen der Kanäle und erfassen Advertisement-Pakete für eine definierte Zeit.
+Anschließend wird nach einer Wartezeit auf den nächsten Kanal gewechselt \cite{Spec_BLE_5.3}.
+Wie häufig und wie lange Apple-Geräte im Hintergrund die Kanäle nach Advertisement-Paketen anderer Apple-Geräte abhören, ist nicht bekannt.
