@@ -160,7 +160,7 @@ Dieser ist nur mit Zugriff auf den \ac{MBK} des Lost Device berechenbar und kann
 \subsubsection{Ablauf beim Verlust eines Geräts}
 \label{sec:Verlust}
 
-Alle Apple Geräte mit aktivierter Bluetooth-Funktion, die für das Finden durch den „Wo ist?“ Dienst angemeldet sind, senden periodisch alle 2 s \ac{BLE}-Advertisement Pakete.
+Alle Apple Geräte mit aktivierter Bluetooth-Funktion, die für das Finden durch den „Wo ist?“ Dienst angemeldet sind, senden periodisch im Intervall von zwei Sekunden \ac{BLE}-Advertisement Pakete.
 Die im Advertisement enthaltenen Daten unterscheiden sich jedoch abhängig vom Zustand des Geräts.
 iPhones, iPads und MacBooks mit Internetverbindung und alle unterstützen Geräte mit einer aktiven \ac{BLE}-Verbindung zu einem Owner Device, gelten nicht als Lost Device und senden deshalb nur die ersten fünf Bytes des öffentlichen Advertising Keys $AK_i$ \cite{Apple_FindMySpec}.
 Das Advertisement erfolgt vermutlich auch im nicht verlorenen Zustand, um erkennen zu können, wenn ein Gerät in der Nähe die Verbindung verliert.
@@ -181,10 +181,9 @@ Das zweite so gekennzeichnete Gerät ist ein iPhone ohne Internetverbindung und 
 
 Ab iOS 15 werden auch ausgeschaltete iPhones als Lost Devices angesehen und Advertisement Pakete gesendet.
 So kann ein Gerät zum Beispiel auch gefunden werden, wenn es sich aufgrund niedriger Akkuladung abschaltet oder es bei einem Diebstahl abgeschaltet wird \cite{Classen_FindMy}.
-Die Advertisement Pakete werden immer mit dem Typ \textit{manufacturer-specific data} gesendet, sodass neben angebotenen \ac{BLE}-Services auch eigene Daten übertragen werden können.
-Das Format erlaubt nach einer Firmen-ID von zwei Byte, maximal 27 weitere Byte zu übertragen \cite{Spec_BLE_5.3}.
+Die Advertisement Pakete werden immer mit dem Typ manufacturer-specific data gesendet, sodass neben angebotenen \ac{BLE}-Services auch eigene Daten übertragen werden können \cite{Spec_BLE_5.3}.
 Apple nutzt \ac{BLE}-Advertisements auch für andere Zwecke, wie zum Beispiel für den sogenannten Nearby-Dienst, der den Zustand zwischen mehreren Geräten des gleichen Besitzers synchronisiert.
-Deshalb wird zusätzlich jeweils ein Byte für die Kodierung des Typs und der Länge der folgenden Daten verwendet \cite{Martin_continuity}.
+Das proprietäre Advertisement-Format von Apple verwendet deshalb jeweils ein Byte für die Kodierung des Typs und der Länge der folgenden Daten \cite{Martin_continuity}.
 Darauf folgt ein Status-Feld, welches den ungefähren Akkustand in den Stufen \textit{„Full“}, \textit{„Medium“}, \textit{„Low“} und \textit{„Very Low“} enthält \cite{Mayberry_Tracking}.
 Zusätzlich kodiert dieses Feld den Typ des Geräts, von welchem das Advertisement Paket stammt.
 Dabei wird zwischen Apple Endgeräten (iPhone, iPad, MacBook), AirTags, Drittanbieterprodukten und Kopfhörern unterschieden \cite{Heinrich_AirGuard,Mayberry_Tracking}.
@@ -209,7 +208,7 @@ Die Teile, in welchen der öffentliche Schlüssel übertragen wird, sind gelb hi
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.9\textwidth]{apple_advertising.pdf}
-    \caption{Aufbau der Advertisement Pakete des „Wo ist?“ Dienstes.}
+    \caption{Aufbau der Advertisement-Pakete des „Wo ist?“ Dienstes.}
     \label{fig:apple_advertising}
 \end{figure}
 Das als "Hint" bezeichnete Feld kodiert laut Spezifikation \cite{Apple_FindMySpec} Byte 5 des öffentlichen Schlüssels, laut Heinrich \textit{et al.} \cite{Heinrich_FindMy} ist dieses Feld bei iOS allerdings immer 0.
