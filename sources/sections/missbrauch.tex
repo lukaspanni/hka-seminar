@@ -252,15 +252,19 @@ Bräunleins Verfahren benötigt zwei Anfragen an Apples Server pro übertragenem
 \label{missbrauch:6}
 
 Das zweite Ziel des Angreifermodells des Dienstanbieters (A4 in \autoref{fig:adversary_models}) bezieht sich auf die Korrelation von Standorten mehrerer Nutzer.
-Heinrich \textit{et al.} \cite{Heinrich_FindMy} zeigen, dass durch den authentifizierten Up- und Download, die Korrelation durch Apple theoretisch möglich ist.
+Heinrich \textit{et al.} \cite{Heinrich_FindMy} zeigen, dass durch den authentifizierten Upload und Download, die Korrelation durch Apple theoretisch möglich ist.
 Die konkreten Standorte können aufgrund der Ende-zu-Ende-Verschlüsselung nicht bestimmt werden.
 Allerdings kann bestimmt werden, welches Gerät welche Location Reports erstellt und welcher Nutzer diese heruntergeladen hat.
 Daraus lässt sich folgern, welche Nutzer sich zu welcher Zeit an einem gemeinsamen Ort aufgehalten haben.
 Apple könnte diese Informationen nutzen, um soziale Beziehungen zwischen Nutzern zu bestimmen und diese, zum Beispiel zu Werbezwecken, zu analysieren.
 In \cite{Heinrich_FindMy} wird zusätzlich aufgezeigt, dass diese Daten auch von Strafverfolgungsbehörden genutzt werden könnten, um unter anderem die Identität von Demonstrationsteilnehmern zu bestimmen.
-Jedoch ist nicht klar, ob Apple diese Daten tatsächlich speichert und nutzt.
-% TODO: weiter darauf eingehen; auch: wie ist die Rechstlage z.B. in den USA?
 
+Zumindest nach US-Recht existieren verschiedene Möglichkeiten für Strafverfolgungsbehörden, von Apple gespeicherte Daten anzufragen \cite{Data_Access}.
+In den „Richtlinien für Rechtsverfahren“ für „Regierungs- und Strafverfolgungsbehörden außerhalb der USA“ \cite{Apple_FindMy_Data} gibt Apple an, dass kein Zugriff auf die Standortdaten der Nutzer möglich ist.
+Allerdings stehen „Verbindungsprotokolle zu ‚Wo ist?’ [stehen] für einen Zeitraum von bis zu 25 Tagen zur Verfügung“ \cite{Apple_FindMy_Data}.
+Um diese Verbindungsprotokolle zu erstellen, muss eine Zuordnung von Verbindungen zu Nutzern stattfinden.
+Da solche Verbindungen nur beim Upload oder Download von Location Reports entstehen, kann davon ausgegangen werden, dass Apple die Daten zur Authentifizierung der Nutzer speichert und damit Location Reports zu Nutzern zuordnen kann.
+Somit ist das hier beschriebene Szenario auch praktisch möglich und könnte bei entsprechendem Zugriff nicht nur von Apple, sondern auch von Strafverfolgungsbehörden genutzt werden.
 
 
 
