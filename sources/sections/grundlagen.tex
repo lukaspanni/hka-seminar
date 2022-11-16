@@ -33,6 +33,7 @@ Wie häufig und wie lange Apple-Geräte im Hintergrund die Kanäle nach Advertis
 Auf elliptischen Kurven basierende Kryptografieverfahren gehören zu den asymmetrischen Verschlüsselungsverfahren.
 Asymmetrisch sind alle Verfahren, welche für die Verschlüsselung und die Entschlüsselung zwei verschiedene Schlüssel verwenden.
 Der für die Verschlüsselung verwendete Schlüssel muss dabei nicht geheim gehalten werden, da verschlüsselte Nachrichten mit diesem nicht entschlüsselt werden können.
+Der Schlüssel kann öffentlich zugänglich gemacht werden.
 Daher heißt der Verschlüsselungsschlüssel auch öffentlicher Schlüssel oder \textit{public key}.
 Der Entschlüsselungsschlüssel, auch privater Schlüssel oder \textit{private key} genannt, muss hingegen geheim gehalten werden \cite[S. 173ff.]{Krypto}.
 
@@ -43,13 +44,17 @@ Auch für die Verschlüsselung der Standortdaten in Apples „Wo ist“ Dienst w
 
 Für den „Wo ist“ Dienst wird \ac{ECC} verwendet.
 Verfahren auf Basis von elliptischen Kurven erreichen ein vergleichbares Sicherheitsniveau mit kürzeren Schlüsseln als andere asymmetrische Verfahren \cite[S. 273.]{Krypto}.
-Dieser Vorteil wird ausgenutzt, damit der öffentliche Schlüssel in Advertisement-Paketen übertragen werden kann.
+Dieser Vorteil wird ausgenutzt, damit der öffentliche Schlüssel in \ac{BLE} Advertisement-Paketen übertragen werden kann.
 Meist kommen standardisierte elliptische Kurven zum Einsatz, Apple nutzt beispielsweise die NIST P-224 Kurve \cite{Heinrich_FindMy}.
 Jede Kurve wird durch eine Primzahl, zwei Kurvenkoeffizenten und einen primitiven Punkt auf der Kurve definiert.
 Der private Schlüssel ist eine zufällige ganze Zahl.
 Durch die Multiplikation des privaten Schlüssels mit dem primitiven Punkt wird der öffentliche Schlüssel als Punkt auf der Kurve berechnet.
 Der öffentliche Schlüssel wird in Form der X und Y Koordinate des Punktes angegeben.
 Weiterhin lässt sich der öffentliche Schlüssel in der Praxis auf eine Koordinate reduzieren \cite[S. 284f.]{Krypto}.
-%TODO: noch kurz auf Schlüsselableitung eingehen
 
-%TODO: eventuell Grundlagen Datenschutz
+Schlüssel werden oft nur für einen begrenzten Zeitraum verwendet, wodurch sich die Sicherheit erhöhen kann \cite[S. 378f.]{Krypto}.
+Wenn der Schlüssel für die Verschlüsselung der Standortdaten regelmäßig gewechselt wird, kann ein Angreifer, auch wenn er einen Schlüssel erlangt, nur die Standortdaten aus einer begrenzten Zeit abrufen.
+Weiterhin kann die Zuordnung von öffentlichem Schlüssel zu einem Gerät durch häufiges Wechseln der Schlüssel erschwert werden.
+\ac{KDF} können genutzt werden, um aus bestehenden Schlüsseln und einer Zusatzinformation neue Schlüssel zu erzeugen.
+Dabei kann jeder, der den Schlüssel und die Zusatzinformation kennt, neue Schlüssel ableiten \cite[S. 378ff.]{Krypto}.
+Im „Wo ist“ Dienst wird eine \ac{KDF} genutzt, um aus einem geheimen Schlüssel und einem Zähler regelmäßig neue Schlüsselpaare abzuleiten \cite{Heinrich_FindMy}.
