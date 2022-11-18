@@ -238,8 +238,8 @@ Danach wird der Prozess für das nächste Bit der Nachricht wiederholt.
 Diese Kodierung ist in \autoref{fig:sendmy_encoding} schematisch dargestellt.
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.9\linewidth]{sendmy_encoding.png}
-  \caption{Bitweise Kodierung der Nachricht in im Advertisement übertragenen Daten \cite{braeunlein_sendmy}.}
+  \includegraphics[width=0.9\textwidth]{sendmy.pdf}
+  \caption{Bitweise Kodierung einer Nachricht in Advertisement-Pakete, wie von Bräunlein vorgeschlagen.}
   \label{fig:sendmy_encoding}
 \end{figure}
 Der Empfänger kann für jedes Bit der Nachricht die zwei möglichen Arrays generieren und eine Anfrage mit den jeweiligen \ac{SHA}-256 Hashes an Apples Server senden.
@@ -249,12 +249,22 @@ Da die Location Reports Ende-zu-Ende verschlüsselt sind, wird dadurch die Vertr
 Jedoch ist für dieses Missbrauchszenario die Entschlüsselung der Daten nicht notwendig, da lediglich das Vorhandensein eines bestimmten Location Reports überprüft werden muss, um die Nachricht zu dekodieren.
 Ein Nachteil bei diesem Verfahren ist, dass somit auch jedes Apple-Gerät die Nachricht abrufen könnte.
 
-
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.9\textwidth]{tagcomm.png}
+  \caption{Kodierung einer Nachricht in eine Folge bekannter Advertising Keys, wie von Tonetto \textit{et al.} vorgeschlagen \cite{Tonetto_FindMy}.}
+  \label{fig:tagcomm_encoding}
+\end{figure}
 Das von Tonetto \textit{et al.} \cite{Tonetto_FindMy} vorgestellte Verfahren verwendet 16 bekannte Advertising Keys, um die Nachricht in eine Folge dieser Keys zu kodieren.
 Dazu wird eine Menge von Advertising Keys zuvor generiert und zwischen Sender und Empfänger ausgetauscht.
-Der Sender kann die Nachricht erzeugt aus der Nachricht eine Abfolge der Advertising Keys und sendet diese nacheinander im Advertisement.
-Finder Devices, die sich in der Nähe befinden, empfangen die Advertisements, erstellen Location Reports und laden diese hoch.
-Der Empfänger der Nachricht kann alle Location Reports der bekannten Advertising Keys herunterladen, die Daten entschlüsseln und anhand der Zeitstempel die Folge und damit die ursprüngliche Nachricht rekonstruieren.
+Das Verfahren ist in \autoref{fig:tagcomm_encoding} schematisch dargestellt.
+Zunächst erzeugt der Sender aus der Nachricht eine Abfolge der Advertising Keys.
+Diese werden in dieser Reihenfolge nacheinander in den Advertisement-Paketen gesendet.
+Finder Devices, die sich in der Nähe befinden, empfangen die Advertisement-Pakete, erstellen Location Reports und laden diese hoch.
+Der Empfänger der Nachricht kann alle Location Reports der bekannten Advertising Keys herunterladen.
+Da der Empfänger die Location Reports entschlüsseln kann, erhält er die Zeitstempel der Erstellung der Location Reports.
+Daraus kann er die Folge der Advertising Keys rekonstruieren und die Nachricht dekodieren.
+
 Im Vergleich zum Verfahren von Bräunlein, werden hier echte Advertising Keys verwendet, sodass die Location Reports entschlüsselt werden können, sodass der Standort des Senders bestimmt werden kann.
 Zusätzlich muss der Empfänger weniger Anfragen an Apples Server stellen, da nur 16 unterschiedliche Advertising Keys verwendet werden.
 Bräunleins Verfahren benötigt hingegen zwei Anfragen an Apples Server pro übertragenem Bit \cite{braeunlein_sendmy}.
