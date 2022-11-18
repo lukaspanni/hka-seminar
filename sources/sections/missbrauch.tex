@@ -98,7 +98,7 @@ Die Betrachtung der Funktionsweise in \autoref{sec:Funktionsweise_FindMy} zeigt,
 Durch die Verwendung dieses Verschlüsselungsmechanismus kann unter der Annahme, dass der Angreifer die Verschlüsselung nicht brechen kann, gewährleistet werden, dass nur der Besitzer eines verlorenen Geräts die Standortdaten entschlüsseln kann.
 Sollte einem Angreifer gelingen die Daten direkt von Apples Server abzurufen, oder über einen \ac{MITM} Angriff die verschlüsselten Daten zu erhalten, können diese ohne die nur auf den Owner Devices verfügbaren Schlüssel nicht entschlüsselt werden.
 Dabei werden ein \ac{MITM}-Angriffe durch die Verwendung von \ac{TLS} mit Certificate Pinning bei der Kommunikation mit Apples Servern verhindert \cite{Heinrich_FindMy}.
-Durch die Ende-zu-Ende Verschlüsselung werden alle vom Netzwerkangreifer (A3 in \autoref{fig:adversary_models}) ausgehenden Bedrohungen adressiert.
+Durch die Ende-zu-Ende-Verschlüsselung werden alle vom Netzwerkangreifer (A3 in \autoref{fig:adversary_models}) ausgehenden Bedrohungen adressiert.
 Die zur Entschlüsselung benötigten Schlüssel werden auf den Geräten des Besitzers in der als sicher geltenden iCloud Keychain gespeichert.
 So werden auch die von lokalen Angreifern (A1 in \autoref{fig:adversary_models}) ausgehenden Bedrohungen behandelt.
 Eine in \cite{Heinrich_FindMy} aufgedeckte Schwachstelle, die aufgrund von unsicherer Speicherung der Schlüssel unbefugten Zugriff auf die Standortdaten ermöglicht, wurde durch Apple mittlerweile behoben.
@@ -189,11 +189,23 @@ Während Finder Devices mit Mobilfunkverbindung Location Reports in der Regel er
 Wechselt ein Finder Device von einer Mobilfunkverbindung zu einer WLAN-Verbindung, werden die zwischengespeicherten Location Reports in der Regel kurz darauf hochgeladen.
 Unter der Annahme, dass Personen außerhalb einiger weniger Orte, wie zum Beispiel der eigenen Wohnung, nicht dauerhaft mit einem WLAN-Netzwerk verbunden sind, werden außerhalb dieser Orte erstellte Location Reports in etwa zur gleichen Zeit hochgeladen \cite{Tonetto_FindMy}.
 
-Platziert ein Angreifer mehrere Tracker an verschiedenen Orten, erfassen Finder Devices diese und generieren jeweils Location Reports.
-Jeder dieser Location Reports gibt an, zu welchem Zeitpunkt das Finder Device an welcher Position war.
-Werden diese Location Reports gebündelt hochgeladen, kann der Angreifer die zusammengehörigen Location Reports anhand der Uploadzeitpunkte identifizieren.
-Aus den Positionen und Zeitpunkten der Erstellung der Reports kann die Bewegung des Finder Device rekonstruiert werden \cite{Tonetto_FindMy}.
-
+\autoref{fig:indirect_tracking} zeigt ein Beispiel für das indirekte Tracking von Personen.
+Ein Angreifer platziert mehrere Tracker an verschiedenen Orten.
+Im hier gezeigten Beispiel werden zwei Tracker mit jeweils festem Advertising Key, vereinfacht als \textit{id} dargestellt verwendet.
+Finder Devices in der Nähe erfassen die Tracker und erstellen Location Reports.
+In der Regel werden diese Reports gebündelt hochgeladen, sobald eine WLAN-Verbindung hergestellt wird \cite{Tonetto_FindMy}.
+Der Angreifer kann die Location Reports zu seinen Trackern herunterladen und erhält dabei auch die Uploadzeitpunkte.
+Mehrere Location Reports mit gleichem Uploadzeitpunkt stammen mit hoher Wahrscheinlichkeit vom gleichen Finder Device, sodass der Angreifer die Reports nach Finder Devices gruppieren kann.
+Im Beispiel können die ersten beiden heruntergeladenen Location Reports anhand der gleichen Uploadzeit \textbf{54321} dem Opfer zugeordnet werden.
+Die Reports enthalten neben dem Uploadzeitpunkt auch den Zeitpunkt der Erstellung und können somit geordnet werden.
+Dadurch kann der Angreifer die Bewegung des Opfers zwischen seinen Trackern rekonstruieren.
+Mit steigender Anzahl verwendeter Tracker kann die Genauigkeit der Verfolgung erhöht werden.
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.9\textwidth]{indirektes_tracking.pdf}
+  \caption{Schema zum indirekten Tracking von Personen.}
+  \label{fig:indirect_tracking}
+\end{figure}
 
 Zur Nutzung zum Crowd-Monitoring werden einzelne Tracker an öffentlichen Orten platziert.
 Finder Devices, die sich in der Nähe dieser Tracker befinden, generieren Location Reports für diese.
@@ -238,20 +250,20 @@ Jedoch ist für dieses Missbrauchszenario die Entschlüsselung der Daten nicht n
 Ein Nachteil bei diesem Verfahren ist, dass somit auch jedes Apple-Gerät die Nachricht abrufen könnte.
 
 
-Das von Tonetto \textit{et al.} \cite{Tonetto_FindMy} vorgestellte Verfahren verwendet 16 bekannten Advertising Keys, um die Nachricht in eine Folge dieser Keys zu kodieren.
+Das von Tonetto \textit{et al.} \cite{Tonetto_FindMy} vorgestellte Verfahren verwendet 16 bekannte Advertising Keys, um die Nachricht in eine Folge dieser Keys zu kodieren.
 Dazu wird eine Menge von Advertising Keys zuvor generiert und zwischen Sender und Empfänger ausgetauscht.
 Der Sender kann die Nachricht erzeugt aus der Nachricht eine Abfolge der Advertising Keys und sendet diese nacheinander im Advertisement.
 Finder Devices, die sich in der Nähe befinden, empfangen die Advertisements, erstellen Location Reports und laden diese hoch.
 Der Empfänger der Nachricht kann alle Location Reports der bekannten Advertising Keys herunterladen, die Daten entschlüsseln und anhand der Zeitstempel die Folge und damit die ursprüngliche Nachricht rekonstruieren.
 Im Vergleich zum Verfahren von Bräunlein, werden hier echte Advertising Keys verwendet, sodass die Location Reports entschlüsselt werden können, sodass der Standort des Senders bestimmt werden kann.
 Zusätzlich muss der Empfänger weniger Anfragen an Apples Server stellen, da nur 16 unterschiedliche Advertising Keys verwendet werden.
-Bräunleins Verfahren benötigt zwei Anfragen an Apples Server pro übertragenem Bit.
+Bräunleins Verfahren benötigt hingegen zwei Anfragen an Apples Server pro übertragenem Bit \cite{braeunlein_sendmy}.
 
 
 \subsection[M6]{M6: Korrelation von Standorten durch Apple}
 \label{missbrauch:6}
 
-Das zweite Ziel des Angreifermodells des Dienstanbieters (A4 in \autoref{fig:adversary_models}) bezieht sich auf die Korrelation von Standorten mehrerer Nutzer.
+Das zweite Ziel im Angreifermodell des Dienstanbieters (A4 in \autoref{fig:adversary_models}) bezieht sich auf die Korrelation von Standorten mehrerer Nutzer.
 Heinrich \textit{et al.} \cite{Heinrich_FindMy} zeigen, dass durch den authentifizierten Upload und Download, die Korrelation durch Apple theoretisch möglich ist.
 Die konkreten Standorte können aufgrund der Ende-zu-Ende-Verschlüsselung nicht bestimmt werden.
 Allerdings kann bestimmt werden, welches Gerät welche Location Reports erstellt und welcher Nutzer diese heruntergeladen hat.
