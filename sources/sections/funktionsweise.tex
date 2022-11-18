@@ -103,10 +103,10 @@ So wird ermöglicht, dass verschlüsselte Standortdaten des „Wo ist?“ Dienst
 
 Um die Standortdaten der Nutzer zu schützen, werden diese mit dem \ac{AES}-Algorithmus im \ac{GCM} auf dem Finder Device Ende-zu-Ende verschlüsselt.
 Der für die Verschlüsselung verwendete Schlüssel darf nur dem Owner Device und dem Finder Device, welches die Standortdaten verschlüsselt, bekannt sein.
-Dazu muss das Lost Device in den \ac{BLE} Advertisement Paketen einen Schlüssel übertragen, aus welchem sowohl das Finder Device als auch ein Owner Device den \ac{AES} Schlüssel berechnen können.
+Dazu muss das Lost Device in den \ac{BLE} Advertisement-Paketen einen Schlüssel übertragen, aus welchem sowohl das Finder Device als auch ein Owner Device den \ac{AES} Schlüssel berechnen können.
 Da allerdings gleichzeitig die Verfolgung eines Lost Device anhand der im Advertising übertragenen Daten nicht möglich sein soll, muss der sogenannte \textit{Advertising Key} regelmäßig gewechselt werden.
 Die ANSI X9.63-\ac{KDF} wird verwendet, um temporär gültige Advertising Keys abzuleiten \cite{Apple_FindMySpec,Heinrich_FindMy}.
-Ein abgeleiteter Advertising Key $AK_i$ wird jeweils für eine definierte Zeit in \ac{BLE}-Advertisement Paketen übertragen, bevor zum nächsten Schlüssel $AK_{i+1}$ gewechselt wird.
+Ein abgeleiteter Advertising Key $AK_i$ wird jeweils für eine definierte Zeit in \ac{BLE}-Advertisement-Paketen übertragen, bevor zum nächsten Schlüssel $AK_{i+1}$ gewechselt wird.
 Für die Ableitung von $AK_{i+1}$ wird neben $AK_{i}$, auch der \ac{MBK} benötigt.
 Damit ist es für Außenstehende nicht möglich, den folgenden Advertising Key zu berechnen oder mehrere Advertising Keys miteinander in Verbindung zu bringen.
 Durch das regelmäßige Wechseln des verwendeten Avertising Keys lässt sich verhindern, dass ein Angreifer ein Lost Device anhand der im Advertising übertragenen Daten verfolgen kann \cite{Heinrich_FindMy}.
@@ -159,7 +159,7 @@ Dieser ist nur mit Zugriff auf den \ac{MBK} des Lost Device berechenbar und kann
 
 
 \subsubsection{\ac{BLE} Advertisement des Dienstes}
-Alle Apple Geräte mit aktivierter Bluetooth-Funktion, die für das Finden durch den „Wo ist?“ Dienst angemeldet sind, senden periodisch im Intervall von zwei Sekunden \ac{BLE}-Advertisement Pakete.
+Alle Apple Geräte mit aktivierter Bluetooth-Funktion, die für das Finden durch den „Wo ist?“ Dienst angemeldet sind, senden periodisch im Intervall von zwei Sekunden \ac{BLE}-Advertisement-Pakete.
 Die im Advertisement enthaltenen Daten unterscheiden sich jedoch abhängig vom Zustand des Geräts.
 iPhones, iPads und MacBooks mit Internetverbindung und alle unterstützen Geräte mit einer aktiven \ac{BLE}-Verbindung zu einem Owner Device, gelten nicht als Lost Device und senden deshalb nur die ersten fünf Bytes des öffentlichen Advertising Keys $AK_i$ \cite{Apple_FindMySpec}.
 Das Advertisement erfolgt vermutlich auch im nicht verlorenen Zustand, um erkennen zu können, wenn ein Gerät in der Nähe die Verbindung verliert.
@@ -178,9 +178,9 @@ Der Screenshot der nRF-Connect App in \autoref{fig:findMy_screenshot} zeigt die 
 Das erste mit „(Find My)“ gekennzeichnete Gerät ist ein iPad, dass sich aufgrund einer vorhandenen Internetverbindung nicht im verlorenen Zustand befindet.
 Das zweite so gekennzeichnete Gerät ist ein iPhone ohne Internetverbindung und gilt demnach als Lost Device, weshalb hier der gesamte öffentliche Schlüssel im Advertisement Paket enthalten ist.
 
-Ab iOS 15 werden zudem ausgeschaltete iPhones als Lost Devices angesehen und senden Advertisement Pakete.
+Ab iOS 15 werden zudem ausgeschaltete iPhones als Lost Devices angesehen und senden Advertisement-Pakete.
 So kann ein Gerät zum Beispiel gefunden werden, wenn es sich aufgrund niedriger Akkuladung abschaltet oder es bei einem Diebstahl abgeschaltet wird \cite{Classen_FindMy}.
-Die Advertisement Pakete werden immer mit dem Typ manufacturer-specific data gesendet, sodass neben angebotenen \ac{BLE}-Services auch eigene Daten übertragen werden können \cite{Spec_BLE_5.3}.
+Die Advertisement-Pakete werden immer mit dem Typ manufacturer-specific data gesendet, sodass neben angebotenen \ac{BLE}-Services auch eigene Daten übertragen werden können \cite{Spec_BLE_5.3}.
 Apple nutzt \ac{BLE}-Advertisements auch für andere Zwecke, wie zum Beispiel für den sogenannten Nearby-Dienst, der den Zustand zwischen mehreren Geräten des gleichen Besitzers synchronisiert.
 Das proprietäre Advertisement-Format von Apple verwendet deshalb jeweils ein Byte für die Kodierung des Typs und der Länge der folgenden Daten \cite{Martin_continuity}.
 Darauf folgt ein Status-Feld, welches den ungefähren Akkustand in den Stufen \textit{„Full“}, \textit{„Medium“}, \textit{„Low“} und \textit{„Very Low“} enthält \cite{Mayberry_Tracking}.

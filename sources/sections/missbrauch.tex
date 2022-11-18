@@ -112,7 +112,7 @@ Auf dieses Szenario wird in \autoref{sec:szenarien} näher eingegangen.
 Die Schlüsselrotation der Advertising Keys im Intervall von 15 Minuten bei Endgeräten und bis zu 24 Stunden bei Accesories, wie in \autoref{sec:Funktionsweise_FindMy} beschrieben, trägt ebenfalls zur Vertraulichkeit der Standortdaten bei.
 Durch die regelmäßige Rotation der Schlüssel wird das Tracking von Geräten anhand der im Advertising gesendeten Daten erschwert.
 Damit richtet sich diese Maßnahme gezielt gegen das Tracking durch einen Angreifer in der Nähe (A2 mit Ziel (2) in \autoref{fig:adversary_models}).
-Außerdem müssten für einen solchen Angriff viele scannende Geräte so positioniert werden, dass auch bei Bewegung die Advertisement Pakete des zu verfolgenden Geräts von einem der Scanner erfasst wird.
+Außerdem müssten für einen solchen Angriff viele scannende Geräte so positioniert werden, dass auch bei Bewegung die Advertisement-Pakete des zu verfolgenden Geräts von einem der Scanner erfasst wird.
 Um größere Bereiche abzudecken, wären jedoch sehr viele scannende Geräte notwendig, was den Angriff bereits deutlich erschwert.
 In Verbindung mit der Schlüsselrotation ist die Verfolgung, auch mit hohem Aufwand, nur für das Intervall der Schlüsselrotation möglich.
 Allerdings können AirTags und Drittanbieterprodukte durch das längere Intervall für bis zu 24 Stunden über einen solchen Angriff verfolgt werden.
@@ -133,16 +133,24 @@ Die Szenarien basieren größtenteils auf den Arbeiten von Heinrich \textit{et a
 \subsubsection[M1]{M1: Replay-Angriff}
 \label{missbrauch:1}
 Durch die Ende-zu-Ende-Verschlüsselung und den authentifizierten Upload der Standortdaten, kann die Integrität der Standortdaten in vielen Fällen geschützt werden.
-Allerdings können über einen Replay-Angriff manipulierte Standortdaten, welche korrekt verschlüsselt sind und authentifiziert hochgeladen werden, auf Apples Server gelangen.
+Allerdings können über einen Replay-Angriff korrekt verschlüsselte, manipulierte Standortdaten, auf Apples Server gelangen.
 Somit kann die Integrität der abgerufenen Standortdaten nicht mehr gewährleistet werden.
 Der Nutzer kann eventuell nicht mehr erkennen, welche Daten korrekt sind und kann somit keine verlässliche Standortinformation erhalten, was die Verfügbarkeit beeinträchtigt \cite{Heinrich_FindMy}.
 Dieser Angriff entspricht dem \ac{DOS}-Angriff durch einen Angreifer in der Nähe (A2 mit Ziel (3) in \autoref{fig:adversary_models}).
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.9\textwidth]{replay.pdf}
+    \caption{Schema eines Replay-Angriffs um die Integrität verfügbarer Standortdaten zu beeinträchtigen.}
+    \label{fig:replay_attack}  
+\end{figure}
 
-Um einen solchen Angriff durchzuführen, kann ein Angreifer die Advertisement Pakete eines Gerätes aufzeichnen und an anderen Orten wieder abspielen.
-Geräte in der Nähe empfangen diese Pakete und senden Standortdaten verschlüsselt und korrekt authentifiziert an Apple.
-Der Besitzer erhält die manipulierten Standortdaten interpretiert diese als korrekt, oder kann nicht mehr erkennen, welche Daten korrekt sind.
-Es ist unklar, ob Apple gegen diese Art der Manipulation Maßnahmen ergreift.
-
+Das grundsätzliche Schema eines Replay-Angriffs ist in \autoref{fig:replay_attack} dargestellt.
+Um einen solchen Angriff durchzuführen, zeichnet ein Angreifer zunächst die Advertisement-Pakete eines Lost Device auf.
+Anschließend kann der Angreifer die selben Advertisement-Pakete zu einer anderen Zeit oder an einem anderen Ort senden.
+Geräte in der Nähe des Angreifers empfangen diese Pakete und erstellen korrekte Location Reports.
+Diese werden ebenfalls korrekt authentifiziert auf Apples Server hochgeladen.
+Bei einer Anfrage erhält das Owner Device beispielsweise die korrekten und die manipulierten Standortdaten.
+Das Owner Device kann nicht bestimmen, welche Informationen korrekt sind.
 
 \subsubsection[M2]{M2: \ac{DOS}: Angreifer in der Nähe}
 \label{missbrauch:2}
@@ -238,7 +246,7 @@ Danach wird der Prozess für das nächste Bit der Nachricht wiederholt.
 Diese Kodierung ist in \autoref{fig:sendmy_encoding} schematisch dargestellt.
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.9\textwidth]{sendmy.pdf}
+  \includegraphics[width=0.95\textwidth]{sendmy.pdf}
   \caption{Bitweise Kodierung einer Nachricht in Advertisement-Pakete, wie von Bräunlein vorgeschlagen.}
   \label{fig:sendmy_encoding}
 \end{figure}
@@ -251,7 +259,7 @@ Ein Nachteil bei diesem Verfahren ist, dass somit auch jedes Apple-Gerät die Na
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.9\textwidth]{tagcomm.png}
+  \includegraphics[width=0.7\textwidth]{tagcomm.png}
   \caption{Kodierung einer Nachricht in eine Folge bekannter Advertising Keys, wie von Tonetto \textit{et al.} vorgeschlagen \cite{Tonetto_FindMy}.}
   \label{fig:tagcomm_encoding}
 \end{figure}
@@ -305,9 +313,7 @@ Dazu sind die Zielsetzung des Angreifers und mögliche Betroffene eines solchen 
     \hline
     \nameref{missbrauch:1} & Replay-Angriff & Integrität, Verfügbarkeit & Nutzer des „Wo ist?“ Dienstes \\
     \hline
-    \nameref{missbrauch:2.1} & \ac{DOS}: Angreifer mit physischer Zugriff & Verfügbarkeit & Nutzer des „Wo ist?“ Dienstes \\
-    \hline
-    \nameref{missbrauch:2.2} & \ac{DOS}: Angreifer in der Nähe & Verfügbarkeit & Nutzer des „Wo ist?“ Dienstes \\
+    \nameref{missbrauch:2} & \ac{DOS}: Angreifer in der Nähe & Verfügbarkeit & Nutzer des „Wo ist?“ Dienstes \\
     \hline
     \nameref{missbrauch:3} & Direktes Tracking & Vertraulichkeit & Jeder \\
     \hline
