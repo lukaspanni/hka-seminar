@@ -36,15 +36,16 @@
 
 \begin{abstract}
 Apples „Wo ist“ Dienst ermöglicht die Lokalisierung verlorener Geräte.
-Dazu senden unterstützte Geräte periodisch Daten über \ac{BLE} an Apple-Geräte in der Nähe.
-Diese bestimmen den Standort und senden diesen an Apples Server, von wo der Besitzer des verlorenen Geräts die Daten abrufen kann.
-Durch die große Verbreitung von Apple-Geräte ist die Wahrscheinlichkeit hoch, dass \ac{BLE}-Pakete verlorener Geräte ein Apple-Gerät in der Nähe erreichen kann.
-Über eine Ende-zu-Ende-Verschlüsselung werden die Standorte zudem vor unberechtigtem Zugriff geschützt.
-Die vorliegende Arbeit beschreibt die Funktionsweise des Dienstes und zeigt dabei, welche Schutzmaßnahmen ergriffen werden.
-Weiterhin werden konkrete Missbrauchsszenarien aufgezeigt, gegen welche die ergriffenen Maßnahmen nur unzureichend schützen.
-Basierend darauf werden notwendige Schutzmaßnahmen vorgeschlagen.
-Jedoch kann ohne eine umfassende Anpassung auch mit zusätzlichen Maßnahmen nicht jeder Missbrauch ausgeschlossen werden.
-% \keywords{ A \and B \and C }
+Dazu senden unterstützte Geräte periodisch Daten über \ac{BLE} an alle Geräte in der Nähe.
+Empfängt ein Apple-Gerät solche Daten, bestimmt es Standort und sendet diesen Ende-zu-Ende-verschlüsselt an Apples Server.
+Besitzer verlorener Geräte können die Standortdaten von diesen Servern abrufen, entschlüsseln und das Gerät lokalisieren.
+Durch die große Verbreitung von Apple-Geräten ist die Wahrscheinlichkeit hoch, dass \ac{BLE}-Pakete verlorener Geräte ein Apple-Gerät in der Nähe erreichen.
+
+Die vorliegende Arbeit beschreibt die Funktionsweise des „Wo ist“ Dienstes und zeigt, welche Maßnahmen getroffen werden, um die Privatsphäre der Nutzer zu schützen.
+Weiterhin werden konkrete Missbrauchsszenarien aufgezeigt, gegen welche die ergriffenen Sicherheitsmaßnahmen nur unzureichend schützen.
+Basierend darauf werden Maßnahmen vorgeschlagen, wie Apple und die Nutzer des Dienstes den Missbrauch in einigen Fällen verhindern können.
+Jedoch kann ohne eine umfassende Anpassung auch mit zusätzlichen Maßnahmen nicht jeder Missbrauch komplett ausgeschlossen werden.
+\keywords{ Apple \and Bluetooth \and Privatsphäre \and Tracking }
 \end{abstract}
 
 \input{acronyms.tex}

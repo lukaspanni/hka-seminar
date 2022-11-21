@@ -6,13 +6,14 @@ Dazu werden insbesondere der Standard zu kabellosen Kurzstreckenkommunikation \a
 
 \subsection{\acf{BLE}}
 \label{sec:ble}
-Für die Erklärung der Funktionsweise ist insbesondere das \ac{BLE}-Advertising relevant.
-Der Standard für \ac{BLE} ist ein Teil des Bluetooth Standards und auf Kurzstreckenkommunikation bei geringem Energieverbrauch ausgelegt.
-Das Advertising wird dazu verwendet, das Gerät für andere Geräte in der Umgebung auffindbar zu machen.
-Dazu werden Advertisement-Pakete im Abstand von einem sogenannten \textit{Advertising-Intervall} gesendet \cite{Spec_BLE_5.3}.
-Für das Advertising stellt der \ac{BLE}-Standard drei der 40 verfügbaren Kanäle im Frequenzbereich von 2,4 GHz bis 2,4835 GHz zur Verfügung.
+Für die Erklärung der Funktionsweise von Crowdsourced-Tracking ist insbesondere das \textit{\ac{BLE}-Advertising} relevant.
+\ac{BLE} ist ein Teil des Bluetooth-Standards und auf Kurzstreckenkommunikation bei geringem Energieverbrauch ausgelegt.
+Das Advertising wird dazu verwendet, \ac{BLE}-Geräte für andere Geräte in der Umgebung auffindbar zu machen.
+Das Gerät im Advertising-Modus sendet periodisch Advertisement-Pakete, die von allen Geräten in der Funkreichweite empfangen werden können \cite{Spec_BLE_5.3}.
+
+Für das Advertising sind im \ac{BLE}-Standard drei der 40 verfügbaren Kanäle im Frequenzbereich von 2,4 GHz bis 2,4835 GHz reserviert.
 Jedes Advertisement-Paket wird nacheinander, mit einer zufälligen Verzögerung zur Kollisionsvermeidung, in jedem der drei Kanäle gesendet.
-Das minimale Advertising-Intervall beträgt 20 Millisekunden, das maximale 10,24 Sekunden \cite{Spec_BLE_5.3}.
+Das minimale Intervall für das Senden von Advertisement-Paketen, das sogenannte \textit{Advertising-Intervall} beträgt 20 Millisekunden, das maximale 10,24 Sekunden \cite{Spec_BLE_5.3}.
 Je länger das Intervall, desto geringer ist der Energieverbrauch des Geräts, das die Advertisement-Pakete sendet.
 Allerdings leidet die Auffindbarkeit unter langen Intervallen.
 Apple verwendet für den „Wo ist“ Dienst als Kompromiss zwischen optimaler Auffindbarkeit und minimalem Energieverbrauch ein Advertising-Intervall von zwei Sekunden \cite{Apple_FindMySpec}.
@@ -21,40 +22,43 @@ Apple verwendet für den „Wo ist“ Dienst als Kompromiss zwischen optimaler A
 Der \ac{BLE}-Standard erlaubt es, beliebige Daten in einem Advertisement-Paket zu versenden, sofern der Typ des Pakets als \textit{manufacturer-specific-data} festgelegt wird.
 In diesem Fall kann das Paket 27 Byte Nutzdaten enthalten \cite{Spec_BLE_5.3}.
 Da Apple für andere Dienste, wie beispielsweise AirDrop, ebenfalls \ac{BLE} nutzt, kommt ein proprietäres Format für die Nutzdaten zum Einsatz \cite{Heinrich_FindMy}.
-Das genaue Format für den „Wo ist“ Dienst wird in \autoref{fig:apple_advertising} vorgestellt.
+Das genaue Format der Advertisement-Daten für den „Wo ist“ Dienst wird in \autoref{sec:advertisement} näher vorgestellt.
 
-Um Advertisement-Pakete zu empfangen, müssen die Advertising-Kanäle abgehört werden.
-Dazu wechseln die Geräte jeweils auf einen der Kanäle und erfassen Advertisement-Pakete für eine definierte Zeit.
-Anschließend wird nach einer Wartezeit auf den nächsten Kanal gewechselt \cite{Spec_BLE_5.3}.
+Geräte, die Advertisement-Pakete empfangen wollen, müssen dazu die für das Advertising reservierten Kanäle abhören.
+Dazu wechseln sie jeweils auf einen der Kanäle und empfangen für eine definierte Zeit alle Advertisement-Pakete, die auf diesem Kanal gesendet werden.
+Anschließend wird nach einer Wartezeit auf den nächsten Kanal gewechselt.
+Abhängig von der Zeit, für welche die Kanäle jeweils abgehört werden, kann die Empfangswahrscheinlichkeit für Advertisement-Pakete erhöht werden \cite{Spec_BLE_5.3}.
 Wie häufig und wie lange Apple-Geräte im Hintergrund die Kanäle nach Advertisement-Paketen anderer Apple-Geräte abhören, ist nicht bekannt.
 
 \subsection{\acf{ECC}}
 \label{sec:ecc}
 Auf elliptischen Kurven basierende Kryptografieverfahren gehören zu den asymmetrischen Verschlüsselungsverfahren.
 Asymmetrisch sind alle Verfahren, welche für die Verschlüsselung und die Entschlüsselung zwei verschiedene Schlüssel verwenden.
-Der für die Verschlüsselung verwendete Schlüssel muss dabei nicht geheim gehalten werden, da verschlüsselte Nachrichten mit diesem nicht entschlüsselt werden können.
+Der für die Verschlüsselung verwendete Schlüssel muss dabei nicht geheim gehalten werden, da verschlüsselte Nachrichten mit diesem nicht wieder entschlüsselt werden können.
 Der Schlüssel kann öffentlich zugänglich gemacht werden.
 Daher heißt der Verschlüsselungsschlüssel auch öffentlicher Schlüssel oder \textit{public key}.
 Der Entschlüsselungsschlüssel, auch privater Schlüssel oder \textit{private key} genannt, muss hingegen geheim gehalten werden \cite[S. 173ff.]{Krypto}.
 
-Die asymmetrische Verschlüsselung löst somit das Problem des Schlüsselaustauschs bei symmetrischen Verschlüsselungsverfahren, bei denen nur ein Schlüssel existiert, welcher geheim gehalten werden muss.
+Asymmetrische Verschlüsselungsverfahren lösen das Problem des Schlüsselaustauschs welches bei symmetrischen Verfahren auftritt.
+Bei symmetrischen Verfahren wird ein einziger Schlüssel für Verschlüsselung und Entschlüsselung verwendet, der deshalb geheim bleiben muss und über einen sicheren Kanal ausgetauscht werden muss.
 Jedoch sind asymmetrische Verfahren meist rechenintensiver und damit langsamer als symmetrische Verfahren mit vergleichbarem Sicherheitsniveau.
 Oft werden deshalb Hybride Verfahren verwendet \cite[S. 178f.]{Krypto}.
 Auch für die Verschlüsselung der Standortdaten in Apples „Wo ist“ Dienst wird ein hybrides Verfahren verwendet, welches in \autoref{sec:Funktionsweise_FindMy} näher erläutert wird.
 
-Für den „Wo ist“ Dienst wird \ac{ECC} verwendet.
-Verfahren auf Basis von elliptischen Kurven erreichen ein vergleichbares Sicherheitsniveau mit kürzeren Schlüsseln als andere asymmetrische Verfahren \cite[S. 273.]{Krypto}.
-Dieser Vorteil wird ausgenutzt, damit der öffentliche Schlüssel in \ac{BLE} Advertisement-Paketen übertragen werden kann.
+Verfahren auf Basis von elliptischen Kurven, wie auch vom „Wo ist“ Dienst eingesetzt, erreichen bereits mit kürzeren Schlüsseln ein vergleichbares Sicherheitsniveau wie andere asymmetrische Verfahren \cite[S. 273.]{Krypto}.
+Dieser Vorteil wird von Apple ausgenutzt, damit der öffentliche Schlüssel im begrenzten Payload von \ac{BLE} Advertisement-Paketen übertragen werden kann.
+So wird die Ende-zu-Ende-Verschlüsselung der Standortdaten ermöglicht.
 Meist kommen standardisierte elliptische Kurven zum Einsatz, Apple nutzt beispielsweise die NIST P-224 Kurve \cite{Heinrich_FindMy}.
 Jede Kurve wird durch eine Primzahl, zwei Kurvenkoeffizenten und einen primitiven Punkt auf der Kurve definiert.
 Der private Schlüssel ist eine zufällige ganze Zahl.
-Durch die Multiplikation des privaten Schlüssels mit dem primitiven Punkt wird der öffentliche Schlüssel als Punkt auf der Kurve berechnet.
+Durch die Multiplikation des privaten Schlüssels mit dem primitiven Punkt wird der öffentliche Schlüssel, ebenfalls als Punkt auf der Kurve, berechnet.
 Der öffentliche Schlüssel wird in Form der X und Y Koordinate des Punktes angegeben.
 Weiterhin lässt sich der öffentliche Schlüssel in der Praxis auf eine Koordinate reduzieren \cite[S. 284f.]{Krypto}.
 
-Schlüssel werden oft nur für einen begrenzten Zeitraum verwendet, wodurch sich die Sicherheit erhöhen kann \cite[S. 378f.]{Krypto}.
-Wenn der Schlüssel für die Verschlüsselung der Standortdaten regelmäßig gewechselt wird, kann ein Angreifer, auch wenn er einen Schlüssel erlangt, nur die Standortdaten aus einer begrenzten Zeit abrufen.
+Werden Schlüssel nur für einen jeweils begrenzten Zeitraum verwendet, kann die Sicherheit des Systems erhöht werden \cite[S. 378f.]{Krypto}.
+Wenn zum Beispiel der Schlüssel für die Verschlüsselung der Standortdaten regelmäßig gewechselt wird, kann ein Angreifer, auch wenn er einen Schlüssel erlangt, nur die Standortdaten aus einer begrenzten Zeit abrufen.
 Weiterhin kann die Zuordnung von öffentlichem Schlüssel zu einem Gerät durch häufiges Wechseln der Schlüssel erschwert werden.
 \ac{KDF} können genutzt werden, um aus bestehenden Schlüsseln und einer Zusatzinformation neue Schlüssel zu erzeugen.
 Dabei kann jeder, der den Schlüssel und die Zusatzinformation kennt, neue Schlüssel ableiten \cite[S. 378ff.]{Krypto}.
+Demnach muss entweder der Basisschlüssel oder die Zusatzinformation geheim gehalten werden, damit Angreifer aus einem erhaltenen Schlüssel keine weiteren Schlüssel ableiten können.
 Im „Wo ist“ Dienst wird eine \ac{KDF} genutzt, um aus einem geheimen Schlüssel und einem Zähler regelmäßig neue Schlüsselpaare abzuleiten \cite{Heinrich_FindMy}.
