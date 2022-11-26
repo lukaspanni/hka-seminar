@@ -194,9 +194,14 @@ Der Angreifer ist ein legitimer Nutzer des Dienstes, der ein Lost Device lokalis
 Lediglich die Platzierung des Lost Devices unterscheidet diesen Angriff von einem normalen Einsatz des Dienstes.
 
 Der „Wo ist?“ Dienst bietet zwar eine Funktion, um Nutzer auf mögliche Verfolgung hinzuweisen (\ac{UT}) \cite{Apple_FindMySpec}.
-Allerdings wurde bereits gezeigt, dass diese Funktion leicht umgangen werden kann \cite{Mayberry_Tracking} und in vielen Fällen nicht zuverlässig vor Tracking warnen kann \cite{Heinrich_AirGuard}.
-Darüber hinaus ist die Funktion nur für iOS-Geräte direkt verfügbar, sodass für Android-Nutzer keinerlei Warnung erfolgt.
-Demnach sind die Gegenmaßnahmen des „Wo ist?“ Dienstes gegen das direkte Tracking von Personen als nicht ausreichend zu bewerten.
+Diese ist nur für iOS automatisch verfügbar, sodass Android-Nutzer ohne eigenes Zutun nicht geschützt werden können.
+Zusätzlich lässt sich die Funktion durch den Einsatz inoffizieller Tracker leicht umgehen und kann in vielen Fällen nicht zuverlässig vor Tracking warnen \cite{Heinrich_AirGuard,Mayberry_Tracking}.
+Inoffiziell sind alle Tracker, welche den „Wo ist?“ Dienst ohne explizite Erlaubnis von Apple nutzen.
+Solche Tracker lassen sich leicht aus kostengünstiger \ac{BLE}-Hardware und Open-Source-Software zusammenbauen und sind häufig günstiger als offizielle AirTags \cite{Heinrich_OpenHaystack,Mayberry_Tracking}.
+Kennzeichen dieser Tracker ist die Möglichkeit, im Advertisement beliebige Daten zu senden, was genutzt werden kann, um die \ac{UT} zu umgehen \cite{Mayberry_Tracking}.
+
+Da die Gegenmaßnahmen des „Wo ist?“ Dienstes gegen das direkte Tracking von Personen einfach umgangen werden können, sind sie als nicht ausreichend zu bewerten.
+Wie genau die Gegenmaßnahmen umgangen werden können und welche Maßnahmen möglich sind, wird in \autoref{sec:gegenmassnahmen:3} beschrieben.
 
 
 \subsubsection[M4]{M4: Indirektes Tracking von Personen}
@@ -255,10 +260,9 @@ Deshalb wird dieser Einsatzzweck als „positiver“ Missbrauch des „Wo ist?�
 \label{missbrauch:5}
 Tonetto \textit{et al.} \cite{Tonetto_FindMy} und Bräunlein \cite{braeunlein_sendmy} zeigen unabhängig voneinander, dass der „Wo ist?“ Dienst auch für einen verdeckten Datentransfer mit einer niedrigen Übertragungsrate ausgenutzt werden kann.
 Dabei werden Finder Devices dazu genutzt, Daten an Apples Server zu übertragen, welche vom Angreifer heruntergeladen und dekodiert werden können.
-Beide verwenden für das Senden der Daten einen Nachbau eines Accessories, bestehend aus einem \ac{BLE}-fähigen Mikrocontroller.
+Beide verwenden für das Senden der Daten inoffizielle Tracker, um die Daten in den Advertisements zu senden.
 Der verdeckte Datentransfer kann dem Angreifermodell des Angreifers in der Nähe (A2 in \autoref{fig:adversary_models}) zugeordnet werden.
-Allerdings muss das Angreifermodell um das Ziel eines kostenfreien und unentdeckten Datentransfers erweitert werden.
-Zusätzlich muss der Angreifer die Möglichkeit haben, auf die Location Reports über die \ac{API} des Dienstes zugreifen zu können.
+Allerdings muss das Angreifermodell um das Ziel eines kostenfreien und unentdeckten Datentransfers und der Möglichkeit die Location Reports über die \acp{API} des Diensts herunterzuladen erweitert werden.
 
 
 Bräunlein \cite{braeunlein_sendmy} kodiert eine zu sendende Nachricht in den öffentlichen Schlüssel, der in Advertisement-Paketen übertragen wird.
