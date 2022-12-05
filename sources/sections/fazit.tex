@@ -1,32 +1,33 @@
 \section{Fazit}
 \label{sec:Fazit}
 
-Mit dem „Wo ist?“ Dienst nutzt Apple seinen großen Marktanteil aus, um einen Dienst zum Crowdsourced-Tracking verlorener Apple-Gerät anzubieten.
-Im Vergleich zu Konkurrenzdiensten schützt „Wo ist?“ die Privatsphäre seiner Nutzer besser.
-Insbesondere werden die Standorte verlorener Geräte mit einer Ende-zu-Ende-Verschlüsselung vor unbefugtem Zugriff geschützt.
-Weitere Maßnahmen werden ergriffen, um die Ausnutzung des Dienstes für das Tracking von Personen durch Dritte zu verhindern.
+Mit dem „Wo ist?“ Dienst bietet Apple eine Lösung zum Crowdsourced-Tracking verlorener Geräte an, die aufgrund der großen Verbreitung von Apples Produkten hohe Standortgenauigkeit bietet.
+Im Vergleich zu vor der Einführung von „Wo ist?“ existierenden Konkurrenzdiensten schützt der Dienst die Privatsphäre seiner Nutzer besser.
+Insbesondere werden Standortinformationen immer durch eine Ende-zu-Ende-Verschlüsselung von unbefugtem Zugriff geschützt.
+Darüber hinaus werden weitere Maßnahmen getroffen, die den Missbrauch des Dienstes, zum Beispiel für unberechtigtes Tracking von Personen, zu verhindern.
+Zwar konnten bisher keine Schwachstellen in der eingesetzten Verschlüsselung identifiziert werden, jedoch konnte bereits mehrfach gezeigt werden \cite{Mayberry_Tracking,braeunlein_sendmy,Tonetto_FindMy}, dass die vorhandenen Maßnahmen zur Verhinderung von Missbrauch nicht ausreichen.
 
-Allerdings konnte gezeigt werden, dass die von Apple getroffenen Maßnahmen nicht jeden Missbrauch verhindern können.
-Vorhandene Sicherheitsmaßnahmen zur Verhinderung von direktem Tracking durch Dritte beziehen sich zum Beispiel nur auf iOS-Geräte und können demnach die Mehrheit der Personen nicht schützen.
-Weiterhin können diese Sicherheitsmaßnahmen mit geringem technischem Aufwand umgangen werden.
-Die grundlegende Funktionsweise des „Wo ist?“ Dienstes macht es unmöglich das Umgehen der Sicherheitsmaßnahmen zu verhindern.
-Nur eine erhebliche Anpassung des gesamten Dienstes hat das Potenzial diesen Missbrauch zu verhindern.
+So sind beispielsweise die bestehenden Maßnahmen gegen direktes Tracking, wie in \autoref{missbrauch:3} gezeigt, nur eingeschränkt für Nutzer außerhalb des Apple-Ökosystems offiziell verfügbar und lassen sich darüber hinaus mit geringem Aufwand unentdeckt umgehen.
+Damit eignet sich der „Wo ist?“ Dienst sehr gut für Stalking oder ähnliche Zwecke.
+Gegen dieses Problem können sich Nutzer nicht wirksam schützen.
+Apple kann nur durch eine erhebliche Anpassung des Designs des aktuellen Dienstes diesen und weiteren Missbrauch sicher verhindern.
 
-Neben direktem Tracking lässt sich der Dienst auch für indirektes Tracking der Nutzer einsetzen.
-Dieses Missbrauchsszenario lässt sich allerdings auch für positive Zwecke, wie Crowd-Monitoring unter Erhalt der Privatsphäre, nutzen.
-Den negativen Missbrauch könnte Apple hier mit geringem Aufwand verhindern.
+Weitere Missbrauchsszenarien lassen sich leichter verhindern.
+Negatives indirektes Tracking wie in \autoref{missbrauch:4} vorgestellt, könnte beispielsweise durch ein einfaches Software-Update der Server des Dienstes behoben werden.
 
-Nutzer können kaum Maßnahmen ergreifen, um sich selbst vor den Auswirkungen des Missbrauchs zu schützen.
-Das Opt-out aus dem Dienst oder die Deaktivierung der Bluetooth-Funktionalität schützt vor allen Missbrauchsszenario mit Ausnahme des direkten Trackings durch Dritte.
-Stattdessen wird das direkte Tracking durch diese Maßnahme erleichtert.
+
+Gegen keines der in \autoref{sec:Missbrauch} aufgeführten Missbrauchsszenarien, können sich Nutzer mit geringem Aufwand und ohne Verzicht auf die Verwendung des Dienstes schützen.
+Selbst das Opt-out aus dem Dienst oder die Deaktivierung der Bluetooth-Funktionalität schützt den Nutzer nicht vor allen Missbrauchsszenarien.
+Stattdessen wird so das direkte Tracking schwerer erkennbar.
 Demnach kann es keine klare Empfehlung für die Nutzer geben, wie sie sich vor Auswirkungen von Missbrauch des Dienstes schützen können.
-
-
-Obwohl verschiedene Szenarien für den Missbrauch des Dienstes aufgezeigt wurden, stellt der „Wo ist?“ Dienst eine Verbesserung gegenüber bisherigen Diensten dar.
+Dennoch stellt der Dienst im Vergleich zu Konkurrenzdiensten vor der Einführung von „Wo ist?“ eine deutliche Verbesserung dar.
 Die Standortdaten verlorener Geräte sind weder Apple noch Angreifern zugänglich.
 In der Vergangenheit konnte gezeigt werden, dass dies für viele Konkurrenzdienste nicht gilt \cite{Garg_Secure_Tracker,Weller_BLE_Finders}.
-Dennoch ist der Dienst durch die große Verbreitung von Apple-Geräten auch für Angreifer attraktiv.
-Deshalb ist es notwendig, dass Apple die vorhandenen Sicherheitsmaßnahmen ausbaut und weitere Maßnahmen ergreift.
-Verschiedene Maßnahmen wurden bereits vorgeschlagen, die zumindest dafür geeignet sind, den Missbrauch zu erschweren.
+Trotzdem muss Apple aktiv werden und zumindest gegen die Missbrauchsszenarien, die sich mit geringem Aufwand verhindern lassen, geeignete Maßnahmen treffen.
+Wie bereits mehrfach erwähnt lassen sich nicht alle Missbrauchsszenarien einfach verhindern.
+Gegen diese existieren jedoch Maßnahmen, welche das Ausnutzen der Schwachstellen erschweren, beziehungsweise die Auswirkungen des Missbrauchs verringern können.
+Auch diese Maßnahmen sollte Apple umsetzen.
+
 Weiterhin gibt es verschiedene Vorschläge zu sicheren Crowdsourced-Tracking-Diensten, welche nicht für den hier vorgestellten Missbrauch anfällig sind \cite{Garg_Secure_Tracker,Weller_BLE_Finders}.
-Diese Ressourcen sollte Apple für die Weiterentwicklung des „Wo ist?“ Dienstes in Betracht ziehen.
+Durch die große Verbreitung des Standardmäßig aktivierten „Wo ist?“ Dienstes und Apples restriktiven \acp{API} haben Konkurrenzdienste, welche diese Maßnahmen umsetzen jedoch kaum eine Chance, eine nennenswerte Verbreitung zu erreichen.
+Deshalb sollte Apple zur Weiterentwicklung des Dienstes auf die Vorschläge zu sicheren Diensten zurückgreifen und den Dienst sicherer zu machen, um dem Marketing zu entsprechen.
