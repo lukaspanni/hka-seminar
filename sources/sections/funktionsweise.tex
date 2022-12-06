@@ -11,7 +11,7 @@ Der Besitzer des zu findenden Geräts, kann mit einem anderen Gerät \textit{a)}
 Das Funktionsprinzip ist dementsprechend vergleichsweise einfach.
 \begin{figure}[ht]
     \centering 
-    \includegraphics[width=0.9\textwidth]{BLE_Tracker_allgemein.pdf}
+    \includegraphics[width=0.6\textwidth]{BLE_Tracker_allgemein.pdf}
     \caption{Allgemeine Funktionsweise des Crowdsourced-Tracking mit \ac{BLE}.}
     \label{fig:tracker_allgemein}
 \end{figure}
@@ -115,7 +115,6 @@ Im Separated State wird der Schlüssel dabei seltener gewechselt.
 Dies ist unter anderem notwendig um das Anti-Tracking Feature der Accessories zu ermöglichen.
 Dabei erkennen Apple-Endgeräte, ob sich das gleiche Accessory längere Zeit in der Nähe befindet und können den Nutzer vor Tracking durch andere warnen.
 Insbesondere mit AirTags lässt sich anderen Personen sehr einfach folgen, da diese beispielsweise leicht in Autos, Taschen oder Kleidung versteckt werden können \cite{Heinrich_AirGuard}.
-Auf solche Gefahren, sowie die von Apple bereits getroffenen und die noch nötigen Gegenmaßnahmen, wird in \autoref{sec:Missbrauch} und \autoref{sec:Gegenmassnahmen} näher eingegangen.
 
 
 Der Schlüssel für den \ac{AES}-Algorithmus wird aus dem Advertising Key $AK_i$ berechnet und muss sowohl vom Finder Device als auch vom Owner Device bestimmt werden können.
@@ -129,7 +128,7 @@ Dieser ist nur mit Zugriff auf den \ac{MBK} des Lost Device berechenbar und kann
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.8\textwidth]{krypto_encryption.pdf}
+    \includegraphics[width=0.6\textwidth]{krypto_encryption.pdf}
     \caption{Ableitung des \ac{AES}-Schlüssels für die Ende-zu-Ende-Verschlüsselung der Standortdaten.}
     \label{fig:krypto_encryption}
 \end{figure}
