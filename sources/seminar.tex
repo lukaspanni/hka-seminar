@@ -35,11 +35,11 @@
 \maketitle              % typeset the header of the contribution
 
 \begin{abstract}
-Apples „Wo ist“ Dienst ermöglicht die Lokalisierung verlorener Geräte.
-Dazu senden unterstützte Geräte periodisch Daten über \ac{BLE} an alle Geräte in der Nähe.
-Empfängt ein Apple-Gerät solche Daten, bestimmt es Standort und sendet diesen Ende-zu-Ende-verschlüsselt an Apples Server.
-Besitzer verlorener Geräte können die Standortdaten von diesen Servern abrufen, entschlüsseln und das Gerät lokalisieren.
-Durch die große Verbreitung von Apple-Geräten ist die Wahrscheinlichkeit hoch, dass \ac{BLE}-Pakete verlorener Geräte ein Apple-Gerät in der Nähe erreichen.
+Apples „Wo ist“ Dienst ist aufgrund der großen Verbreitung von Apple-Geräten und fehlender Schutzmaßnahmen ein interessantes Ziel für Angreifer und bietet großes Missbrauchspotential.
+
+Als Crowdsourced-Tracking-Dienst verwendet „Wo ist“ zur Lokalisierung verlorener Geräte andere Apple-Geräte in der Umgebung.
+Verlorene Geräte senden regelmäßig Daten über \ac{BLE} an alle Geräte der Umgebung, welche den Standort bestimmen und Ende-zu-Ende verschlüsselt an Apple übertragen.
+Besitzer verlorener Geräte können die Standortdaten von Apples Servern abrufen, entschlüsseln und das Gerät lokalisieren.
 
 Die vorliegende Arbeit beschreibt die Funktionsweise des „Wo ist“ Dienstes und zeigt, welche Maßnahmen getroffen werden, um die Privatsphäre der Nutzer zu schützen.
 Weiterhin werden konkrete Missbrauchsszenarien aufgezeigt, gegen welche die ergriffenen Sicherheitsmaßnahmen nur unzureichend schützen.
