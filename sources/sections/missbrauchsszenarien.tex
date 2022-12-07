@@ -3,28 +3,21 @@
 \label{sec:szenarien}
 
 Basierend auf den Arbeiten von Heinrich \textit{et al.} \cite{Heinrich_FindMy}, Tonetto \textit{et al.} \cite{Tonetto_FindMy}, Mayberry \textit{et al.} \cite{Mayberry_Tracking} und Garg \textit{et al.} \cite{Garg_Secure_Tracker}, sind im Folgenden sechs Missbrauchsszenarien aufgeführt, welche nicht ausreichend durch Gegenmaßnahmen unterbunden werden.
-Gegen einige werden gar keine Maßnahmen getroffen, andere Gegenmaßnahmen lassen sich leicht umgehen und sind dementsprechend nicht ausreichend.
+Gegen einige werden aktuell keine Maßnahmen getroffen, andere Gegenmaßnahmen lassen sich leicht umgehen und sind dementsprechend nicht ausreichend.
 Neben der Erläuterung des Szenarios werden jeweils Gegenmaßnahmen vorgeschlagen, welche von Apple oder den Nutzern des Dienstes beziehungsweise den Betroffenen umgesetzt werden können.
-In diesem Zusammenhang werden auch mögliche Problem dieser Gegenmaßnahmen aufgezeigt.
+In diesem Zusammenhang werden auch mögliche Probleme dieser Gegenmaßnahmen aufgezeigt.
 
 Weiterhin ist Szenario \nameref{missbrauch:4} differenziert zu betrachten, da es sowohl einen negativen als auch einen positiven Missbrauch des Dienstes beschreibt.
-Im einen Fall lässt sich der Dienst missbrauchen, um die Privatsphäre Dritter einzuschränken.
-Im anderen Fall erfolgt der Missbrauch, zum besseren Schutz der Privatsphäre.
+In einem Fall lässt sich der Dienst nutzen, um die Privatsphäre Dritter einzuschränken.
+Im anderen Fall erfolgt der Missbrauch, zum Schutz der Privatsphäre.
 Weil dieser Anwendungsfall jedoch nicht von Apple vorgesehen ist, handelt es sich dennoch um Missbrauch.
+
 
 
 Allgemein konnten keine Gegenmaßnahmen identifiziert werden, welche jedes der Szenarien unterbinden können.
 Die Nutzer des „Wo ist?“ Dienstes können sich jedoch gegen alle Missbrauchsszenarien außer \nameref{missbrauch:3} schützen, indem sie den Dienst nicht nutzen und der Teilnahme als Finder Devices widersprechen.
-Diese Gegenmaßnahme wird allerdings nicht als sinnvoll angesehen, da der Dienst potenziell sehr nützlich sein kann.
+Da der Dienst jedoch sehr nützlich sein kann, wird diese Gegenmaßnahme allerdings nicht als sinnvoll angesehen.
 Stattdessen werden, wenn möglich, zu den jeweiligen Szenarien Gegenmaßnahmen vorgestellt, die eine möglichst uneingeschränkte Nutzung des Dienstes erlauben.
-
-%TODO: 
-Dennoch gibt es eine Gegenmaßnahme, welche \nameref{missbrauch:5} sicher verhindert und das Umgehen der bestehenden Maßnahmen gegen \nameref{missbrauch:3} verhindert.
-Dazu muss der Einsatz inoffizieller Tracker verhindert werden.
-Zur sicheren Verhinderung des Einsatzes von inoffiziellen Trackern müsste Apple beispielsweise eine Authentifizierung für alle Tracker umsetzen, was laut Mayberry \textit{et al.} \cite{Mayberry_Tracking} nicht ohne erhebliche Anpassungen der offiziellen Tracker möglich ist.
-Eine weitere Möglichkeit wäre die Registrierung aller offiziellen Tracker mitsamt \ac{MBK}, um erkennen zu können, ob ein Location Report mit einem gültigen Schlüssel erzeugt wurde.
-Da diese Methode jedoch die Ende-zu-Ende-Verschlüsselung der Location Reports aufweicht, sodass Apple die Daten entschlüsseln kann, wird sie als nicht geeignet angesehen.
-
 
 
 \subsection[M1]{M1: Replay-Angriff}
@@ -40,7 +33,7 @@ Allerdings kann hier das Ziel auch in der reinen Manipulation der Standortdaten 
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.9\textwidth]{replay.pdf}
-    \caption{Schema eines Replay-Angriffs um die Integrität verfügbarer Standortdaten zu beeinträchtigen.}
+    \caption{Schema eines Replay-Angriffs, um die Integrität verfügbarer Standortdaten zu beeinträchtigen.}
     \label{fig:replay_attack}  
 \end{figure}
 
@@ -49,20 +42,20 @@ Um einen solchen Angriff durchzuführen, zeichnet ein Angreifer zunächst die Ad
 Anschließend kann der Angreifer die Aufzeichnung zu einer anderen Zeit oder an einem anderen Ort senden.
 Geräte in der Nähe empfangen die wiederholten Pakete und erstellen Location Reports, welche mit dem enthaltenen Advertising Key verschlüsselt werden.
 Bei einer Anfrage erhält das Owner Device beispielsweise sowohl korrekte als auch manipulierte Standortdaten.
-Das Owner Device kann nicht bestimmen, welche Informationen korrekt sind und die Daten daher nicht für die Lokalisierung des Lost Device verwenden.
+Es kann nicht bestimmt werden, welche Informationen korrekt sind, weshalb die Daten für die Lokalisierung verlorener Geräte nicht geeignet sind.
 
 \subsubsection{Gegenmaßnahmen}
-Das Design des Dienstes lässt es prinzipiell zu, Replay-Angriffe zumindest zu erkennen.
+Das Design des Dienstes lässt es prinzipiell zu, Replay-Angriffe zumindest erkennen zu können.
 Die „Wo ist?“ App könnte beispielsweise die Plausibilität der empfangenen Standortdaten prüfen und Nutzer auf eventuelle Manipulationen hinweisen.
-Eine solche Prüfung wäre unter anderem anhand der Zeitpunkte der Standortdaten möglich.
-Große Abweichungen des Standorts bei Reports, welche kurz nacheinander oder gleichzeitig erstellt wurden, könnten als nicht realistisch erkannt werden.
+Eine solche Prüfung wäre unter anderem anhand der Erstellungszeitpunkte der Location Reports möglich.
+Große Abweichungen des Standorts bei Reports, welche in einem kurzen Zeitraum erstellt wurden, könnten als potenziell manipuliert erkannt werden.
 Allerdings lassen sich so nicht alle Manipulationen erkennen, da der Replay-Angriff zum Beispiel auch in der Nähe des tatsächlichen Standorts durchgeführt werden kann, sodass die Abweichungen der Standorte klein sind.
 In diesem Fall wird lediglich die Genauigkeit der Lokalisierung eingeschränkt.
 Außerdem könnte das Owner Device bestimmen, welcher Advertising Key zum Zeitpunkt der Generierung des Location Reports aktiv war und so überprüfen ob der Location Report mit dem passenden Advertising Key erstellt wurde, oder ob ein älterer Schlüssel verwendet wurde.
 So lassen sich mögliche Replay-Angriffe auf das Intervall der Schlüsselrotation beschränken.
 
 Jedoch sind diese Maßnahmen nur durch Apple, durch eine Aktualisierung der „Wo ist?“ App umsetzbar. 
-Auf Apples Server können Manipulationen hingegen nicht erkannt werden, da durch die Verschlüsselung kein Zugriff auf die Standortinformationen besteht.
+Auf Apples Server können Manipulationen hingegen nicht erkannt werden, da durch die Verschlüsselung kein Zugriff auf die Standortinformationen besteht, welche für die Prüfung der Plausibilität benötigt werden.
 
 Die Nutzer haben keine Möglichkeit, sich vor einem Replay-Angriff zu schützen.
 Sobald ein Gerät Advertisement-Pakete sendet, könnten diese von einem Angreifer aufgezeichnet und für einen Replay-Angriff verwendet werden.
@@ -70,14 +63,14 @@ Sobald ein Gerät Advertisement-Pakete sendet, könnten diese von einem Angreife
 
 \subsection[M2]{M2: \ac{DOS}: Angreifer in der Nähe}
 \label{missbrauch:2}
-Die Verfügbarkeit der Standortdaten ist für die Betrachtung im Rahmen dieser Arbeit weniger relevant, da das Design des Dienstes vergleichsweise wenige Auswirkungen auf die Verfügbarkeit hat.
+Die Verfügbarkeit der Standortdaten ist für die Betrachtung im Rahmen dieser Arbeit weniger relevant, da das Design des Dienstes wenige Auswirkungen auf die Verfügbarkeit hat.
 Dennoch ist die Verfügbarkeit durch verschiedene Angriffe bedroht.
 Die Verfügbarkeit von Standortdaten lässt sich durch den Missbrauch von Funktionen des Dienstes durch einen Angreifer in \ac{BLE}-Reichweite eines Lost Device beeinträchtigen.
 Dieser Angriff entspricht dem dritten Ziel des Angreifers in der Nähe (A3 mit Ziel (3) in \autoref{fig:adversary_models}).
 
 Garg \textit{et al.} \cite{Garg_Secure_Tracker} zeigen bei einem von ihnen entwickelten Crowdsourced-Tracking Dienst, dass ein Angreifer in der \ac{BLE}-Reichweite des Geräts in der Lage ist, die Batterie des Geräts gezielt zu entladen.
 Beim betroffenen System wird der aktuelle Standort vom Finder Device an das Lost Device gesendet, welches die Daten verschlüsselt zurückgibt.
-Da sowohl Verschlüsselung als auch aktive \ac{BLE}-Kommunikation vergleichsweise energieintensiv sind, kann ein Angreifer durch das häufige Anfragen der Verschlüsselung die Batterie des Gerät entladen.
+Da sowohl Verschlüsselung als auch aktive \ac{BLE}-Kommunikation energieintensiv sind, kann ein Angreifer durch das häufige Anfragen der Verschlüsselung die Batterie des Geräts entladen.
 
 Ein Angriff nach diesem Schema kann prinzipiell auch Apples System betreffen.
 Insbesondere für Accessories mit üblicherweise geringer Batteriekapazität ist die gezielte Entladung ein relevantes Bedrohungsszenario.
@@ -88,16 +81,17 @@ Allerdings kann diese Funktion durch alle Geräte in \ac{BLE}-Reichweite missbra
 Das Abspielen von Tönen ließe sich im Rahmen eines Angriffes so lange wiederholen, bis die Batterie des Lost Devices entladen ist.
 
 \subsubsection{Gegenmaßnahmen}
-Schutz gegen die Entladung der Batterie durch Angreifer in der Nähe ist nur schwierig umsetzbar.
-Da bei Apples System die Verschlüsselung nicht auf dem verlorenen Gerät, sondern auf dem Finder Device erfolgt, ist dieser Angriff vermutlich aufwändiger als beim System von Garg \textit{et al.} \cite{Garg_Secure_Tracker}.
-Außerdem ist das Abspielen eines Tons vergleichsweise auffällig und damit für Angreifer nicht in jeder Situation gut geeignet.
+Da das Abspielen eines Tons auffällig und damit für Angreifer nicht in jeder Situation geeignet ist, ist diese Art des Missbrauchs weniger praxisrelevant und Maßnahmen vermutlich nicht zwingend notwendig.
+Dennoch sollen mögliche Maßnahmen vorgestellt werden.
 
-Als Gegenmaßnahme könnte Apple die Funktion Töne abzuspielen entfernen, was den Angriff nicht komplett verhindern, aber erschweren kann.
+Als Gegenmaßnahme könnte Apple die Funktion, Töne abzuspielen, entfernen.
+So würde der Angriff nicht komplett verhindert, aber erschwert werden.
 Allerdings ist diese Funktion Teil der Schutzmaßnahmen gegen direktes Tracking und die Entfernung dieser Funktion würde die Maßnahmen zur \ac{UT} abschwächen.
+
 
 Die Nutzer haben kaum Möglichkeiten sich gegen dieses Szenario zu schützen. 
 Das Entfernen des Lautsprechers von Accessories wäre eine Möglichkeit die Entladung durch Angreifer in der Nähe zu erschweren.
-Da die Entladung durch das Abspielen von Tönen jedoch auffällig und demnach als eher unwahrscheinlich anzusehen ist, ist diese Maßnahme nur bedingt sinnvoll.
+Da die Entladung durch das Abspielen von Tönen jedoch auffällig und demnach als eher unwahrscheinlich anzusehen ist, ist auch diese Maßnahme nur bedingt sinnvoll.
 
 
 \subsection[M3]{M3: Direktes Tracking von Personen}
@@ -133,30 +127,33 @@ Diese Funktion beruht darauf, dass Accessories im Separated State ihren Advertis
 So lassen sich Accessories anhand der \ac{BLE}-Advertisements über länger Zeiträume erkennen.
 Wird ein Accessory seit mehr als zehn Minuten in der Nähe erkannt und ist es dem Gerät mindestens 840 Meter gefolgt, wird es als verdächtig markiert \cite{Heinrich_AirGuard}.
 Warnungen werden allerdings, zur Vermeidung von false positives, verzögert angezeigt.
-Heinrich \textit{et al.} \cite{Heinrich_AirGuard} zeigen, dass die Warnungen erst mehrere Stunden nach der Erkennung oder bei Rückkehr des Benutzers an den von iOS als Zuhause bestimmten Ort angezeigt werden.
+Heinrich \textit{et al.} \cite{Heinrich_AirGuard} zeigen, dass die Warnungen erst mehrere Stunden nach der Erkennung oder bei Rückkehr des Benutzers zu der in iOS hinterlegten Heimatadresse angezeigt werden.
 Ein Angreifer kann die Position seines Opfers also, ohne die \ac{UT} umgehen zu müssen, mindestens mehrere Stunden oder sogar bis zu dessen Zuhause verfolgen, ohne eine Warnung auszulösen.
 Besitzt das Opfer kein Apple-Gerät, ist eine unbegrenzte Verfolgung möglich.
 
 Inzwischen bietet Apple auch eine App für Android an, um die Warnung vor Tracking auch für Android-Nutzer zu ermöglichen, welche jedoch von Heinrich \textit{et al.} \cite{Heinrich_AirGuard} mangels Features nicht als ausreichend angesehen wird.
 Die Open-Source App \textit{AirGuard} für Android bietet eine ähnliche Warnfunktion, welche in Tests besser abschneidet als die Warnfunktion von iOS und die offizielle App von Apple.
 Für iOS ist dieser bessere Schutz aufgrund von Einschränkungen der Bluetooth-\acp{API} für Apps von Drittanbietern nicht verfügbar \cite{Heinrich_AirGuard}.
+Durch Anpassungen an der \ac{UT} könnte eine bessere Warnung auch für iOS möglich sein, was jedoch von Apple bisher nicht umgesetzt wurde.
 
-Problematisch ist ebenfalls, dass die \ac{UT} von iOS durch den Einsatz inoffizieller Tracker einfach und zuverlässig umgangen werden kann \cite{Heinrich_AirGuard,Mayberry_Tracking}.
-Einerseits können inoffizielle Tracker für Status-Feld im Advertisement-Format von Apple immer den Wert 0 senden, was den Tracker als verlorenes Endgerät ausweist.
+Problematisch ist allerdings, dass die \ac{UT} von iOS durch den Einsatz inoffizieller Tracker einfach und zuverlässig umgangen werden kann \cite{Heinrich_AirGuard,Mayberry_Tracking}.
+Einerseits können inoffizielle Tracker für das Status-Feld im Advertisement-Format von Apple immer den Wert 0 senden, was den Tracker als verlorenes Endgerät ausweist.
 Verlorene Endgeräte werden für das \ac{UT}-Feature nicht betrachtet und generieren deshalb keine Warnungen \cite{Heinrich_AirGuard,Mayberry_Tracking}.
-Die AirGuard-App hingegen warnt unabhängig vom Status-Feld \cite{Heinrich_AirGuard}, was zeigt, dass zumindest diese Möglichkeit zur Umgehung einfach behoben werden kann.
+Die AirGuard-App hingegen warnt unabhängig vom Status-Feld \cite{Heinrich_AirGuard}, was zeigt, dass zumindest diese Möglichkeit zur Umgehung von Apple einfach behoben werden könnte.
 
 Andererseits können Tracker den Advertising Key häufig wechseln, sodass iOS nicht erkennen kann, ob es sich um den gleichen Tracker handelt.
-Damit ist keine Unterscheidung von Trackern und Endgeräten ohne Internetverbindung und keine Warnungen mehr möglich \cite{Mayberry_Tracking}.
-Würde auch vor Endgeräten ohne Internetverbindung gewarnt, würden vermutlich sehr viele falsche Warnungen generiert werden.
-Die einzige sichere Möglichkeit, ist die Verwendung inoffizieller Tracker zu verhindern, wie oben bereits beschrieben.
+Damit kann iOS den Tracker nicht als verdächtig markieren und keine Warnung auslösen \cite{Mayberry_Tracking}.
+Die einzige Möglichkeit die Umgehung der \ac{UT} zu verhindern, ist die Verwendung von inoffiziellen Trackern zu unterbinden.
+Dazu sind laut Mayberry \textit{et al.} \cite{Mayberry_Tracking} jedoch umfassende Anpassungen am Design des „Wo ist?“-Dienstes notwendig, zum Beispiel um eine anonyme Authentifizierung der Tracker umzusetzen.
+Eine weitere Möglichkeit wäre die Registrierung aller offiziellen Tracker mitsamt \ac{MBK}, um erkennen zu können, ob ein Location Report mit einem gültigen Schlüssel erzeugt wurde.
+Da diese Methode jedoch die Ende-zu-Ende-Verschlüsselung der Location Reports aufweicht, sodass Apple die Daten entschlüsseln kann, wird sie als nicht geeignet angesehen.
+Somit ist aktuell keine Maßnahme bekannt, wie Apple ohne signifikanten Aufwand die Umgehung der \ac{UT} verhindern könnte.
 
 
-Nutzer können sich vor Tracking durch offizielle Tracker warnen lassen, indem sie entweder ein iOS-Gerät, oder die AirGuard-App verwenden.
+Nutzer können sich vor Tracking durch offizielle Tracker warnen lassen, indem sie entweder ein iOS-Gerät oder die AirGuard-App verwenden.
 Weiterhin können inoffizielle Tracker, welche nur das Status-Feld manipulieren, von der AirGuard-App erkannt werden und Android-Nutzer können auch in diesem Fall gewarnt werden.
 Durch manuelle \ac{BLE}-Scans der Umgebung haben Nutzer von AirGuard außerdem die Möglichkeit, beliebige „Wo ist?“-Geräte in der Nähe zu erkennen.
-Durch die beschriebenen Einschränkungen müssen Nutzer jedoch selbst Entscheiden, ob ein Gerät als schadhafter Tracker einzustufen ist.
-
+Dabei liegt die Entscheidung, ob ein erkanntes Gerät als schadhafter Tracker einzustufen ist jedoch beim Nutzer.
 
 
 \subsection[M4]{M4: Indirektes Tracking von Personen}
@@ -214,28 +211,26 @@ Deshalb wird dieser Einsatzzweck als „positiver“ Missbrauch des „Wo ist?�
 
 \subsubsection{Gegenmaßnahmen}
 Da hier sowohl positive als auch negative Einsatzzwecke möglich sind, sind Gegenmaßnahmen wünschenswert, welche den positiven Nutzen erhalten und gleichzeitig die mögliche negative Nutzung verhindern.
-Der negative Missbrauch durch indirektes Tracking beruht darauf, Location Reports eines Finder Devices miteinander in Verbindung zu bringen.
-Dazu werden die Upload-Zeitstempel verwendet, die von Apples Servern beim Empfang gespeichert werden.
+Der negative Missbrauch beruht darauf, mehrere Location Reports eines Finder Devices anhand der Upload-Zeitstempel miteinander in Verbindung zu bringen.
 Tonetto \textit{et al.} \cite{Tonetto_FindMy} schlagen daher eine Reduktion der Genauigkeit der Zeitstempel oder deren komplette Abschaffung als Gegenmaßnahmen vor.
-Alternativ kann auch der Upload der einzelnen Location Reports zufällig verteilt werden.
+Alternativ könnte auch der Upload der einzelnen Location Reports zufällig verteilt werden.
 Konkret werden zufällige Zeitintervalle oder zufällige, seit der Erstellung zurückgelegte Distanzen vorgeschlagen.
 
 Diese Maßnahmen sind geeignet, die Zuordnung mehrerer Location Reports zu einem Finder Device zumindest zu erschweren.
-Damit steigt auch der Aufwand für die Rekonstruktion von Bewegungen und die indirekte Verfolgung von Personen.
+Insbesondere durch die komplette Abschaffung der Zeitstempel kann der negative Missbrauch zuverlässig verhindert werden.
 
 Der positive Missbrauch zum Crowd-Monitoring wird durch diese Gegenmaßnahmen nicht komplett verhindert.
-Insbesondere die Abschätzung von Personendichten ist nicht davon abhängig, mehrere Location Reports zu einem Gerät zuzuordnen.
+Die Abschätzung von Personendichten ist nicht davon abhängig, mehrere Location Reports zu einem Gerät zuzuordnen, sondern nur davon, mehrere Location Reports abrufen zu können.
 Die Bestimmung des Crowd-Flows, nach der in \cite{Tonetto_FindMy} vorgestellten Methode, ist hingegen auf diese Zuordnung angewiesen.
 Allerdings ließe sich der Crowd-Flow auch anhand der Veränderung der Personendichte über die Zeit abschätzen.
 Die Genauigkeit dieser Alternativen Lösung ist mangels Untersuchung durch die Autoren nicht bekannt.
-Die Bestimmung der Personendichte ist nur von der Möglichkeit Location Reports abzurufen abhängig.
-Damit lassen sich kaum Gegenmaßnahmen treffen, welche nicht die Funktionsweise des Dienstes an sich beeinflussen.
-Die Limitierung der zurückgegebenen Anzahl von Location Reports könnte diese Methode zwar erschweren, allerdings würde so vermutlich auch die Genauigkeit der Standortinformationen von tatsächlich verlorenen Geräten reduziert werden.
+Sofern die Möglichkeit mehrere Location Reports abzurufen nicht eingeschränkt wird, ist der positive Missbrauch weiterhin möglich.
+Da durch die Limitierung der Anzahl der Location Reports vermutlich die Genauigkeit der Standortinformationen reduziert werden würde, ist nicht zu erwarten, dass Apple diese Maßnahme umsetzt.
 
-Die Nutzer können sich gegen positiven und negativen Missbrauch nur schwer schützen.
-Durch regelmäßige Verbindung mit einem WLAN-Netzwerk wäre es möglich, die Zuordnung von Location Reports zu einem Gerät einzuschränken, da jeder Upload weniger Location Reports enthält.
+Die Nutzer können sich sowohl gegen positiven als auch negativen Missbrauch nur schwer schützen.
+Durch regelmäßige Verbindung mit einem WLAN-Netzwerk wäre es möglich, die Anzahl der zu einem Gerät zuordenbaren Location Reports zu reduzieren, was die negative Ausnutzung erschweren würde.
 Jedoch ist die Verbindung mit einem WLAN-Netzwerk nicht immer möglich und auch nicht immer gewünscht.
-Sinnvolle Schutzmaßnahmen müssen demnach von Apple getroffen werden.
+Geeignete Schutzmaßnahmen müssen demnach von Apple getroffen werden.
 
 
 \subsection[M5]{M5: Verdeckter Datentransfer}
@@ -288,24 +283,24 @@ Bräunleins Verfahren benötigt hingegen zwei Anfragen an Apples Server pro übe
 
 
 \subsubsection{Gegenmaßnahmen}
-Der verdeckte Datentransfer über den „Wo ist?“ Dienst beeinträchtigt die Privatsphäre der Nutzer nicht.
-Außerdem ist nur eine sehr geringe Datenrate möglich, was dieses Missbrauchsszenario für Angreifer in der Praxis weniger interessant macht.
+Da die Privatsphäre der Nutzer nicht beeinträchtigt wird und die Praxisrelevanz aufgrund geringer Datenrate niedrig ist, sind Gegenmaßnahmen aus Sicht der Nutzer nicht zwingend erforderlich.
 Dennoch hat Apple ein berechtigtes Interesse, den kostenlosen Datentransfer über seinen Dienst zu verhindern.
-Wie oben bereits beschrieben lässt sich dieser Missbrauch verhindern, indem die Nutzung von inoffiziellen Trackern unterbunden wird.
+Der verdeckte Datentransfer ist auf die Verwendung von inoffiziellen Trackern angewiesen, weshalb die Maßnahmen gegen inoffizielle Tracker, wie bei den Gegenmaßnahmen zu \autoref{missbrauch:3} beschrieben, diesen Missbrauch sicher verhindern könnten.
+Allerdings treffen die bereits beschriebenen Probleme auch hier zu.
 
 Weiterhin schlagen die Autoren von \cite{Tonetto_FindMy} vor, die Anzahl der Location Reports, die von einem Finder Device hochgeladen werden können, zu begrenzen.
-Durch andere Finder Devices in der Nähe, reicht diese Begrenzung jedoch nicht aus um den verdeckten Datentransfer zu verhindern.
+Durch andere Finder Devices in der Nähe, reicht diese Begrenzung jedoch nicht aus um den verdeckten Datentransfer zuverlässig zu verhindern.
 Zusätzlich könnte die Anzahl der abrufbaren Location Reports pro Advertising Key limitiert werden.
-Die Kodierung, wie von Bräunlein \cite{braeunlein_sendmy} vorgeschlagen, wäre davon allerdings nicht betroffen, da für jedes Bit der Nachricht ein eigener Advertising Key verwendet wird.
+Die Kodierung, wie von Bräunlein \cite{braeunlein_sendmy} vorgeschlagen, wäre davon allerdings nicht betroffen, da für jedes Bit der Nachricht ein eigener Advertising Key verwendet wird und somit nur ein Location Report abrufbar sein muss.
 
 Apple könnte zusätzlich den Abruf von Location Reports auf Lost Devices beschränken, die unter der gleichen Apple-ID registriert sind.
-Eine Registrierung, welche die Zuordnung eines hochgeladenen Location Reports zu einer Apple-ID erlaubt, ist jedoch im Dienst aktuell nicht vorgesehen und würde eine signifikante Anpassung des Dienstes erfordern.
-Entweder müsste der \ac{MBK} mit der Apple-ID verknüpft werden, was die Ende-zu-Ende-Verschlüsselung aufweicht, da Apple die Daten dann entschlüsseln könnte.
-Alternativ müsste das Advertisement-Format um Daten zur Verknüpfung mit der Apple-ID erweitert werden.
+Eine Registrierung, welche die Zuordnung eines hochgeladenen Location Reports zu einer Apple-ID erlaubt, ist jedoch im Dienst aktuell nicht vorgesehen und würde ebenfalls eine signifikante Anpassung des Dienstes erfordern.
+Eine Möglichkeit hierzu wäre die Verknüpfung des \ac{MBK} mit der Apple-ID, was die Ende-zu-Ende-Verschlüsselung aufweicht.
+Alternativ könnte das Advertisement-Format um Daten zur Verknüpfung mit der Apple-ID erweitert werden.
 Letzteres würde die Verfolgbarkeit von Lost Devices anhand der Advertisement-Pakete im Vergleich zum aktuellen System erleichtern.
-Zusätzlich bietet bereits die aktuelle Implementierung keine Möglichkeit noch mehr Daten in einem einzelnen Advertisement-Paket zu senden.
+Zusätzlich bietet bereits die aktuelle Implementierung keine Möglichkeit zusätzliche Daten in den Advertisement-Paketen zu senden.
 Apple hat demnach keine Möglichkeit den Missbrauch einzuschränken, ohne signifikante Anpassungen des Dienstes vorzunehmen.
-Da dieses Szenario die Privatsphäre der Nutzer nicht gefährdet wird auf die Erarbeitung möglicher Gegenmaßnahmen durch die Nutzer verzichtet.
+
 
 
 \subsection[M6]{M6: Korrelation von Standorten durch Apple}
@@ -332,7 +327,9 @@ Das hier beschriebene Szenario ist dadurch auch praktisch umsetzbar und könnte 
 Um die Korrelation der Standortdaten zu verhindern, muss entweder der Upload oder der Download der Location Reports ohne Authentifizierung erfolgen.
 Ein nicht authentifizierter Upload würde jedoch den Upload gefälschter von Location Reports erleichtern, da dafür kein Apple-Gerät mehr benötigt würde.
 Die Auswirkungen gefälschter Reports sind mit den Auswirkungen von Replay-Angriffen nach Szenario \nameref{missbrauch:1} vergleichbar und könnten die Verfügbarkeit und Integrität der Standortdaten gefährden.
-Der Download könnte prinzipiell ohne Authentifizierung erfolgen, da die Location Reports Ende-zu-Ende-verschlüsselt sind und auch die aktuelle Implementierung nicht prüfen kann, ob ein Location Report zur Apple-ID gehört, die den Download anfordert.
+
+Der Download könnte prinzipiell ohne Authentifizierung erfolgen, da die Location Reports Ende-zu-Ende-verschlüsselt sind.
+Auch die aktuelle Implementierung kann nicht prüfen, ob ein Location Report zur Apple-ID gehört, die den Download anfordert.
 Diese Maßnahme wird auch von Heinrich \textit{et al.} \cite{Heinrich_FindMy} vorgeschlagen.
 Es wäre jedoch möglich, dass Gegenmaßnahmen für andere Missbrauchsszenarien, wie zum Beispiel \nameref{missbrauch:3} und \nameref{missbrauch:4}, einen authentifizierten Download erforderlich machen.
 Weiterhin ist fraglich, inwieweit Apple ein Interesse daran hat, die Korrelation der Standorte der Nutzer zu verhindern.

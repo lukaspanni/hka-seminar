@@ -5,10 +5,10 @@ Mit der Einführung ihres ersten \ac{BLE}-Trackers hat die Firma Tile 2013 das K
 Wie viele konkurrierende Systeme, darunter Apples „Wo ist?“ Dienst, setzt auch Tile auf crowdsourcing zur Bestimmung der Position verlorener Gegenstände \cite{Weller_BLE_Finders}.
 Die grundlegende Funktion dieser Systeme ist jeweils identisch und in \autoref{fig:tracker_allgemein} gezeigt: Ein zu findendes Gerät \textit{c)} sendet periodisch \ac{BLE}-Advertisements, die von Smartphones in der Nähe \textit{b)} empfangen werden \textit{(1)}.
 Das zu findende Gerät ist dabei entweder ein Endgerät wie ein Smartphone oder ein Tablet, oder ein spezieller, batteriebetriebener, sogenannter Tracker.
-Solche Tracker können an anderen Gegenstände befestigt werden, sodass diese bei Verlust ebenfalls gefunden werden können.
+Solche Tracker können an anderen Gegenständen befestigt werden, sodass diese bei Verlust ebenfalls gefunden werden können.
 Die Empfänger der \ac{BLE}-Advertisements können ihre Position über das \ac{GPS} bestimmen und diese zusammen mit einer ID, welche das zu findende Gerät identifiziert, an einen Server übermitteln \textit{(2)}.
 Der Besitzer des zu findenden Geräts, kann mit einem anderen Gerät \textit{a)} die Position vom Server abrufen \textit{(3)} \cite{Garg_Secure_Tracker}.
-Das Funktionsprinzip ist dementsprechend vergleichsweise einfach.
+Das Funktionsprinzip ist dementsprechend einfach.
 \begin{figure}[ht]
     \centering 
     \includegraphics[width=0.6\textwidth]{BLE_Tracker_allgemein.pdf}
@@ -42,8 +42,8 @@ Der größte Konkurrent Tile hatte im Jahr 2021, laut der bekannten Gadget-Revie
 Durch die bereits beschriebene Limitierung der Hintergrundnutzung von \ac{BLE} unter iOS schränkt Apple alle Konkurrenten zusätzlich stark ein.
 Der „Wo ist?“ Dienst kann hingegen standardmäßig auf alle Apple-Geräte zur Lokalisierung verlorener Geräte zurückgreifen \cite{Heinrich_AirGuard}.
 
-Auf Basis des Reverse-Engineering des „Wo ist?“ Dienstes von Heinrich \textit{et al.} in \cite{Heinrich_FindMy} und der Spezifikation für Drittanbieter \cite{Apple_FindMySpec}, wird im Folgenden die grundlegende Funktionsweise des Dienstes erläutert.
-Dabei wird insbesondere darauf eingegangen, welche Maßnahmen Apple ergreift um Sicherheit und Privatsphäre der Nutzer besser zu schützen als die konkurrierenden Dienste. 
+Auf Basis des Reverse-Engineerings des „Wo ist?“ Dienstes von Heinrich \textit{et al.} in \cite{Heinrich_FindMy} und der Spezifikation für Drittanbieter \cite{Apple_FindMySpec}, wird im Folgenden die grundlegende Funktionsweise des Dienstes erläutert.
+Dabei wird insbesondere darauf eingegangen, welche Maßnahmen Apple ergreift, um Sicherheit und Privatsphäre der Nutzer besser zu schützen als die konkurrierenden Dienste. 
 
 Die Spezifikation definiert für den „Wo ist?“ Dienst die folgenden vier Rollen \cite{Apple_FindMySpec}:
 \begin{itemize}
@@ -66,7 +66,7 @@ Bei Accessories muss ein initialer Pairing-Prozess mit einem Endgerät durchlauf
 
 \subsubsection{Kryptografie}
 \label{sec:Kryptografie}
-Apple verwendet asymmetrische \ac{ECC} Verschlüsselung, um eine im Vergleich zur Konkurrenz höhere Sicherheit und besseren Schutz der Privatsphäre zu gewährleisten.
+Apple verwendet asymmetrische \ac{ECC}-Verschlüsselung, um eine im Vergleich zur Konkurrenz höhere Sicherheit und besseren Schutz der Privatsphäre zu gewährleisten.
 Alle Standortdaten werden mit einer Ende-zu-Ende-Verschlüsselung vor unbefugtem Zugriff geschützt.
 So können weder Apple noch potenzielle Angreifer die Positionen der Nutzer auslesen.
 Nur der Besitzer des Geräts kann die verschlüsselten Daten zur Lokalisierung des Geräts entschlüsseln \cite{Greenberg_FindMyCrypto}.
@@ -74,7 +74,7 @@ Nur der Besitzer des Geräts kann die verschlüsselten Daten zur Lokalisierung d
 Um eine Ende-zu-Ende-Verschlüsselung zu ermöglichen, müssen alle Geräte eines Besitzers Zugriff auf gemeinsame Schlüssel haben.
 Wie diese Schlüssel generiert und genutzt werden, wird im Folgenden erläutert.
 Die Generierung ist in \autoref{fig:crypto_keygen} dargestellt.
-Jedes Owner Device \textit{a)} erzeugt zunächst ein \ac{ECC} Schlüsselpaar $K_{ECC}$ und einen symmetrischen Schlüssel $SK$ \textit{(1)}.
+Jedes Owner Device \textit{a)} erzeugt zunächst ein \ac{ECC}-Schlüsselpaar $K_{ECC}$ und einen symmetrischen Schlüssel $SK$ \textit{(1)}.
 Diese bilden zusammen den sogenannten \textit{\ac{MBK}} ($MBK = K_{ECC} + SK$).
 Die \acp{MBK} werden über den iCloud Dienst zwischen allen Geräten mit der gleichen Apple-ID synchronisiert \textit{(2)}.
 Um die Schlüssel bei der Synchronisierung zu schützen, werden sie mit einem symmetrischen Schlüssel, aus der als sicher geltenden iCloud-Keychain, verschlüsselt \cite{Heinrich_FindMy,Afonin_iCloudKeychain}.
@@ -86,7 +86,7 @@ Abhängig vom Zustand des Accessories bildet sich der verwendete \ac{MBK} aus de
 War das Gerät schon längere Zeit nicht mit einem Owner Device verbunden (sogenannter \textit{Separated State}), wird der SK\textbf{S} (\textbf{S} = Separated) als symmetrischer Schlüssel verwendet ($MBK_{separated} = K_{ECC} + SKS$).
 Solange das Gerät mit einem Owner Device verbunden ist sowie kurzzeitig nach dem Verlust der Verbindung (sogenannter \textit{Nearby State}), wird stattdessen der SK\textbf{N} (\textbf{N} = Nearby) verwendet ($MBK_{nerby} = K_{ECC} + SKN$) \cite{Apple_FindMySpec}.
 Beide möglichen \acp{MBK} werden verschlüsselt über den iCloud Dienst mit allen Geräten des Besitzers synchronisiert \textit{(2)}.
-Anhand dieser Schlüssel können die für die Verschlüsselung der Standortdaten verwendeten Schlüssel berechnet werden.
+Anhand dieser Schlüssel können die, für die Verschlüsselung der Standortdaten verwendeten, Schlüssel berechnet werden.
 Durch die Synchronisierung der Schlüssel wird ermöglicht, dass verschlüsselte Standortdaten des „Wo ist?“ Dienstes auf allen Owner Devices entschlüsselt werden können \cite{Heinrich_FindMy}.
 \begin{figure}[ht]
     \centering
@@ -99,7 +99,7 @@ Durch die Synchronisierung der Schlüssel wird ermöglicht, dass verschlüsselte
 Zur Ende-zu-Ende-Verschlüsselung der Standortdaten, wird der \ac{AES}-Algorithmus im \ac{GCM} verwendet.
 Die Verschlüsselung wird dabei  auf dem Finder Device durchgeführt.
 Der für die Verschlüsselung verwendete Schlüssel darf nur dem Owner Device und dem Finder Device bekannt sein.
-Dazu überträgt das Lost Device in den \ac{BLE} Advertisement-Paketen einen Schlüssel, aus welchem sowohl das Finder Device als auch ein Owner Device den \ac{AES} Schlüssel berechnen können.
+Dazu überträgt das Lost Device in den \ac{BLE} Advertisement-Paketen einen Schlüssel, aus welchem sowohl das Finder Device als auch ein Owner Device den \ac{AES}-Schlüssel berechnen können.
 Da allerdings gleichzeitig die Verfolgung eines Lost Device anhand der im Advertising übertragenen Daten nicht möglich sein soll, muss der sogenannte \textit{Advertising Key} regelmäßig gewechselt werden.
 Deshalb wird die ANSI X9.63-\ac{KDF} verwendet, um temporär gültige Advertising Keys abzuleiten \cite{Apple_FindMySpec,Heinrich_FindMy}.
 Ein abgeleiteter Advertising Key $AK_i$ wird jeweils für eine definierte Zeit in \ac{BLE}-Advertisement-Paketen übertragen, bevor zum nächsten Schlüssel $AK_{i+1}$ gewechselt wird.
@@ -112,18 +112,18 @@ Bei Accessories ist der für die Ableitung der Advertising Keys verwendete \ac{M
 Wie bereits beschrieben wird entweder der $MBK_{nerby}$ oder der  $MBK_{separated}$ eingesetzt \cite{Apple_FindMySpec}.
 Außerdem ist das Intervall in welchem neue Advertising Keys generiert werden, abhängig vom Zustand des Geräts.
 Im Separated State wird der Schlüssel dabei seltener gewechselt.
-Dies ist unter anderem notwendig um das Anti-Tracking Feature der Accessories zu ermöglichen.
+Dies ist unter anderem notwendig, um das Anti-Tracking Feature der Accessories zu ermöglichen.
 Dabei erkennen Apple-Endgeräte, ob sich das gleiche Accessory längere Zeit in der Nähe befindet und können den Nutzer vor Tracking durch andere warnen.
 Insbesondere mit AirTags lässt sich anderen Personen sehr einfach folgen, da diese beispielsweise leicht in Autos, Taschen oder Kleidung versteckt werden können \cite{Heinrich_AirGuard}.
 
 
 Der Schlüssel für den \ac{AES}-Algorithmus wird aus dem Advertising Key $AK_i$ berechnet und muss sowohl vom Finder Device als auch vom Owner Device bestimmt werden können.
 Dazu generiert das Finder Device zunächst ein temporäres \ac{ECC}-Schlüsselpaar ($K_{ECC}'$).
-Über einen \ac{ECDH} Schlüsselaustausch wird aus dem privaten Teil von $K_{ECC}'$ und dem öffentlichen Teil von $AK_i$ ein geteiltes Geheimnis ($s$) berechnet.
+Über einen \ac{ECDH}-Schlüsselaustausch wird aus dem privaten Teil von $K_{ECC}'$ und dem öffentlichen Teil von $AK_i$ ein geteiltes Geheimnis ($s$) berechnet.
 Durch die Anwendung der ANSI X9.63-\ac{KDF} auf $s$ wird ein symmetrischer Schlüssel $e$ generiert.
 Von diesem werden die ersten 16 Byte als Schlüssel für den \ac{AES}-Algorithmus und die folgenden 16 Byte als Initialisierungsvektor verwendet \cite{Heinrich_FindMy}.
 Der Prozess zur Ableitung des symmetrischen Verschlüsselungsschlüssels ist in \autoref{fig:krypto_encryption} schematisch dargestellt.
-Durch die Verwendung des \ac{ECDH} Schlüsselaustauschs kann sichergestellt werden, dass die Standortdaten nur mithilfe des privaten Teils von $AK_i$ entschlüsselt werden können.
+Durch die Verwendung des \ac{ECDH}-Schlüsselaustauschs kann sichergestellt werden, dass die Standortdaten nur mithilfe des privaten Teils von $AK_i$ entschlüsselt werden können.
 Dieser ist nur mit Zugriff auf den \ac{MBK} des Lost Device berechenbar und kann damit nur von Owner Devices bestimmt werden \cite{Heinrich_FindMy}.
 
 \begin{figure}[ht]
@@ -133,7 +133,7 @@ Dieser ist nur mit Zugriff auf den \ac{MBK} des Lost Device berechenbar und kann
     \label{fig:krypto_encryption}
 \end{figure}
 
-Für die Entschlüsselung der Standortdaten kann $s$ über den \ac{ECDH} Schlüsselaustausch ebenfalls mit dem öffentlichen Teil von $K_{ECC}'$ und dem privaten Teil von $AK_i$ berechnet werden.
+Für die Entschlüsselung der Standortdaten kann $s$ über den \ac{ECDH}-Schlüsselaustausch ebenfalls mit dem öffentlichen Teil von $K_{ECC}'$ und dem privaten Teil von $AK_i$ berechnet werden.
 Der symmetrische Schlüssel entsteht wieder durch die Anwendung der ANSI X9.63-\ac{KDF} auf das geteilte Geheimnis.
 Damit das Owner Device diesen Prozess durchführen kann, muss der öffentliche Teil von $K_{ECC}'$ im Location Report, der von Apples Servern abgerufen wird, enthalten sein.
 Außerdem muss das Owner Device erkennen können, welcher Advertising Key verwendet wurde.
@@ -264,7 +264,7 @@ Die Antwort besteht aus einem Array von Objekten, die jeweils den Hash des Adver
 }
 \end{lstlisting}
 
-Das Owner Device kann anhand des Hashwertse in jedem Report den für die Erstellung verwendeten Advertising Key identifizieren und den zugehörigen privaten Schlüssel verwenden, um den Schlüssel abzuleiten und die Daten zu entschlüsseln \cite{Heinrich_FindMy}.
+Das Owner Device kann anhand des Hashwerts in jedem Report den für die Erstellung verwendeten Advertising Key identifizieren und den zugehörigen privaten Schlüssel verwenden, um den Schlüssel abzuleiten und die Daten zu entschlüsseln \cite{Heinrich_FindMy}.
 Zur Steigerung der Genauigkeit bei der Positionsermittlung können die Informationen aus mehreren Location Reports eines Lost Devices miteinander kombiniert werden.
 Bis zu sieben Tage nach dem Upload eines Location Reports kann dieser abgerufen werden.
 Neuere Reports verhindern das Abrufen vorhandener nicht.
